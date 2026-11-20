@@ -6,7 +6,7 @@ PYTHON  ?= python3
 STORE   := store/catalog.rl
 export PATH := $(HOME)/.local/bin:$(PATH)
 
-.PHONY: all setup venv data store verify demo clean
+.PHONY: all setup venv data store verify demo viewer clean
 
 all: verify
 
@@ -37,5 +37,8 @@ verify: store
 demo: store
 	@RELATE=$(RELATE) bash scripts/demo.sh $(STORE)
 
+viewer: setup store
+	$(PYTHON) scripts/build_viewer.py
+
 clean:
-	rm -rf store data/load.cypher data/demo_params.json .venv
+	rm -rf store data/load.cypher data/demo_params.json .venv viewer.html

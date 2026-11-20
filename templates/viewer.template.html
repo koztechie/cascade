@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cascade — blast radius explorer</title>
+<style>
+  :root { --bg:#0e1116; --panel:#161b22; --border:#30363d; --text:#e6edf3; --muted:#8b949e; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+         font:14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { padding:13px 18px 11px; border-bottom:1px solid var(--border); }
+  h1 { margin:0 0 3px; font-size:16px; font-weight:650; }
+  .sub { color:var(--muted); font-size:13px; }
+  .sub b { color:var(--text); font-weight:600; }
+  .sub code { background:#21262d; padding:1px 5px; border-radius:4px; font-size:12px; }
+  #cy { position:fixed; top:76px; left:0; right:0; bottom:0; }
+  #panel { position:fixed; top:90px; right:14px; width:280px; max-height:70vh; overflow:auto;
+           background:var(--panel); border:1px solid var(--border); border-radius:10px;
+           padding:14px; font-size:13px; display:none; z-index:5; box-shadow:0 8px 24px rgba(0,0,0,.4); }
+  #panel h2 { margin:0 14px 6px 0; font-size:14px; word-break:break-word; }
+  #panel .k { color:var(--muted); font-size:12px; }
+  #panel ul { margin:8px 0 0; padding-left:16px; }
+  #panel li { margin:4px 0; cursor:pointer; word-break:break-word; }
+  #panel li:hover { color:#58a6ff; }
+  #panel .close { float:right; cursor:pointer; color:var(--muted); font-size:15px; }
+  #legend { position:fixed; left:14px; bottom:14px; background:var(--panel);
+            border:1px solid var(--border); border-radius:10px; padding:9px 12px;
+            font-size:12px; display:flex; flex-wrap:wrap; gap:4px 14px; max-width:64vw; z-index:5; }
+  #legend span::before { content:""; display:inline-block; width:9px; height:9px;
+            border-radius:50%; background:var(--c); margin-right:6px; }
+  #hint { position:fixed; right:14px; bottom:14px; color:var(--muted); font-size:12px; z-index:5; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Cascade — blast radius explorer</h1>
+  <div class="sub">Focus product <b id="focus-label"></b> · <b id="counts"></b> · every edge is a real
+  relationship in <code>store/catalog.rl</code> · click a node to inspect it</div>
+</header>
+<div id="cy"></div>
+<div id="panel"><span class="close" onclick="hidePanel()">✕</span><h2 id="p-title"></h2><div id="p-body"></div></div>
+<div id="legend"></div>
+<div id="hint">drag · scroll to zoom · click to inspect</div>
+<script src="vendor/cytoscape.min.js"></script>
+<script>
+const G = /*__GRAPH_DATA__*/;
+
+const COLORS = {
+  Product:'#f0883e', Listing:'#3fb950', Page:'#58a6ff', Category:'#d2a8ff',
+  Brand:'#ff7b72', Feed:'#ffd33d', Mapping:'#ffa657', Rule:'#ff9bce',
+  Campaign:'#79c0ff', Segment:'#7ee787', Supplier:'#8b949e', Marketplace:'#a5d6ff'
+};
+const esc = s => String(s).replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+document.getElementById('focus-label').textContent = G.focus_name;
+document.getElementById('counts').textContent =
+  G.nodes.length + ' nodes · ' + G.edges.length + ' relationships';
+
+const legend = document.getElementById('legend');
+Object.keys(COLORS).forEach(k => {
+  if (G.nodes.some(n => n.label === k)) {
+    const s = document.createElement('span');
+    s.style.setProperty('--c', COLORS[k]);
+    s.textContent = k;
+    legend.appendChild(s);
+  }
+});
+
+const style = [
+  { selector:'node', style:{
+      label:'data(name)', color:'#e6edf3', 'text-valign':'bottom', 'text-margin-y':5,
+      'font-size':10, 'text-wrap':'wrap', 'text-max-width':96,
+      width:16, height:16, 'background-color':'#8b949e' } },
+  ...Object.keys(COLORS).map(label =>
+      ({ selector:'node[label = "' + label + '"]',
+         style:{ 'background-color':COLORS[label] } })),
+  { selector:'node[focus]', style:{
+      width:34, height:34, 'font-size':14, 'font-weight':'bold',
+      'border-width':3, 'border-color':'#ffffff', 'text-valign':'top' } },
+  { selector:'edge', style:{
+      width:1.4, 'line-color':'#4d5766', 'target-arrow-color':'#4d5766',
+      'target-arrow-shape':'triangle', 'curve-style':'bezier', opacity:0.85 } },
+  { selector:'.faded', style:{ opacity:0.1 } },
+  { selector:'edge.highlight', style:{
+      'line-color':'#58a6ff', 'target-arrow-color':'#58a6ff',
+      width:2.4, opacity:1, 'z-index':99 } },
+  { selector:'node.highlight', style:{ 'border-width':3, 'border-color':'#ffffff', 'z-index':99 } }
+];
+
+const cy = cytoscape({
+  container: document.getElementById('cy'),
+  elements: [
+    ...G.nodes.map(n => ({ data:{ id:n.id, label:n.label, name:n.name, focus:!!n.focus } })),
+    ...G.edges.map(e => ({ data:{ id:e.id, source:e.a, target:e.b, rel:e.rel } }))
+  ],
+  style,
+  layout:{ name:'cose', animate:false, idealEdgeLength:55, nodeRepulsion:350000,
+           edgeElasticity:90, nestingFactor:5, gravity:0.35, numIter:1500, randomize:true },
+  wheelSensitivity:0.25
+});
+
+const panel = document.getElementById('panel');
+function hidePanel() {
+  panel.style.display = 'none';
+  cy.elements().removeClass('highlight faded');
+}
+window.hidePanel = hidePanel;
+
+function focusNode(id) {
+  const n = cy.getElementById(id);
+  if (n.nonempty()) n.emit('tap');
+}
+window.focusNode = focusNode;
+
+cy.on('tap', 'node', evt => {
+  const node = evt.target;
+  cy.elements().addClass('faded');
+  const kept = node.union(node.neighborhood());
+  kept.removeClass('faded').addClass('highlight');
+  document.getElementById('p-title').textContent =
+    node.data('label') + ' · ' + node.data('name');
+  const links = node.connectedEdges().map(e => {
+    const other = e.source().id() === node.id() ? e.target() : e.source();
+    const dir = e.source().id() === node.id() ? '→' : '←';
+    return '<li onclick="focusNode(' + JSON.stringify(other.id()) + ')">' +
+      esc(e.data('rel')) + ' ' + dir + ' ' + esc(other.data('label')) +
+      ': ' + esc(other.data('name')) + '</li>';
+  }).join('');
+  document.getElementById('p-body').innerHTML =
+    '<div class="k">' + (node.data('focus') ? 'Focus product — every listed edge leaves from here'
+      : 'Connected object') + '</div><ul>' + (links || '<li>no edges</li>') + '</ul>';
+  panel.style.display = 'block';
+});
+
+cy.on('tap', evt => { if (evt.target === cy) hidePanel(); });
+</script>
+</body>
+</html>

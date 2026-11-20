@@ -67,6 +67,14 @@ make verify
 builds `store/catalog.rl`, runs all four demo queries and fails if any of them
 returns the wrong rows. Expected output ends with `== verify: OK ==`.
 
+If your CPU predates AVX2, the prebuilt binary refuses to start — that is
+exactly the hardware this project is for. The repository ships `bin/relate`,
+a wrapper that uses the official CLI when it runs on your machine and
+otherwise drives the same engine through the embedded Python client
+(`relate_db` on PyPI, installed into `.venv` by `make venv`): same commands,
+same engine, same store file. `make verify` bootstraps whatever your machine
+needs.
+
 Run the whole demo with recorded parameters:
 
 ```bash
@@ -89,6 +97,30 @@ relate query --database store/catalog.rl \
 
 The dataset is **synthetic**: realistic structure, deliberate defects, no real
 business data.
+
+## Look first, run later
+
+[`viewer.html`](viewer.html) is the pre-built blast-radius view of the demo
+product: open it in any browser — no install, no server, works offline.
+Rebuild it from the store with `make viewer`.
+
+## The store in numbers
+
+| Metric | Value |
+| --- | --- |
+| Nodes | **1,667** — 600 products, 769 listings, 175 pages, 34 feed mappings, 38 rules/campaigns/segments, 51 catalog entities |
+| Relationships | **3,731** |
+| Store file | `store/catalog.rl` — **1.1 MB**, single file, committed |
+
+Query timings, measured on a 2013 AMD A4-4020 without AVX2 — the floor, not
+the ceiling:
+
+| Query | Rows | Median |
+| --- | --- | --- |
+| 01 blast radius | 475 | 206 ms |
+| 02 rejected root cause | 25 | 3.4 ms |
+| 03 invisible inventory | 150 | 9.1 ms |
+| 04 merge counterfactual | 15 | 1.2 ms |
 
 ## Limitations
 

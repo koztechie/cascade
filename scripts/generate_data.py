@@ -166,8 +166,7 @@ def build():
             f"channel: {q(channel)}, budget_uah: {random.choice([5000, 12000, 25000, 40000])}}})"
             f"-[:TARGETS]->(c);"
         )
-    for i in range(3):
-        brand = random.choice(BRANDS)[0]
+    for brand in [b[0] for b in random.sample(BRANDS, 3)]:
         lines.append(
             f"MATCH (b:Brand {{name: {q(brand)}}}) "
             f"CREATE (:Campaign {{name: {q(brand + ' / brand awareness')}, "
