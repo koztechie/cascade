@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Prefer the official prebuilt `relate` CLI when this CPU supports it;
+# otherwise fall back to the embedded Python client (same engine, same store
+# format) — see scripts/relate_compat.py.
+set -u
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+if command -v relate >/dev/null 2>&1 && relate --version >/dev/null 2>&1; then
+  exec relate "$@"
+fi
+
+PY="$ROOT/.venv/bin/python"
+if [ ! -x "$PY" ]; then
+  PY=python3
+fi
+exec "$PY" "$ROOT/scripts/relate_compat.py" "$@"

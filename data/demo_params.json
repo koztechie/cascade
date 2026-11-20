@@ -1,0 +1,5 @@
+{
+  "sku": "PU-1004",
+  "merge_from": "Sneakers",
+  "merge_into": "Boots"
+}
