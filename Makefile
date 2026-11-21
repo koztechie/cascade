@@ -6,7 +6,7 @@ PYTHON  ?= python3
 STORE   := store/catalog.rl
 export PATH := $(HOME)/.local/bin:$(PATH)
 
-.PHONY: all setup venv data store check-committed verify demo viewer report golden golden-update clean
+.PHONY: all setup venv data store check-committed verify demo viewer report golden golden-update check-claims clean
 
 all: verify
 
@@ -60,6 +60,9 @@ golden: setup store
 
 golden-update: setup store
 	@RELATE=$(RELATE) bash scripts/golden.sh update "$(STORE)"
+
+check-claims: setup store
+	@RELATE=$(RELATE) PYTHON=$(PYTHON) bash scripts/check_claims.sh "$(STORE)"
 
 clean:
 	rm -rf store data/load.cypher data/demo_params.json .venv viewer.html

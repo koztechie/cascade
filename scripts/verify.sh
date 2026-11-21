@@ -68,6 +68,7 @@ if ! mcp_out=$(printf '%s\n' \
   echo "FAIL 05: MCP server exited non-zero"; fail=1
 else
   echo "$mcp_out" | grep -q '"name": "read_cypher"' || { echo "FAIL 05: read_cypher missing"; fail=1; }
+  echo "$mcp_out" | grep -q '"name": "get_schema"'  || { echo "FAIL 05: get_schema missing"; fail=1; }
   echo "$mcp_out" | grep -q 'row_count'             || { echo "FAIL 05: query through MCP failed"; fail=1; }
   echo "$mcp_out" | grep -q '"isError": true'       || { echo "FAIL 05: write not refused"; fail=1; }
   echo "$mcp_out" | grep -q '"name": "blast_radius"' || { echo "FAIL 05: blast_radius missing from catalog"; fail=1; }
