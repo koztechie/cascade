@@ -1,0 +1,103 @@
+== verify: store/catalog.rl (demo sku: PU-1004) ==
+-- 01 blast radius
+impact_type | name                                    | hops
+------------+-----------------------------------------+-----
+Campaign    | Sneakers / Email (SendPulse)            | 2   
+Campaign    | Sneakers / Viber                        | 2   
+Campaign    | Audio / Google Ads                      | 4   
+Campaign    | Audio / Viber                           | 4   
+Campaign    | Boots / Meta Ads                        | 4   
+Campaign    | Fitness / Google Ads                    | 4   
+Campaign    | Fitness / Meta Ads                      | 4   
+Campaign    | Haircare / Email (SendPulse)            | 4   
+Campaign    | Haircare / Google Ads                   | 4   
+Campaign    | IronTrail / brand awareness             | 4   
+Campaign    | Kitchen / Viber                         | 4   
+Campaign    | PureGlow / brand awareness              | 4   
+Campaign    | Sandals / Email (SendPulse)             | 4   
+-- 02 rejected root cause
+listing  | sku     | category  | feed                   | missing_field
+---------+---------+-----------+------------------------+--------------
+L-0028-1 | AU-1028 | Outdoor   | Google Merchant Center | gtin         
+L-0152-0 | AU-1152 | Kitchen   | Google Merchant Center | gtin         
+L-0152-1 | AU-1152 | Kitchen   | Google Merchant Center | gtin         
+L-0499-0 | AU-1499 | Sneakers  | Google Merchant Center | gtin         
+L-0499-1 | AU-1499 | Sneakers  | Google Merchant Center | gtin         
+L-0499-2 | AU-1499 | Sneakers  | Google Merchant Center | gtin         
+L-0081-0 | BR-1081 | Haircare  | Google Merchant Center | gtin         
+L-0117-0 | BR-1117 | Boots     | Google Merchant Center | gtin         
+L-0117-1 | BR-1117 | Boots     | Google Merchant Center | gtin         
+L-0170-0 | BR-1170 | Outdoor   | Google Merchant Center | gtin         
+L-0343-0 | BR-1343 | Audio     | Google Merchant Center | gtin         
+L-0502-0 | IR-1502 | Storage   | Google Merchant Center | gtin         
+L-0502-1 | IR-1502 | Storage   | Google Merchant Center | gtin         
+-- 03 invisible inventory
+issue             | detail                     
+------------------+----------------------------
+orphan_page       | /c/footwear                
+orphan_page       | /c/home                    
+orphan_page       | /c/electronics             
+orphan_page       | /c/beauty                  
+orphan_page       | /c/sports                  
+orphan_page       | /p/ir-1208                 
+orphan_page       | /p/pu-1220                 
+orphan_page       | /p/qu-1264                 
+orphan_page       | /p/su-1272                 
+orphan_page       | /p/no-1276                 
+orphan_page       | /p/no-1284                 
+orphan_page       | /p/su-1288                 
+orphan_page       | /p/bl-1292                 
+-- 04 merge counterfactual (Sneakers -> Boots)
+object       | detail                       | category
+-------------+------------------------------+---------
+rule         | Sneakers margin floor        | Sneakers
+rule         | Boots margin floor           | Boots   
+rule         | Sneakers winter promo -15%   | Sneakers
+campaign     | Sneakers / Email (SendPulse) | Sneakers
+campaign     | Sneakers / Viber             | Sneakers
+campaign     | Boots / Meta Ads             | Boots   
+feed_mapping | gtin                         | Sneakers
+feed_mapping | gtin                         | Boots   
+feed_mapping | color                        | Boots   
+feed_mapping | size                         | Boots   
+segment      | Win-back 180d                | Sneakers
+segment      | Sneakers viewers 30d         | Sneakers
+segment      | Churn risk                   | Boots   
+page         | /c/sneakers                  | Sneakers
+page         | /c/boots                     | Boots   
+-- 05 MCP surface (read-only agent access)
+MCP handshake, reads, blast_radius tool, write refusal and CLI/MCP parity checked
+-- 06 rejection risk (proactive, before the marketplace says no)
+sku     | status | category  | feed                   | missing_field
+--------+--------+-----------+------------------------+--------------
+AU-1028 | active | Outdoor   | Google Merchant Center | gtin         
+AU-1152 | active | Kitchen   | Google Merchant Center | gtin         
+AU-1499 | active | Sneakers  | Google Merchant Center | gtin         
+BL-1092 | active | Boots     | Google Merchant Center | gtin         
+BL-1436 | active | Outdoor   | Google Merchant Center | gtin         
+BR-1081 | active | Haircare  | Meta Catalog           | gtin         
+BR-1081 | active | Haircare  | Google Merchant Center | gtin         
+BR-1117 | active | Boots     | Google Merchant Center | gtin         
+BR-1343 | active | Audio     | Meta Catalog           | gtin         
+BR-1343 | active | Audio     | Google Merchant Center | gtin         
+-- 07 baseline counts (self-grading against the README numbers)
+total_nodes
+-----------
+1667       
+   negative control: 553 products with gtin are never flagged
+-- 08 temporal standing (promo active vs expired as of 2026-12-09)
+promo                      | category | valid_until | status 
+---------------------------+----------+-------------+--------
+Audio winter promo -15%    | Audio    | 2026-12-15  | active 
+Sneakers winter promo -15% | Sneakers | 2026-12-31  | active 
+Skincare winter promo -15% | Skincare | 2026-10-31  | expired
+-- 09 remediation (which one fix clears the most risk)
+missing_field | products_to_fix | feed_risks_cleared
+--------------+-----------------+-------------------
+gtin          | 47              | 67                
+-- 10 parameter safety (injection-like sku must return nothing)
+(ok)
+   OK: injection-like parameter returned no rows
+-- 11 generator determinism (byte-identical under PYTHONHASHSEED=1)
+   OK: byte-identical under a different hash seed
+== verify: OK ==

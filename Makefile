@@ -6,7 +6,7 @@ PYTHON  ?= python3
 STORE   := store/catalog.rl
 export PATH := $(HOME)/.local/bin:$(PATH)
 
-.PHONY: all setup venv data store check-committed verify demo viewer report clean
+.PHONY: all setup venv data store check-committed verify demo viewer report golden golden-update clean
 
 all: verify
 
@@ -50,6 +50,16 @@ viewer: setup store
 
 report: setup store
 	@RELATE=$(RELATE) bash scripts/report.sh $(STORE)
+
+# --- Golden fixtures (P0.1): the parity anchor for every refactor pass. ---
+# `make golden`        — compares fresh outputs against the committed snapshots.
+# `make golden-update` — refreshes snapshots (only after an INTENTIONAL change;
+#                        review `git diff tests/golden` before committing).
+golden: setup store
+	@RELATE=$(RELATE) bash scripts/golden.sh check "$(STORE)"
+
+golden-update: setup store
+	@RELATE=$(RELATE) bash scripts/golden.sh update "$(STORE)"
 
 clean:
 	rm -rf store data/load.cypher data/demo_params.json .venv viewer.html

@@ -1,0 +1,684 @@
+## Cascade demo — store: store/catalog.rl
+
+### 01 — What breaks if we stop selling PU-1004?
+impact_type | name                                    | hops
+------------+-----------------------------------------+-----
+Campaign    | Sneakers / Email (SendPulse)            | 2   
+Campaign    | Sneakers / Viber                        | 2   
+Campaign    | Audio / Google Ads                      | 4   
+Campaign    | Audio / Viber                           | 4   
+Campaign    | Boots / Meta Ads                        | 4   
+Campaign    | Fitness / Google Ads                    | 4   
+Campaign    | Fitness / Meta Ads                      | 4   
+Campaign    | Haircare / Email (SendPulse)            | 4   
+Campaign    | Haircare / Google Ads                   | 4   
+Campaign    | IronTrail / brand awareness             | 4   
+Campaign    | Kitchen / Viber                         | 4   
+Campaign    | PureGlow / brand awareness              | 4   
+Campaign    | Sandals / Email (SendPulse)             | 4   
+Campaign    | Skincare / Meta Ads                     | 4   
+Campaign    | SunField / brand awareness              | 4   
+Feed        | Google Merchant Center                  | 3   
+Listing     | https://google-shopping.example/pu-1004 | 1   
+Listing     | https://rozetka.example/pu-1004         | 1   
+Listing     | https://amazon.example/am-1312          | 3   
+Listing     | https://amazon.example/bl-1212          | 3   
+Listing     | https://amazon.example/bl-1475          | 3   
+Listing     | https://amazon.example/br-1052          | 3   
+Listing     | https://amazon.example/br-1314          | 3   
+Listing     | https://amazon.example/ir-1379          | 3   
+Listing     | https://amazon.example/kr-1428          | 3   
+Listing     | https://amazon.example/no-1226          | 3   
+Listing     | https://amazon.example/no-1388          | 3   
+Listing     | https://amazon.example/no-1441          | 3   
+Listing     | https://amazon.example/or-1340          | 3   
+Listing     | https://amazon.example/or-1573          | 3   
+Listing     | https://amazon.example/pu-1014          | 3   
+Listing     | https://amazon.example/pu-1058          | 3   
+Listing     | https://amazon.example/pu-1060          | 3   
+Listing     | https://amazon.example/pu-1249          | 3   
+Listing     | https://amazon.example/pu-1283          | 3   
+Listing     | https://amazon.example/pu-1316          | 3   
+Listing     | https://amazon.example/pu-1367          | 3   
+Listing     | https://amazon.example/pu-1409          | 3   
+Listing     | https://amazon.example/pu-1455          | 3   
+Listing     | https://amazon.example/pu-1474          | 3   
+Listing     | https://amazon.example/pu-1507          | 3   
+Listing     | https://amazon.example/pu-1531          | 3   
+Listing     | https://amazon.example/pu-1544          | 3   
+Listing     | https://amazon.example/qu-1106          | 3   
+Listing     | https://amazon.example/su-1018          | 3   
+Listing     | https://amazon.example/su-1482          | 3   
+Listing     | https://amazon.example/te-1304          | 3   
+Listing     | https://amazon.example/ve-1091          | 3   
+Listing     | https://amazon.example/ve-1224          | 3   
+Listing     | https://amazon.example/ve-1423          | 3   
+Listing     | https://amazon.example/ve-1560          | 3   
+Listing     | https://epicenter.example/am-1486       | 3   
+Listing     | https://epicenter.example/am-1545       | 3   
+Listing     | https://epicenter.example/au-1201       | 3   
+Listing     | https://epicenter.example/au-1499       | 3   
+Listing     | https://epicenter.example/bl-1469       | 3   
+Listing     | https://epicenter.example/br-1267       | 3   
+Listing     | https://epicenter.example/ir-1546       | 3   
+Listing     | https://epicenter.example/no-1095       | 3   
+Listing     | https://epicenter.example/no-1159       | 3   
+Listing     | https://epicenter.example/no-1388       | 3   
+Listing     | https://epicenter.example/no-1441       | 3   
+Listing     | https://epicenter.example/or-1037       | 3   
+Listing     | https://epicenter.example/pu-1014       | 3   
+Listing     | https://epicenter.example/pu-1024       | 3   
+Listing     | https://epicenter.example/pu-1060       | 3   
+Listing     | https://epicenter.example/pu-1148       | 3   
+Listing     | https://epicenter.example/pu-1155       | 3   
+Listing     | https://epicenter.example/pu-1232       | 3   
+Listing     | https://epicenter.example/pu-1250       | 3   
+Listing     | https://epicenter.example/pu-1521       | 3   
+Listing     | https://epicenter.example/qu-1094       | 3   
+Listing     | https://epicenter.example/qu-1432       | 3   
+Listing     | https://epicenter.example/su-1222       | 3   
+Listing     | https://epicenter.example/te-1039       | 3   
+Listing     | https://epicenter.example/te-1304       | 3   
+Listing     | https://epicenter.example/te-1351       | 3   
+Listing     | https://epicenter.example/te-1578       | 3   
+Listing     | https://epicenter.example/te-1587       | 3   
+Listing     | https://epicenter.example/ve-1423       | 3   
+Listing     | https://facebook-shop.example/am-1110   | 3   
+Listing     | https://facebook-shop.example/am-1303   | 3   
+Listing     | https://facebook-shop.example/am-1312   | 3   
+Listing     | https://facebook-shop.example/am-1545   | 3   
+Listing     | https://facebook-shop.example/au-1201   | 3   
+Listing     | https://facebook-shop.example/au-1361   | 3   
+Listing     | https://facebook-shop.example/au-1461   | 3   
+Listing     | https://facebook-shop.example/bl-1469   | 3   
+Listing     | https://facebook-shop.example/br-1052   | 3   
+Listing     | https://facebook-shop.example/br-1061   | 3   
+Listing     | https://facebook-shop.example/br-1267   | 3   
+Listing     | https://facebook-shop.example/br-1296   | 3   
+Listing     | https://facebook-shop.example/ir-1458   | 3   
+Listing     | https://facebook-shop.example/kr-1470   | 3   
+Listing     | https://facebook-shop.example/no-1009   | 3   
+Listing     | https://facebook-shop.example/no-1010   | 3   
+Listing     | https://facebook-shop.example/no-1542   | 3   
+Listing     | https://facebook-shop.example/no-1550   | 3   
+Listing     | https://facebook-shop.example/or-1365   | 3   
+Listing     | https://facebook-shop.example/pu-1014   | 3   
+Listing     | https://facebook-shop.example/pu-1044   | 3   
+Listing     | https://facebook-shop.example/pu-1250   | 3   
+Listing     | https://facebook-shop.example/pu-1367   | 3   
+Listing     | https://facebook-shop.example/pu-1438   | 3   
+Listing     | https://facebook-shop.example/pu-1457   | 3   
+Listing     | https://facebook-shop.example/pu-1474   | 3   
+Listing     | https://facebook-shop.example/pu-1544   | 3   
+Listing     | https://facebook-shop.example/qu-1106   | 3   
+Listing     | https://facebook-shop.example/su-1018   | 3   
+Listing     | https://facebook-shop.example/su-1184   | 3   
+Listing     | https://facebook-shop.example/te-1515   | 3   
+Listing     | https://facebook-shop.example/ve-1091   | 3   
+Listing     | https://google-shopping.example/am-1104 | 3   
+Listing     | https://google-shopping.example/am-1313 | 3   
+Listing     | https://google-shopping.example/am-1389 | 3   
+Listing     | https://google-shopping.example/am-1547 | 3   
+Listing     | https://google-shopping.example/au-1121 | 3   
+Listing     | https://google-shopping.example/au-1128 | 3   
+Listing     | https://google-shopping.example/au-1137 | 3   
+Listing     | https://google-shopping.example/au-1191 | 3   
+Listing     | https://google-shopping.example/au-1231 | 3   
+Listing     | https://google-shopping.example/au-1363 | 3   
+Listing     | https://google-shopping.example/au-1380 | 3   
+Listing     | https://google-shopping.example/au-1439 | 3   
+Listing     | https://google-shopping.example/au-1499 | 3   
+Listing     | https://google-shopping.example/au-1549 | 3   
+Listing     | https://google-shopping.example/au-1568 | 3   
+Listing     | https://google-shopping.example/au-1579 | 3   
+Listing     | https://google-shopping.example/au-1596 | 3   
+Listing     | https://google-shopping.example/bl-1162 | 3   
+Listing     | https://google-shopping.example/bl-1227 | 3   
+Listing     | https://google-shopping.example/bl-1372 | 3   
+Listing     | https://google-shopping.example/bl-1436 | 3   
+Listing     | https://google-shopping.example/bl-1497 | 3   
+Listing     | https://google-shopping.example/bl-1532 | 3   
+Listing     | https://google-shopping.example/br-1061 | 3   
+Listing     | https://google-shopping.example/br-1073 | 3   
+Listing     | https://google-shopping.example/br-1081 | 3   
+Listing     | https://google-shopping.example/br-1120 | 3   
+Listing     | https://google-shopping.example/br-1181 | 3   
+Listing     | https://google-shopping.example/br-1241 | 3   
+Listing     | https://google-shopping.example/br-1266 | 3   
+Listing     | https://google-shopping.example/br-1267 | 3   
+Listing     | https://google-shopping.example/br-1406 | 3   
+Listing     | https://google-shopping.example/br-1498 | 3   
+Listing     | https://google-shopping.example/br-1530 | 3   
+Listing     | https://google-shopping.example/ir-1036 | 3   
+Listing     | https://google-shopping.example/ir-1042 | 3   
+Listing     | https://google-shopping.example/ir-1087 | 3   
+Listing     | https://google-shopping.example/ir-1100 | 3   
+Listing     | https://google-shopping.example/ir-1172 | 3   
+Listing     | https://google-shopping.example/ir-1258 | 3   
+Listing     | https://google-shopping.example/ir-1386 | 3   
+Listing     | https://google-shopping.example/ir-1440 | 3   
+Listing     | https://google-shopping.example/ir-1454 | 3   
+Listing     | https://google-shopping.example/ir-1552 | 3   
+Listing     | https://google-shopping.example/ir-1566 | 3   
+Listing     | https://google-shopping.example/kr-1101 | 3   
+Listing     | https://google-shopping.example/kr-1164 | 3   
+Listing     | https://google-shopping.example/kr-1180 | 3   
+Listing     | https://google-shopping.example/kr-1311 | 3   
+Listing     | https://google-shopping.example/kr-1355 | 3   
+Listing     | https://google-shopping.example/kr-1399 | 3   
+Listing     | https://google-shopping.example/no-1002 | 3   
+Listing     | https://google-shopping.example/no-1132 | 3   
+Listing     | https://google-shopping.example/no-1159 | 3   
+Listing     | https://google-shopping.example/no-1211 | 3   
+Listing     | https://google-shopping.example/no-1226 | 3   
+Listing     | https://google-shopping.example/no-1256 | 3   
+Listing     | https://google-shopping.example/no-1261 | 3   
+Listing     | https://google-shopping.example/no-1276 | 3   
+Listing     | https://google-shopping.example/no-1395 | 3   
+Listing     | https://google-shopping.example/no-1404 | 3   
+Listing     | https://google-shopping.example/no-1414 | 3   
+Listing     | https://google-shopping.example/no-1415 | 3   
+Listing     | https://google-shopping.example/no-1425 | 3   
+Listing     | https://google-shopping.example/no-1467 | 3   
+Listing     | https://google-shopping.example/no-1483 | 3   
+Listing     | https://google-shopping.example/no-1495 | 3   
+Listing     | https://google-shopping.example/no-1592 | 3   
+Listing     | https://google-shopping.example/or-1025 | 3   
+Listing     | https://google-shopping.example/or-1027 | 3   
+Listing     | https://google-shopping.example/or-1048 | 3   
+Listing     | https://google-shopping.example/or-1178 | 3   
+Listing     | https://google-shopping.example/or-1190 | 3   
+Listing     | https://google-shopping.example/or-1285 | 3   
+Listing     | https://google-shopping.example/or-1378 | 3   
+Listing     | https://google-shopping.example/or-1417 | 3   
+Listing     | https://google-shopping.example/pu-1017 | 3   
+Listing     | https://google-shopping.example/pu-1060 | 3   
+Listing     | https://google-shopping.example/pu-1115 | 3   
+Listing     | https://google-shopping.example/pu-1248 | 3   
+Listing     | https://google-shopping.example/pu-1324 | 3   
+Listing     | https://google-shopping.example/pu-1354 | 3   
+Listing     | https://google-shopping.example/pu-1421 | 3   
+Listing     | https://google-shopping.example/pu-1459 | 3   
+Listing     | https://google-shopping.example/pu-1516 | 3   
+Listing     | https://google-shopping.example/pu-1562 | 3   
+Listing     | https://google-shopping.example/pu-1570 | 3   
+Listing     | https://google-shopping.example/pu-1574 | 3   
+Listing     | https://google-shopping.example/pu-1581 | 3   
+Listing     | https://google-shopping.example/qu-1106 | 3   
+Listing     | https://google-shopping.example/qu-1166 | 3   
+Listing     | https://google-shopping.example/qu-1174 | 3   
+Listing     | https://google-shopping.example/qu-1281 | 3   
+Listing     | https://google-shopping.example/qu-1286 | 3   
+Listing     | https://google-shopping.example/qu-1491 | 3   
+Listing     | https://google-shopping.example/su-1026 | 3   
+Listing     | https://google-shopping.example/su-1041 | 3   
+Listing     | https://google-shopping.example/su-1086 | 3   
+Listing     | https://google-shopping.example/su-1222 | 3   
+Listing     | https://google-shopping.example/su-1301 | 3   
+Listing     | https://google-shopping.example/su-1336 | 3   
+Listing     | https://google-shopping.example/su-1341 | 3   
+Listing     | https://google-shopping.example/su-1342 | 3   
+Listing     | https://google-shopping.example/su-1394 | 3   
+Listing     | https://google-shopping.example/su-1482 | 3   
+Listing     | https://google-shopping.example/te-1206 | 3   
+Listing     | https://google-shopping.example/te-1254 | 3   
+Listing     | https://google-shopping.example/te-1274 | 3   
+Listing     | https://google-shopping.example/te-1373 | 3   
+Listing     | https://google-shopping.example/te-1424 | 3   
+Listing     | https://google-shopping.example/te-1426 | 3   
+Listing     | https://google-shopping.example/te-1452 | 3   
+Listing     | https://google-shopping.example/te-1460 | 3   
+Listing     | https://google-shopping.example/te-1473 | 3   
+Listing     | https://google-shopping.example/te-1515 | 3   
+Listing     | https://google-shopping.example/te-1533 | 3   
+Listing     | https://google-shopping.example/te-1558 | 3   
+Listing     | https://google-shopping.example/te-1593 | 3   
+Listing     | https://google-shopping.example/ve-1046 | 3   
+Listing     | https://google-shopping.example/ve-1145 | 3   
+Listing     | https://google-shopping.example/ve-1252 | 3   
+Listing     | https://google-shopping.example/ve-1317 | 3   
+Listing     | https://google-shopping.example/ve-1437 | 3   
+Listing     | https://google-shopping.example/ve-1442 | 3   
+Listing     | https://google-shopping.example/ve-1513 | 3   
+Listing     | https://google-shopping.example/ve-1560 | 3   
+Listing     | https://prom.ua.example/am-1218         | 3   
+Listing     | https://prom.ua.example/am-1360         | 3   
+Listing     | https://prom.ua.example/au-1161         | 3   
+Listing     | https://prom.ua.example/au-1191         | 3   
+Listing     | https://prom.ua.example/au-1361         | 3   
+Listing     | https://prom.ua.example/au-1499         | 3   
+Listing     | https://prom.ua.example/bl-1108         | 3   
+Listing     | https://prom.ua.example/bl-1469         | 3   
+Listing     | https://prom.ua.example/bl-1475         | 3   
+Listing     | https://prom.ua.example/bl-1567         | 3   
+Listing     | https://prom.ua.example/br-1120         | 3   
+Listing     | https://prom.ua.example/br-1266         | 3   
+Listing     | https://prom.ua.example/br-1296         | 3   
+Listing     | https://prom.ua.example/ir-1379         | 3   
+Listing     | https://prom.ua.example/kr-1470         | 3   
+Listing     | https://prom.ua.example/no-1095         | 3   
+Listing     | https://prom.ua.example/no-1140         | 3   
+Listing     | https://prom.ua.example/no-1291         | 3   
+Listing     | https://prom.ua.example/or-1365         | 3   
+Listing     | https://prom.ua.example/pu-1349         | 3   
+Listing     | https://prom.ua.example/pu-1352         | 3   
+Listing     | https://prom.ua.example/pu-1367         | 3   
+Listing     | https://prom.ua.example/pu-1421         | 3   
+Listing     | https://prom.ua.example/pu-1438         | 3   
+Listing     | https://prom.ua.example/pu-1471         | 3   
+Listing     | https://prom.ua.example/pu-1474         | 3   
+Listing     | https://prom.ua.example/pu-1527         | 3   
+Listing     | https://prom.ua.example/qu-1233         | 3   
+Listing     | https://prom.ua.example/qu-1264         | 3   
+Listing     | https://prom.ua.example/su-1184         | 3   
+Listing     | https://prom.ua.example/te-1460         | 3   
+Listing     | https://prom.ua.example/te-1587         | 3   
+Listing     | https://prom.ua.example/ve-1091         | 3   
+Listing     | https://prom.ua.example/ve-1224         | 3   
+Listing     | https://prom.ua.example/ve-1560         | 3   
+Listing     | https://rozetka.example/am-1134         | 3   
+Listing     | https://rozetka.example/am-1197         | 3   
+Listing     | https://rozetka.example/am-1214         | 3   
+Listing     | https://rozetka.example/am-1279         | 3   
+Listing     | https://rozetka.example/am-1312         | 3   
+Listing     | https://rozetka.example/au-1098         | 3   
+Listing     | https://rozetka.example/au-1121         | 3   
+Listing     | https://rozetka.example/au-1137         | 3   
+Listing     | https://rozetka.example/au-1152         | 3   
+Listing     | https://rozetka.example/au-1191         | 3   
+Listing     | https://rozetka.example/au-1199         | 3   
+Listing     | https://rozetka.example/au-1202         | 3   
+Listing     | https://rozetka.example/au-1319         | 3   
+Listing     | https://rozetka.example/au-1325         | 3   
+Listing     | https://rozetka.example/au-1361         | 3   
+Listing     | https://rozetka.example/au-1412         | 3   
+Listing     | https://rozetka.example/au-1461         | 3   
+Listing     | https://rozetka.example/au-1463         | 3   
+Listing     | https://rozetka.example/au-1464         | 3   
+Listing     | https://rozetka.example/au-1579         | 3   
+Listing     | https://rozetka.example/bl-1116         | 3   
+Listing     | https://rozetka.example/bl-1142         | 3   
+Listing     | https://rozetka.example/bl-1227         | 3   
+Listing     | https://rozetka.example/bl-1292         | 3   
+Listing     | https://rozetka.example/bl-1356         | 3   
+Listing     | https://rozetka.example/bl-1435         | 3   
+Listing     | https://rozetka.example/bl-1481         | 3   
+Listing     | https://rozetka.example/bl-1494         | 3   
+Listing     | https://rozetka.example/bl-1567         | 3   
+Listing     | https://rozetka.example/bl-1584         | 3   
+Listing     | https://rozetka.example/br-1043         | 3   
+Listing     | https://rozetka.example/br-1117         | 3   
+Listing     | https://rozetka.example/br-1120         | 3   
+Listing     | https://rozetka.example/br-1160         | 3   
+Listing     | https://rozetka.example/br-1321         | 3   
+Listing     | https://rozetka.example/br-1327         | 3   
+Listing     | https://rozetka.example/br-1343         | 3   
+Listing     | https://rozetka.example/br-1370         | 3   
+Listing     | https://rozetka.example/br-1406         | 3   
+Listing     | https://rozetka.example/br-1543         | 3   
+Listing     | https://rozetka.example/br-1599         | 3   
+Listing     | https://rozetka.example/ir-1011         | 3   
+Listing     | https://rozetka.example/ir-1059         | 3   
+Listing     | https://rozetka.example/ir-1290         | 3   
+Listing     | https://rozetka.example/ir-1345         | 3   
+Listing     | https://rozetka.example/ir-1379         | 3   
+Listing     | https://rozetka.example/ir-1418         | 3   
+Listing     | https://rozetka.example/ir-1458         | 3   
+Listing     | https://rozetka.example/kr-1119         | 3   
+Listing     | https://rozetka.example/kr-1183         | 3   
+Listing     | https://rozetka.example/kr-1230         | 3   
+Listing     | https://rozetka.example/kr-1355         | 3   
+Listing     | https://rozetka.example/kr-1428         | 3   
+Listing     | https://rozetka.example/kr-1445         | 3   
+Listing     | https://rozetka.example/kr-1488         | 3   
+Listing     | https://rozetka.example/no-1045         | 3   
+Listing     | https://rozetka.example/no-1132         | 3   
+Listing     | https://rozetka.example/no-1261         | 3   
+Listing     | https://rozetka.example/no-1276         | 3   
+Listing     | https://rozetka.example/no-1334         | 3   
+Listing     | https://rozetka.example/no-1387         | 3   
+Listing     | https://rozetka.example/no-1388         | 3   
+Listing     | https://rozetka.example/no-1413         | 3   
+Listing     | https://rozetka.example/no-1467         | 3   
+Listing     | https://rozetka.example/no-1476         | 3   
+Listing     | https://rozetka.example/no-1554         | 3   
+Listing     | https://rozetka.example/or-1025         | 3   
+Listing     | https://rozetka.example/or-1189         | 3   
+Listing     | https://rozetka.example/or-1340         | 3   
+Listing     | https://rozetka.example/pu-1024         | 3   
+Listing     | https://rozetka.example/pu-1044         | 3   
+Listing     | https://rozetka.example/pu-1049         | 3   
+Listing     | https://rozetka.example/pu-1058         | 3   
+Listing     | https://rozetka.example/pu-1155         | 3   
+Listing     | https://rozetka.example/pu-1220         | 3   
+Listing     | https://rozetka.example/pu-1240         | 3   
+Listing     | https://rozetka.example/pu-1245         | 3   
+Listing     | https://rozetka.example/pu-1289         | 3   
+Listing     | https://rozetka.example/pu-1302         | 3   
+Listing     | https://rozetka.example/pu-1316         | 3   
+Listing     | https://rozetka.example/pu-1349         | 3   
+Listing     | https://rozetka.example/pu-1438         | 3   
+Listing     | https://rozetka.example/pu-1459         | 3   
+Listing     | https://rozetka.example/pu-1471         | 3   
+Listing     | https://rozetka.example/pu-1489         | 3   
+Listing     | https://rozetka.example/pu-1516         | 3   
+Listing     | https://rozetka.example/pu-1544         | 3   
+Listing     | https://rozetka.example/pu-1551         | 3   
+Listing     | https://rozetka.example/pu-1562         | 3   
+Listing     | https://rozetka.example/qu-1075         | 3   
+Listing     | https://rozetka.example/qu-1166         | 3   
+Listing     | https://rozetka.example/qu-1179         | 3   
+Listing     | https://rozetka.example/qu-1299         | 3   
+Listing     | https://rozetka.example/qu-1332         | 3   
+Listing     | https://rozetka.example/qu-1472         | 3   
+Listing     | https://rozetka.example/qu-1537         | 3   
+Listing     | https://rozetka.example/su-1008         | 3   
+Listing     | https://rozetka.example/su-1035         | 3   
+Listing     | https://rozetka.example/su-1118         | 3   
+Listing     | https://rozetka.example/su-1153         | 3   
+Listing     | https://rozetka.example/su-1382         | 3   
+Listing     | https://rozetka.example/su-1482         | 3   
+Listing     | https://rozetka.example/su-1517         | 3   
+Listing     | https://rozetka.example/su-1548         | 3   
+Listing     | https://rozetka.example/te-1216         | 3   
+Listing     | https://rozetka.example/te-1234         | 3   
+Listing     | https://rozetka.example/te-1244         | 3   
+Listing     | https://rozetka.example/te-1347         | 3   
+Listing     | https://rozetka.example/te-1351         | 3   
+Listing     | https://rozetka.example/te-1373         | 3   
+Listing     | https://rozetka.example/te-1396         | 3   
+Listing     | https://rozetka.example/te-1419         | 3   
+Listing     | https://rozetka.example/te-1424         | 3   
+Listing     | https://rozetka.example/te-1460         | 3   
+Listing     | https://rozetka.example/te-1533         | 3   
+Listing     | https://rozetka.example/ve-1057         | 3   
+Listing     | https://rozetka.example/ve-1105         | 3   
+Listing     | https://rozetka.example/ve-1131         | 3   
+Listing     | https://rozetka.example/ve-1144         | 3   
+Listing     | https://rozetka.example/ve-1215         | 3   
+Listing     | https://rozetka.example/ve-1224         | 3   
+Listing     | https://rozetka.example/ve-1237         | 3   
+Listing     | https://rozetka.example/ve-1393         | 3   
+Listing     | https://rozetka.example/ve-1513         | 3   
+Page        | /p/pu-1004                              | 1   
+Page        | /c/sneakers                             | 2   
+Page        | /c/footwear                             | 3   
+Page        | /campaigns/brand-novastep               | 3   
+Page        | /p/am-1312                              | 3   
+Page        | /p/am-1360                              | 3   
+Page        | /p/am-1572                              | 3   
+Page        | /p/bl-1108                              | 3   
+Page        | /p/bl-1212                              | 3   
+Page        | /p/br-1052                              | 3   
+Page        | /p/br-1120                              | 3   
+Page        | /p/br-1296                              | 3   
+Page        | /p/ir-1100                              | 3   
+Page        | /p/kr-1428                              | 3   
+Page        | /p/no-1140                              | 3   
+Page        | /p/no-1188                              | 3   
+Page        | /p/no-1388                              | 3   
+Page        | /p/no-1540                              | 3   
+Page        | /p/or-1340                              | 3   
+Page        | /p/pu-1024                              | 3   
+Page        | /p/pu-1044                              | 3   
+Page        | /p/pu-1060                              | 3   
+Page        | /p/pu-1148                              | 3   
+Page        | /p/pu-1232                              | 3   
+Page        | /p/pu-1240                              | 3   
+Page        | /p/pu-1248                              | 3   
+Page        | /p/pu-1260                              | 3   
+Page        | /p/pu-1308                              | 3   
+Page        | /p/pu-1316                              | 3   
+Page        | /p/pu-1352                              | 3   
+Page        | /p/pu-1448                              | 3   
+Page        | /p/pu-1544                              | 3   
+Page        | /p/qu-1264                              | 3   
+Page        | /p/qu-1332                              | 3   
+Page        | /p/qu-1432                              | 3   
+Page        | /p/su-1008                              | 3   
+Page        | /p/su-1184                              | 3   
+Page        | /p/su-1280                              | 3   
+Page        | /p/su-1336                              | 3   
+Page        | /p/te-1244                              | 3   
+Page        | /p/te-1304                              | 3   
+Page        | /p/te-1460                              | 3   
+Page        | /p/te-1536                              | 3   
+Page        | /p/ve-1224                              | 3   
+Page        | /p/ve-1560                              | 3   
+Page        | /c/audio                                | 4   
+Page        | /c/boots                                | 4   
+Page        | /c/fitness                              | 4   
+Page        | /c/haircare                             | 4   
+Page        | /c/kitchen                              | 4   
+Page        | /c/lighting                             | 4   
+Page        | /c/outdoor                              | 4   
+Page        | /c/sandals                              | 4   
+Page        | /c/skincare                             | 4   
+Page        | /c/storage                              | 4   
+Page        | /c/wearables                            | 4   
+Rule        | Sneakers margin floor                   | 2   
+Rule        | Sneakers winter promo -15%              | 2   
+Rule        | Audio margin floor                      | 4   
+Rule        | Audio winter promo -15%                 | 4   
+Rule        | Boots margin floor                      | 4   
+Rule        | Fitness margin floor                    | 4   
+Rule        | Haircare margin floor                   | 4   
+Rule        | Kitchen margin floor                    | 4   
+Rule        | Lighting margin floor                   | 4   
+Rule        | Outdoor margin floor                    | 4   
+Rule        | Sandals margin floor                    | 4   
+Rule        | Skincare margin floor                   | 4   
+Rule        | Skincare winter promo -15%              | 4   
+Rule        | Storage margin floor                    | 4   
+Rule        | Wearables margin floor                  | 4   
+Segment     | Sneakers viewers 30d                    | 2   
+Segment     | Win-back 180d                           | 2   
+Segment     | Churn risk                              | 4   
+Segment     | High AOV                                | 4   
+Segment     | Kitchen upsell                          | 4   
+Segment     | Loyalty 90d                             | 4   
+Segment     | NovaStep fans                           | 4   
+Segment     | Out-of-stock alerts                     | 4   
+
+### 02 — Why are listings rejected? (root cause with proof)
+listing  | sku     | category  | feed                   | missing_field
+---------+---------+-----------+------------------------+--------------
+L-0028-1 | AU-1028 | Outdoor   | Google Merchant Center | gtin         
+L-0152-0 | AU-1152 | Kitchen   | Google Merchant Center | gtin         
+L-0152-1 | AU-1152 | Kitchen   | Google Merchant Center | gtin         
+L-0499-0 | AU-1499 | Sneakers  | Google Merchant Center | gtin         
+L-0499-1 | AU-1499 | Sneakers  | Google Merchant Center | gtin         
+L-0499-2 | AU-1499 | Sneakers  | Google Merchant Center | gtin         
+L-0081-0 | BR-1081 | Haircare  | Google Merchant Center | gtin         
+L-0117-0 | BR-1117 | Boots     | Google Merchant Center | gtin         
+L-0117-1 | BR-1117 | Boots     | Google Merchant Center | gtin         
+L-0170-0 | BR-1170 | Outdoor   | Google Merchant Center | gtin         
+L-0343-0 | BR-1343 | Audio     | Google Merchant Center | gtin         
+L-0502-0 | IR-1502 | Storage   | Google Merchant Center | gtin         
+L-0502-1 | IR-1502 | Storage   | Google Merchant Center | gtin         
+L-0445-0 | KR-1445 | Outdoor   | Google Merchant Center | gtin         
+L-0445-1 | KR-1445 | Outdoor   | Google Merchant Center | gtin         
+L-0256-0 | NO-1256 | Audio     | Google Merchant Center | gtin         
+L-0293-0 | NO-1293 | Skincare  | Google Merchant Center | gtin         
+L-0297-0 | NO-1297 | Haircare  | Google Merchant Center | gtin         
+L-0297-1 | NO-1297 | Haircare  | Google Merchant Center | gtin         
+L-0346-0 | NO-1346 | Wearables | Google Merchant Center | gtin         
+L-0346-1 | NO-1346 | Wearables | Google Merchant Center | gtin         
+L-0309-0 | OR-1309 | Lighting  | Google Merchant Center | gtin         
+L-0417-0 | OR-1417 | Fitness   | Google Merchant Center | gtin         
+L-0417-1 | OR-1417 | Fitness   | Google Merchant Center | gtin         
+L-0417-2 | OR-1417 | Fitness   | Google Merchant Center | gtin         
+
+### 03 — What is invisible or unlinked right now?
+issue             | detail                     
+------------------+----------------------------
+orphan_page       | /c/footwear                
+orphan_page       | /c/home                    
+orphan_page       | /c/electronics             
+orphan_page       | /c/beauty                  
+orphan_page       | /c/sports                  
+orphan_page       | /p/ir-1208                 
+orphan_page       | /p/pu-1220                 
+orphan_page       | /p/qu-1264                 
+orphan_page       | /p/su-1272                 
+orphan_page       | /p/no-1276                 
+orphan_page       | /p/no-1284                 
+orphan_page       | /p/su-1288                 
+orphan_page       | /p/bl-1292                 
+orphan_page       | /p/br-1296                 
+orphan_page       | /p/pu-1308                 
+orphan_page       | /p/am-1312                 
+orphan_page       | /p/pu-1324                 
+orphan_page       | /p/qu-1332                 
+orphan_page       | /p/su-1336                 
+orphan_page       | /p/or-1340                 
+orphan_page       | /p/pu-1344                 
+orphan_page       | /p/te-1348                 
+orphan_page       | /p/pu-1352                 
+orphan_page       | /p/bl-1356                 
+orphan_page       | /p/am-1360                 
+orphan_page       | /p/au-1364                 
+orphan_page       | /p/pu-1368                 
+orphan_page       | /p/bl-1372                 
+orphan_page       | /p/su-1376                 
+orphan_page       | /p/au-1380                 
+orphan_page       | /p/no-1384                 
+orphan_page       | /p/no-1388                 
+orphan_page       | /p/no-1392                 
+orphan_page       | /p/te-1396                 
+orphan_page       | /p/su-1400                 
+orphan_page       | /p/no-1404                 
+orphan_page       | /p/te-1408                 
+orphan_page       | /p/au-1412                 
+orphan_page       | /p/pu-1416                 
+orphan_page       | /p/ve-1420                 
+orphan_page       | /p/te-1424                 
+orphan_page       | /p/kr-1428                 
+orphan_page       | /p/qu-1432                 
+orphan_page       | /p/bl-1436                 
+orphan_page       | /p/ir-1440                 
+orphan_page       | /p/te-1444                 
+orphan_page       | /p/pu-1448                 
+orphan_page       | /p/te-1452                 
+orphan_page       | /p/br-1456                 
+orphan_page       | /p/te-1460                 
+orphan_page       | /p/au-1464                 
+orphan_page       | /p/te-1468                 
+orphan_page       | /p/qu-1472                 
+orphan_page       | /p/no-1476                 
+orphan_page       | /p/au-1480                 
+orphan_page       | /p/te-1484                 
+orphan_page       | /p/kr-1488                 
+orphan_page       | /p/te-1492                 
+orphan_page       | /p/su-1496                 
+orphan_page       | /p/or-1500                 
+orphan_page       | /p/qu-1504                 
+orphan_page       | /p/te-1508                 
+orphan_page       | /p/kr-1512                 
+orphan_page       | /p/pu-1516                 
+orphan_page       | /p/qu-1520                 
+orphan_page       | /p/au-1524                 
+orphan_page       | /p/or-1528                 
+orphan_page       | /p/bl-1532                 
+orphan_page       | /p/te-1536                 
+orphan_page       | /p/no-1540                 
+orphan_page       | /p/pu-1544                 
+orphan_page       | /p/su-1548                 
+orphan_page       | /p/ir-1552                 
+orphan_page       | /p/ve-1556                 
+orphan_page       | /p/ve-1560                 
+orphan_page       | /p/pu-1564                 
+orphan_page       | /p/au-1568                 
+orphan_page       | /p/am-1572                 
+orphan_page       | /p/au-1576                 
+orphan_page       | /p/br-1580                 
+orphan_page       | /p/bl-1584                 
+orphan_page       | /p/qu-1588                 
+orphan_page       | /p/no-1592                 
+orphan_page       | /p/au-1596                 
+orphan_page       | /campaigns/winter-sale     
+orphan_page       | /campaigns/new-arrivals    
+orphan_page       | /campaigns/footwear-week   
+orphan_page       | /campaigns/audio-days      
+orphan_page       | /campaigns/skincare-routine
+orphan_page       | /campaigns/home-refresh    
+orphan_page       | /campaigns/sports-start    
+orphan_page       | /campaigns/brand-novastep  
+invisible_product | BR-1005                    
+invisible_product | BR-1007                    
+invisible_product | BL-1013                    
+invisible_product | SU-1023                    
+invisible_product | IR-1033                    
+invisible_product | BR-1038                    
+invisible_product | AU-1054                    
+invisible_product | BL-1069                    
+invisible_product | BR-1077                    
+invisible_product | BR-1082                    
+invisible_product | PU-1089                    
+invisible_product | SU-1090                    
+invisible_product | BR-1122                    
+invisible_product | PU-1125                    
+invisible_product | NO-1126                    
+invisible_product | PU-1130                    
+invisible_product | BL-1157                    
+invisible_product | PU-1186                    
+invisible_product | PU-1193                    
+invisible_product | IR-1194                    
+invisible_product | PU-1198                    
+invisible_product | VE-1203                    
+invisible_product | QU-1223                    
+invisible_product | QU-1242                    
+invisible_product | NO-1253                    
+invisible_product | TE-1255                    
+invisible_product | QU-1262                    
+invisible_product | TE-1263                    
+invisible_product | BR-1269                    
+invisible_product | SU-1287                    
+invisible_product | AU-1310                    
+invisible_product | AU-1323                    
+invisible_product | SU-1329                    
+invisible_product | SU-1331                    
+invisible_product | OR-1359                    
+invisible_product | QU-1366                    
+invisible_product | KR-1369                    
+invisible_product | PU-1407                    
+invisible_product | OR-1410                    
+invisible_product | BR-1411                    
+invisible_product | VE-1431                    
+invisible_product | IR-1443                    
+invisible_product | PU-1447                    
+invisible_product | SU-1450                    
+invisible_product | SU-1478                    
+invisible_product | QU-1479                    
+invisible_product | NO-1490                    
+invisible_product | PU-1514                    
+invisible_product | SU-1522                    
+invisible_product | QU-1526                    
+invisible_product | KR-1529                    
+invisible_product | KR-1535                    
+invisible_product | VE-1555                    
+invisible_product | VE-1557                    
+invisible_product | BL-1559                    
+invisible_product | NO-1571                    
+invisible_product | SU-1577                    
+invisible_product | NO-1595                    
+invisible_product | KR-1597                    
+
+### 04 — What collides if we merge Sneakers into Boots?
+object       | detail                       | category
+-------------+------------------------------+---------
+rule         | Sneakers margin floor        | Sneakers
+rule         | Boots margin floor           | Boots   
+rule         | Sneakers winter promo -15%   | Sneakers
+campaign     | Sneakers / Email (SendPulse) | Sneakers
+campaign     | Sneakers / Viber             | Sneakers
+campaign     | Boots / Meta Ads             | Boots   
+feed_mapping | gtin                         | Sneakers
+feed_mapping | gtin                         | Boots   
+feed_mapping | color                        | Boots   
+feed_mapping | size                         | Boots   
+segment      | Win-back 180d                | Sneakers
+segment      | Sneakers viewers 30d         | Sneakers
+segment      | Churn risk                   | Boots   
+page         | /c/sneakers                  | Sneakers
+page         | /c/boots                     | Boots   
