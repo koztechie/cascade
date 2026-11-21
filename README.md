@@ -241,8 +241,11 @@ smoke-tests this surface too, including that write attempts are refused.
   transcript, submission-form inventory, competitor analysis, limitations);
   seed-42 generator; synthetic-data disclosure.
 
-Built with AI assistance under the owner's direction; the only third-party
-front-end asset is cytoscape.js (MIT), vendored in `vendor/`.
+Built with AI assistance under the owner's direction — design, code, tests and
+docs — while **no AI runs inside the product**: every runtime answer is
+deterministic Cypher against the store, and the graph outranks any model
+(`docs/limitations.md`). The only third-party front-end asset is cytoscape.js
+(MIT), vendored in `vendor/`.
 
 ## Limitations
 

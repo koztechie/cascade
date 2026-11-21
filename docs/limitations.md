@@ -63,3 +63,31 @@ already rejected stay rejected until they are re-submitted — listing status an
 feed contract live independently, exactly like "a source is available again but
 the earlier review is still invalid". Cascade never silently promotes a fix
 into an approval.
+
+## Absence of impact is not proof of safety
+
+An empty blast radius means **the graph saw no connection** — not that a change
+is safe. That is why query `03` exists: to show what the graph is missing
+(orphan pages, invisible stock) instead of letting silence pass for reassurance.
+Relatedly, **Cascade never invents edges**: it reports consequences only along
+relationships that actually exist in the store, and the generator builds only
+explicit domain relationships — no inferred "probably affects" links, because
+an invented edge is a misleading warning waiting to happen.
+
+## What this demo does not prove
+
+Stated plainly, in the spirit of the honest status pages in this gallery:
+
+- **Only a synthetic catalog has been tested.** No production e-commerce
+  catalog has been loaded; realism is argued from structure, not measured
+  against a real one.
+- **Timings come from one2013 CPU.** They are a floor, not a benchmark — and
+  `make verify`'s baseline makes them reproducible, not authoritative.
+- **No load or concurrency testing.** Single process, single user, one writer
+  by design; nothing here claims multi-agent behaviour.
+- **Security testing is the parameter-injection check and read-only MCP** —
+  not a security audit.
+- **The viewer is pre-rendered** from the store, not a live database view; it
+  refreshes via `make viewer`.
+- **The MCP surface is exercised locally only** — no slow-network or
+  multi-client testing.
