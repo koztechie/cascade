@@ -349,7 +349,9 @@ TOOLS = {
             "Run a read-only Cypher query against the Cascade catalog graph. "
             "Returns rows as JSON, capped at 200 rows with a truncation "
             "marker. Every answer is a path: use variable-length patterns "
-            "like (p:Product {sku:'...'})-[*1..4]-(x) to trace blast radius."),
+            "like (p:Product {sku:'...'})-[*1..4]-(x) to trace blast radius. "
+            "If a query returns no rows, the answer is 'no evidence in the "
+            "graph' — say that and do not invent a result."),
         "inputSchema": {
             "type": "object",
             "properties": {
