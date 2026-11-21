@@ -150,10 +150,15 @@ def build():
             f"expression: 'cost * 1.35'}})-[:APPLIES_TO]->(c);"
         )
     for sub in CONFLICT_CATEGORIES:
+        # Temporal standing (Precedent-style): a promo can live in the graph
+        # and still be out of force. Fixed dates -> deterministic verify.
+        promo_validity = {"Sneakers": "2026-12-31", "Audio": "2026-12-15",
+                          "Skincare": "2026-10-31"}[sub]
         lines.append(
             f"MATCH (c:Category {{name: {q(sub)}}}) "
             f"CREATE (:Rule {{name: {q(sub + ' winter promo -15%')}, type: 'promo', "
-            f"expression: 'price * 0.85'}})-[:APPLIES_TO]->(c);"
+            f"active_until: {q(promo_validity)}, expression: 'price * 0.85'}})"
+            f"-[:APPLIES_TO]->(c);"
         )
 
     # --- campaigns --------------------------------------------------------

@@ -6,7 +6,7 @@ PYTHON  ?= python3
 STORE   := store/catalog.rl
 export PATH := $(HOME)/.local/bin:$(PATH)
 
-.PHONY: all setup venv data store verify demo viewer clean
+.PHONY: all setup venv data store check-committed verify demo viewer report clean
 
 all: verify
 
@@ -31,7 +31,11 @@ store: setup data
 	$(RELATE) query --database $(STORE) < data/load.cypher
 	@echo "built $(STORE)"
 
-verify: store
+# Credit-trail's lesson: validate the committed store BEFORE rebuilding it.
+check-committed: setup
+	@RELATE=$(RELATE) bash scripts/check-committed.sh $(STORE)
+
+verify: setup data check-committed store
 	@RELATE=$(RELATE) bash scripts/verify.sh $(STORE)
 
 demo: store
@@ -39,6 +43,9 @@ demo: store
 
 viewer: setup store
 	$(PYTHON) scripts/build_viewer.py
+
+report: setup store
+	@RELATE=$(RELATE) bash scripts/report.sh $(STORE)
 
 clean:
 	rm -rf store data/load.cypher data/demo_params.json .venv viewer.html

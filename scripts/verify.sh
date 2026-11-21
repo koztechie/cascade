@@ -79,6 +79,42 @@ else
   echo "$out" | grep -q 'active' || { echo "FAIL 06: no active products at risk"; fail=1; }
 fi
 
+echo "-- 07 baseline counts (self-grading against the README numbers)"
+if ! out=$("$RELATE" query --database "$STORE" --mode table <<'CYPHER'
+MATCH (n) RETURN count(n) AS total_nodes
+CYPHER
+); then
+  echo "FAIL 07: node count query errored"; fail=1
+else
+  echo "$out" | sed -n '1,4p'
+  echo "$out" | grep -q '1667' || { echo "FAIL 07: node baseline drift (expected 1667)"; fail=1; }
+fi
+if ! out=$("$RELATE" query --database "$STORE" --mode table <<'CYPHER'
+MATCH ()-[r]->() RETURN count(r) AS total_rels
+CYPHER
+); then
+  echo "FAIL 07: relationship count query errored"; fail=1
+else
+  echo "$out" | grep -q '3730' || { echo "FAIL 07: relationship baseline drift (expected 3730)"; fail=1; }
+fi
+if ! out=$("$RELATE" query --database "$STORE" --mode table <<'CYPHER'
+MATCH (p:Product) RETURN count(p) AS products
+CYPHER
+); then
+  echo "FAIL 07: product count query errored"; fail=1
+else
+  echo "$out" | grep -q '600' || { echo "FAIL 07: product baseline drift (expected 600)"; fail=1; }
+fi
+
+echo "-- 08 temporal standing (promo active vs expired as of 2026-12-09)"
+if ! out=$("$RELATE" query --database "$STORE" --mode table < queries/06_active_vs_expired.cypher); then
+  echo "FAIL 08: query errored"; fail=1
+else
+  echo "$out" | sed -n '1,8p'
+  echo "$out" | grep -q 'active'   || { echo "FAIL 08: no active promo row"; fail=1; }
+  echo "$out" | grep -q 'expired' || { echo "FAIL 08: no expired promo row"; fail=1; }
+fi
+
 if [ "$fail" -ne 0 ]; then
   echo "== verify: FAILED =="
   exit 1

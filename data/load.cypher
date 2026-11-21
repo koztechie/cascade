@@ -107,9 +107,9 @@ MATCH (c:Category {name: 'Skincare'}) CREATE (:Rule {name: 'Skincare margin floo
 MATCH (c:Category {name: 'Haircare'}) CREATE (:Rule {name: 'Haircare margin floor', type: 'price', expression: 'cost * 1.35'})-[:APPLIES_TO]->(c);
 MATCH (c:Category {name: 'Fitness'}) CREATE (:Rule {name: 'Fitness margin floor', type: 'price', expression: 'cost * 1.35'})-[:APPLIES_TO]->(c);
 MATCH (c:Category {name: 'Outdoor'}) CREATE (:Rule {name: 'Outdoor margin floor', type: 'price', expression: 'cost * 1.35'})-[:APPLIES_TO]->(c);
-MATCH (c:Category {name: 'Sneakers'}) CREATE (:Rule {name: 'Sneakers winter promo -15%', type: 'promo', expression: 'price * 0.85'})-[:APPLIES_TO]->(c);
-MATCH (c:Category {name: 'Audio'}) CREATE (:Rule {name: 'Audio winter promo -15%', type: 'promo', expression: 'price * 0.85'})-[:APPLIES_TO]->(c);
-MATCH (c:Category {name: 'Skincare'}) CREATE (:Rule {name: 'Skincare winter promo -15%', type: 'promo', expression: 'price * 0.85'})-[:APPLIES_TO]->(c);
+MATCH (c:Category {name: 'Sneakers'}) CREATE (:Rule {name: 'Sneakers winter promo -15%', type: 'promo', active_until: '2026-12-31', expression: 'price * 0.85'})-[:APPLIES_TO]->(c);
+MATCH (c:Category {name: 'Audio'}) CREATE (:Rule {name: 'Audio winter promo -15%', type: 'promo', active_until: '2026-12-15', expression: 'price * 0.85'})-[:APPLIES_TO]->(c);
+MATCH (c:Category {name: 'Skincare'}) CREATE (:Rule {name: 'Skincare winter promo -15%', type: 'promo', active_until: '2026-10-31', expression: 'price * 0.85'})-[:APPLIES_TO]->(c);
 MATCH (c:Category {name: 'Haircare'}) CREATE (:Campaign {name: 'Haircare / Google Ads', channel: 'Google Ads', budget_uah: 12000})-[:TARGETS]->(c);
 MATCH (c:Category {name: 'Skincare'}) CREATE (:Campaign {name: 'Skincare / Meta Ads', channel: 'Meta Ads', budget_uah: 12000})-[:TARGETS]->(c);
 MATCH (c:Category {name: 'Sandals'}) CREATE (:Campaign {name: 'Sandals / Email (SendPulse)', channel: 'Email (SendPulse)', budget_uah: 40000})-[:TARGETS]->(c);
