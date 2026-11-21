@@ -1,0 +1,74 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//koztechie//Cascade hackathon reminders//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Cascade - Relate hackathon
+BEGIN:VEVENT
+UID:cascade-cut-2026@koztechie.fyi
+DTSTAMP:20261121T090000Z
+DTSTART;TZID=Europe/Kyiv:20261206T100000
+DTEND;TZID=Europe/Kyiv:20261206T101500
+SUMMARY:Cascade: rizannia za R6 (zamorozka kodu)
+DESCRIPTION:Zrizaemo za planom: GIF -> 5-й zapyt -> dev.to -> skrinshoty. Novykh fich bolemshe nema.
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Cascade: rizannia zavtra
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT15M
+ACTION:DISPLAY
+DESCRIPTION:Cascade: rizannia cherez15 khv
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:cascade-review-2026@koztechie.fyi
+DTSTAMP:20261121T090000Z
+DTSTART;TZID=Europe/Kyiv:20261208T100000
+DTEND;TZID=Europe/Kyiv:20261208T103000
+SUMMARY:Cascade: finalnyi ohliad CHECKLIST + suchyi prohion2
+DESCRIPTION:CHECKLIST, suchyi prohion №2, heit-rishennia. Zavtra podacha.
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Cascade: ohliad zavtra
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT15M
+ACTION:DISPLAY
+DESCRIPTION:Cascade: ohliad cherez15 khv
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:cascade-submit-2026@koztechie.fyi
+DTSTAMP:20261121T090000Z
+DTSTART;TZID=Europe/Kyiv:20261209T093000
+DTEND;TZID=Europe/Kyiv:20261209T103000
+SUMMARY:Cascade: PODACHA s'ohodni (vnutrishnii dedlain)
+DESCRIPTION:make verify -> Submit project -> pereviryty status i video. Buler2 doby.
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Cascade: podacha zavtra!
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Cascade: podacha cherez30 khv
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:cascade-result-2026@koztechie.fyi
+DTSTAMP:20261121T090000Z
+DTSTART;TZID=Europe/Kyiv:20261217T120000
+DTEND;TZID=Europe/Kyiv:20261217T123000
+SUMMARY:Cascade: rezultat konkursu
+DESCRIPTION:Perevityty email vid Devpost i storinku konkursu. Oholoshennia peremozhtsiv.
+BEGIN:VALARM
+TRIGGER:-PT15M
+ACTION:DISPLAY
+DESCRIPTION:Cascade: rezultat cherez15 khv
+END:VALARM
+END:VEVENT
+END:VCALENDAR
