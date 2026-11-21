@@ -211,6 +211,27 @@ cause → `gtin` + `Listing → Product → Category → Mapping → Feed` path)
 lives in [`docs/agent-session.md`](docs/agent-session.md). `make verify`
 smoke-tests this surface too, including that write attempts are refused.
 
+## How this maps to the judging criteria
+
+- **Creativity** — an e-commerce *operations* change-impact graph: of the55
+  entries in the gallery, none works on catalog/feed operations; the question
+  ("what breaks?") is universal in a domain nobody else picked.
+- **Relate and connected context** — single-file store, seven Cypher checks,
+  MCP with three read-only tools (`read_cypher`, `get_schema`, `blast_radius`),
+  every answer a traversal with the path as proof.
+- **Functionality and completeness** — `make verify` runs eleven gates
+  end-to-end from a fresh clone; `make report`, `make demo`, `viewer.html` and
+  the committed store all work with no extra setup.
+- **Usefulness** — the weekly spreadsheet conversation of every e-commerce
+  operator, moved into a graph; the verdict is one line you can paste into a
+  ticket.
+- **Documentation and reproducibility** — this README; `docs/` (live agent
+  transcript, submission-form inventory, competitor analysis, limitations);
+  seed-42 generator; synthetic-data disclosure.
+
+Built with AI assistance under the owner's direction; the only third-party
+front-end asset is cytoscape.js (MIT), vendored in `vendor/`.
+
 ## Limitations
 
 See [`docs/limitations.md`](docs/limitations.md) — what Cascade does not do

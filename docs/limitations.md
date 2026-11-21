@@ -45,3 +45,12 @@ process holding `store/catalog.rl`) before `make store`, `make demo` or
 `make report` — they rebuild or reopen the file. Concurrent readers are fine;
 concurrent writers are not. This is a property of Relate itself, not of
 Cascade.
+
+## The graph, not the model, is the source of truth
+
+Cascade has no LLM in its answer path: every number comes from Cypher against
+`store/catalog.rl`. An agent may *choose* the query, but it cannot rewrite the
+result — each claim in `docs/agent-session.md` is replayable by pasting the
+printed statement, `make verify` asserts the pack's outputs, and a
+parameter-injection test proves values stay values. If a model and the graph
+ever disagree, the graph wins.
