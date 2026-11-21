@@ -91,3 +91,7 @@ Stated plainly, in the spirit of the honest status pages in this gallery:
   refreshes via `make viewer`.
 - **The MCP surface is exercised locally only** — no slow-network or
   multi-client testing.
+- **The end-to-end story runs on one SKU (`PU-1004`) and one merge pair.**
+  The other queries run catalog-wide, but no second SKU walkthrough has been
+  recorded — a single demo SKU can flatter a system, and a small demo set is
+  luck until it is repeated.
