@@ -17,6 +17,7 @@ statement each:
 2. **Why** is this listing rejected? → `queries/02_rejected_root_cause.cypher`
 3. **What is invisible or unlinked** right now? → `queries/03_orphans.cypher`
 4. **What collides** if we merge category X into Y? → `queries/04_merge_conflicts.cypher`
+5. **Which products will be rejected next** (required field missing, found early)? → `queries/05_rejection_risk.cypher`
 
 **Who benefits:** e-commerce operators, marketplace/feed managers, and the AI
 agents that assist them (the same queries are served over MCP). The author runs

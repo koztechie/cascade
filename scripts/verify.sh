@@ -70,6 +70,15 @@ else
   echo "MCP handshake, read query and write refusal checked"
 fi
 
+echo "-- 06 rejection risk (proactive, before the marketplace says no)"
+if ! out=$("$RELATE" query --database "$STORE" --mode table < queries/05_rejection_risk.cypher); then
+  echo "FAIL 06: query errored"; fail=1
+else
+  echo "$out" | sed -n '1,12p'
+  echo "$out" | grep -q 'gtin'   || { echo "FAIL 06: no gtin-risk rows"; fail=1; }
+  echo "$out" | grep -q 'active' || { echo "FAIL 06: no active products at risk"; fail=1; }
+fi
+
 if [ "$fail" -ne 0 ]; then
   echo "== verify: FAILED =="
   exit 1
