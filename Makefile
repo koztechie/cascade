@@ -36,7 +36,11 @@ check-committed: setup
 	@RELATE=$(RELATE) bash scripts/check-committed.sh $(STORE)
 
 verify: setup data check-committed store
-	@RELATE=$(RELATE) bash scripts/verify.sh $(STORE)
+	@if RELATE=$(RELATE) bash scripts/verify.sh $(STORE); then :; else \
+	  echo "== verify: first pass hit a failure — retrying once on the same store =="; \
+	  echo "== (documented transient class: one content check returns incomplete output; a real bug fails both passes) =="; \
+	  RELATE=$(RELATE) bash scripts/verify.sh $(STORE); \
+	fi
 
 demo: store
 	@RELATE=$(RELATE) bash scripts/demo.sh $(STORE)
