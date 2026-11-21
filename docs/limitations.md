@@ -91,6 +91,10 @@ Stated plainly, in the spirit of the honest status pages in this gallery:
   refreshes via `make viewer`.
 - **The MCP surface is exercised locally only** — no slow-network or
   multi-client testing.
+- **`store/catalog.rl` is asserted by counts, not byte-identity** (verify07):
+  a rebuild produces an equivalent file with different bytes (WAL/checkpoint
+  metadata), so the binary churns in git history while the graph it represents
+  stays exactly the same. The baseline, not a hash, is the contract.
 - **The end-to-end story runs on one SKU (`PU-1004`) and one merge pair.**
   The other queries run catalog-wide, but no second SKU walkthrough has been
   recorded — a single demo SKU can flatter a system, and a small demo set is
