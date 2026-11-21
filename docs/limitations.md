@@ -54,3 +54,12 @@ result — each claim in `docs/agent-session.md` is replayable by pasting the
 printed statement, `make verify` asserts the pack's outputs, and a
 parameter-injection test proves values stay values. If a model and the graph
 ever disagree, the graph wins.
+
+## Availability is not review state
+
+Fixing a field and getting re-approved are two different states. Filling the
+missing `gtin` clears the *risk pool* (query `05`/`07`), but listings that were
+already rejected stay rejected until they are re-submitted — listing status and
+feed contract live independently, exactly like "a source is available again but
+the earlier review is still invalid". Cascade never silently promotes a fix
+into an approval.

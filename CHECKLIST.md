@@ -18,7 +18,8 @@ Internal target: **submit by 9 December**, leave a 2-day buffer.
 - [ ] One-sentence pitch identical in: repo title, GitHub description, first README line, first video frame
 - [ ] Cover image / GIF on the Devpost page (viewer with highlighted blast radius)
 - [ ] Fresh-clone dry run: `git clone` → `make verify` → green, with no manual fixes
-- [x] `make verify` passes on a clean state (including the MCP surface: handshake, read query, write refusal)
+- [x] `make verify` passes on a clean state (11 gates: committed store, seven queries, MCP surface with five tools + CLI/MCP parity, baseline + negative control, temporal, remediation, injection test)
+- [ ] **Триаж транзієнтів:** зафіксувавши будь-який `FAIL` — одразу повторити `make verify`. Якщо другий прогін зелений — це задокументований транзієнт (у сесії їх було два: FAIL01 і FAIL06, обидва не відтворювалися); якщо падає знову — реальний баг, фіксимо до подачі. **Фінальна подача — лише після двох зелених прогонів підряд.**
 - [x] Numbers measured and in README: node/relationship counts, query timings (PROFILE)
 - [x] Limitations section present (`docs/limitations.md`)
 - [x] Static viewer built (`viewer.html`, offline, no install)

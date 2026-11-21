@@ -297,6 +297,42 @@ def tool_blast_radius(conn, args):
     return json.dumps(payload, ensure_ascii=False, default=str)
 
 
+def tool_rejection_causes(conn, args):
+    """Why listings are rejected: trace from a rejected listing to the
+    required field it lacks and the feed that demands it."""
+    rows = conn.execute(
+        "MATCH (l:Listing {status: 'rejected'})-[:OFFERS]->(p:Product)"
+        "-[:IN_CATEGORY]->(c:Category) "
+        "MATCH (f:Feed)-[:HAS_MAPPING]->(m:Mapping)-[:APPLIES_TO]->(c) "
+        "WHERE m.required AND p.gtin IS NULL "
+        "RETURN l.id AS listing, p.sku AS sku, c.name AS category, "
+        "f.name AS feed, m.target_field AS missing_field "
+        "ORDER BY f.name, l.id LIMIT 25").fetchall()
+    return json.dumps({
+        "causes": rows,
+        "note": "proof path for every row: Listing -OFFERS-> Product "
+                "-IN_CATEGORY-> Category <-APPLIES_TO- Mapping <-HAS_MAPPING- Feed",
+    }, ensure_ascii=False, default=str)
+
+
+def tool_remediation(conn, args):
+    """Which single missing field, once filled, clears the most rejection
+    risk: products to fix and feed risks cleared."""
+    rows = conn.execute(
+        "MATCH (p:Product)-[:IN_CATEGORY]->(c:Category) "
+        "MATCH (f:Feed)-[:HAS_MAPPING]->(m:Mapping)-[:APPLIES_TO]->(c) "
+        "WHERE m.required AND p.gtin IS NULL "
+        "RETURN m.target_field AS missing_field, "
+        "count(DISTINCT p) AS products_to_fix, "
+        "count(*) AS feed_risks_cleared "
+        "ORDER BY feed_risks_cleared DESC").fetchall()
+    return json.dumps({
+        "fix": rows,
+        "note": "fill the missing field on the listed products to clear the "
+                "risk pool; existing rejected listings still need re-submission",
+    }, ensure_ascii=False, default=str)
+
+
 def tool_write_cypher(conn, args):
     q = args.get("query")
     if not isinstance(q, str) or not q.strip():
@@ -353,6 +389,23 @@ TOOLS = {
         },
         "fn": tool_blast_radius,
     },
+    "rejection_causes": {
+        "description": (
+            "Why listings are rejected: trace from each rejected listing to "
+            "the required field the product lacks and the feed that demands "
+            "it. Rows carry the proof path Listing to Product to Category to "
+            "Mapping to Feed."),
+        "inputSchema": {"type": "object", "properties": {}},
+        "fn": tool_rejection_causes,
+    },
+    "remediation": {
+        "description": (
+            "Which single missing field, once filled, clears the most "
+            "rejection risk: products to fix and feed risks cleared, ranked "
+            "by payoff. Existing rejected listings still need re-submission."),
+        "inputSchema": {"type": "object", "properties": {}},
+        "fn": tool_remediation,
+    },
     "write_cypher": {
         "description": "Run a Cypher statement that may write to the graph.",
         "inputSchema": {
@@ -387,7 +440,8 @@ def mcp_loop(db, read_only):
         print(json.dumps({"error": {"message": str(e)}}))
         sys.exit(1)
 
-    tool_names = ["read_cypher", "get_schema", "blast_radius"]
+    tool_names = ["read_cypher", "get_schema", "blast_radius",
+                  "rejection_causes", "remediation"]
     if not read_only:
         tool_names.append("write_cypher")
 

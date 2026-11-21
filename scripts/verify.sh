@@ -62,6 +62,8 @@ if ! mcp_out=$(printf '%s\n' \
     '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"read_cypher","arguments":{"query":"MATCH (n:Product) RETURN count(n) AS c"}}}' \
     '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"read_cypher","arguments":{"query":"CREATE (x:Bad) RETURN x"}}}' \
     '{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"blast_radius","arguments":{"sku":"PU-1004"}}}' \
+    '{"jsonrpc":"2.0","id":6,"method":"tools/call","params":{"name":"rejection_causes","arguments":{}}}' \
+    '{"jsonrpc":"2.0","id":7,"method":"tools/call","params":{"name":"remediation","arguments":{}}}' \
     | "$RELATE" serve --mcp stdio --database "$STORE" --read-only); then
   echo "FAIL 05: MCP server exited non-zero"; fail=1
 else
@@ -69,7 +71,11 @@ else
   echo "$mcp_out" | grep -q 'row_count'             || { echo "FAIL 05: query through MCP failed"; fail=1; }
   echo "$mcp_out" | grep -q '"isError": true'       || { echo "FAIL 05: write not refused"; fail=1; }
   echo "$mcp_out" | grep -q '"name": "blast_radius"' || { echo "FAIL 05: blast_radius missing from catalog"; fail=1; }
+  echo "$mcp_out" | grep -q '"name": "rejection_causes"' || { echo "FAIL 05: rejection_causes missing from catalog"; fail=1; }
+  echo "$mcp_out" | grep -q '"name": "remediation"' || { echo "FAIL 05: remediation missing from catalog"; fail=1; }
   echo "$mcp_out" | grep -q 'listings'              || { echo "FAIL 05: blast_radius call failed"; fail=1; }
+  echo "$mcp_out" | grep -q 'missing_field'         || { echo "FAIL 05: rejection_causes call failed"; fail=1; }
+  echo "$mcp_out" | grep -q 'feed_risks_cleared'    || { echo "FAIL 05: remediation call failed"; fail=1; }
   cli_count=$("$RELATE" query --database "$STORE" --mode table <<'CYPHER'
 MATCH (n:Product) RETURN count(n) AS products
 CYPHER

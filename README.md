@@ -141,11 +141,21 @@ demo is falsifiable rather than hand-picked:
 | An expired promo still sitting in the graph (Skincare) | query `06` |
 | **Negative control:** the553 products that carry `gtin` are never flagged (47 form the entire risk pool) | queries `05`, `07` |
 
-## Look first, run later
+## What a judge can explore in 60 seconds
 
-[`viewer.html`](viewer.html) is the pre-built blast-radius view of the demo
-product: open it in any browser — no install, no server, works offline.
-Rebuild it from the store with `make viewer`.
+1. **Open [`viewer.html`](viewer.html)** — the pre-built blast-radius graph of
+   the demo product: offline, no install, no server. Click a node to isolate
+   its edges. Rebuild it any time with `make viewer`.
+2. **Run `make verify`** — eleven gates: every query, the MCP surface with all
+   five tools, baseline counts, temporal standing, remediation and a
+   parameter-injection test. Ends with `== verify: OK ==`.
+3. **Run `make report`** — a paste-into-a-ticket markdown impact report that
+   opens with a one-line verdict.
+4. **Ask an agent** — the committed `.mcp.json` wires any MCP client to five
+   read-only tools: `read_cypher`, `get_schema`, `blast_radius`,
+   `rejection_causes`, `remediation`.
+5. **Read [`docs/agent-session.md`](docs/agent-session.md)** — a real recorded
+   Q&A, query by query, including the agent correcting its own first query.
 
 ## The store in numbers
 
@@ -167,11 +177,12 @@ the ceiling:
 
 ## Connect an agent (MCP)
 
-The store serves MCP over stdio with three read-only tools — `read_cypher`,
-`get_schema` and the domain tool **`blast_radius(sku)`** (direct breakage +
+The store serves MCP over stdio with five read-only tools — `read_cypher`,
+`get_schema`, and the domain tools **`blast_radius(sku)`** (direct breakage +
 category machinery + the bounded 4-hop neighbourhood, each layer labelled
-honestly) — so an agent can answer "what breaks?" with paths instead of
-guesses:
+honestly), **`rejection_causes`** (why listings are rejected, with the proof
+path) and **`remediation`** (the one fix, ranked by payoff) — so an agent can
+answer "what breaks?" with paths instead of guesses:
 
 ```bash
 relate serve --mcp stdio --database store/catalog.rl --read-only
@@ -217,8 +228,9 @@ smoke-tests this surface too, including that write attempts are refused.
   entries in the gallery, none works on catalog/feed operations; the question
   ("what breaks?") is universal in a domain nobody else picked.
 - **Relate and connected context** — single-file store, seven Cypher checks,
-  MCP with three read-only tools (`read_cypher`, `get_schema`, `blast_radius`),
-  every answer a traversal with the path as proof.
+  MCP with five read-only tools (`read_cypher`, `get_schema`, `blast_radius`,
+  `rejection_causes`, `remediation`), every answer a traversal with the path as
+  proof.
 - **Functionality and completeness** — `make verify` runs eleven gates
   end-to-end from a fresh clone; `make report`, `make demo`, `viewer.html` and
   the committed store all work with no extra setup.
