@@ -19,11 +19,19 @@ statement each:
 4. **Dry run: what collides** if we merge category X into Y — rehearse the merge before you make it → `queries/04_merge_conflicts.cypher`
 5. **Which products will be rejected next** (required field missing, found early)? → `queries/05_rejection_risk.cypher`
 6. **Is this promo still in force?** — standing of every promo rule as of a fixed date → `queries/06_active_vs_expired.cypher`
+7. **What single fix clears the most risk?** — remediation ranked by payoff → `queries/07_remediation.cypher`
 
-Each statement takes `$sku` / `$from` / `$to` — swap in any product to ask the
-same questions. Together they form a **verified query pack**: `make verify`
-asserts the expected output of every one of them, so nothing in this README is
-a hand-picked screenshot.
+Each check is **one Cypher file** — swap `$sku` / `$from` / `$to` to ask the
+same questions of any product. Together they form a **verified query pack**:
+`make verify` asserts the expected output of every one of them, so nothing in
+this README is a hand-picked screenshot. Orphan pages and invisible stock are
+edges that *should exist and don't* — **the missing link is the answer**.
+
+**Cypher next to the SQL it replaces:** blast radius is one variable-length
+pattern (query `01`). The relational equivalent joins the `Product`,
+`Listing`, `Marketplace`, `Feed`, `Mapping`, `Category`, `Rule`, `Campaign`,
+`Page` and `Segment` tables with a recursive CTE for the hops — ten tables deep,
+which is why nobody writes it on a Friday.
 
 **Who benefits:** e-commerce operators, marketplace/feed managers, and the AI
 agents that assist them (the same queries are served over MCP). The author runs
@@ -75,10 +83,11 @@ make verify
 `make verify` first opens the **committed** store read-only (a broken commit
 must fail before anything rebuilds it), then regenerates the synthetic catalog
 (deterministic, seed 42), rebuilds `store/catalog.rl`, and runs every check:
-six queries, the MCP surface, baseline counts (self-grading against the numbers
-below) and temporal standing. Expected output ends with `== verify: OK ==`.
-`make report` produces a paste-into-a-ticket markdown impact report; `make demo`
-runs the four headline queries interactively.
+seven queries, the MCP surface, baseline counts (self-grading, including the
+negative control of553 clean products) and temporal standing. Expected output
+ends with `== verify: OK ==`.
+`make report` produces a paste-into-a-ticket markdown impact report with a
+one-line verdict; `make demo` runs the headline queries interactively.
 
 If your CPU predates AVX2, the prebuilt binary refuses to start — that is
 exactly the hardware this project is for. The repository ships `bin/relate`,
@@ -125,6 +134,7 @@ demo is falsifiable rather than hand-picked:
 | Active products with no listing and no page | query `03` |
 | Two overlapping price rules on one category (Sneakers) | query `04` |
 | An expired promo still sitting in the graph (Skincare) | query `06` |
+| **Negative control:** the553 products that carry `gtin` are never flagged (47 form the entire risk pool) | queries `05`, `07` |
 
 ## Look first, run later
 
@@ -197,7 +207,9 @@ smoke-tests this surface too, including that write attempts are refused.
 ## Limitations
 
 See [`docs/limitations.md`](docs/limitations.md) — what Cascade does not do
-and why, in the same spirit as Relate's own limitations page.
+and why, in the same spirit as Relate's own limitations page. When the graph
+holds no evidence for a question, the answer is **no rows** — Cascade reports
+insufficient evidence instead of inventing a confident conclusion.
 
 ## Beyond one file
 

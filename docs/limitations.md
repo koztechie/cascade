@@ -37,3 +37,11 @@ has to discover it the hard way.
 An importer for real catalogs (CSV/API), a change log with temporal queries,
 write-mode MCP for proposing changes, and vector retrieval for
 "find the change ticket, then traverse its blast radius".
+
+## One writer per store (Relate's rule)
+
+Relate allows a **single writer per store**. Stop `relate serve` (or any other
+process holding `store/catalog.rl`) before `make store`, `make demo` or
+`make report` — they rebuild or reopen the file. Concurrent readers are fine;
+concurrent writers are not. This is a property of Relate itself, not of
+Cascade.

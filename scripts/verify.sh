@@ -105,6 +105,15 @@ CYPHER
 else
   echo "$out" | grep -q '600' || { echo "FAIL 07: product baseline drift (expected 600)"; fail=1; }
 fi
+if ! out=$("$RELATE" query --database "$STORE" --mode table <<'CYPHER'
+MATCH (p:Product) WHERE p.gtin IS NOT NULL RETURN count(p) AS control_products
+CYPHER
+); then
+  echo "FAIL 07: control count query errored"; fail=1
+else
+  echo "$out" | grep -q '553' || { echo "FAIL 07: negative-control drift (expected 553)"; fail=1; }
+  echo "   negative control: 553 products with gtin are never flagged"
+fi
 
 echo "-- 08 temporal standing (promo active vs expired as of 2026-12-09)"
 if ! out=$("$RELATE" query --database "$STORE" --mode table < queries/06_active_vs_expired.cypher); then
@@ -113,6 +122,14 @@ else
   echo "$out" | sed -n '1,8p'
   echo "$out" | grep -q 'active'   || { echo "FAIL 08: no active promo row"; fail=1; }
   echo "$out" | grep -q 'expired' || { echo "FAIL 08: no expired promo row"; fail=1; }
+fi
+
+echo "-- 09 remediation (which one fix clears the most risk)"
+if ! out=$("$RELATE" query --database "$STORE" --mode table < queries/07_remediation.cypher); then
+  echo "FAIL 09: query errored"; fail=1
+else
+  echo "$out" | sed -n '1,6p'
+  echo "$out" | grep -q 'gtin' || { echo "FAIL 09: gtin remediation row missing"; fail=1; }
 fi
 
 if [ "$fail" -ne 0 ]; then
