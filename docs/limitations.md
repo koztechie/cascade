@@ -91,6 +91,9 @@ Stated plainly, in the spirit of the honest status pages in this gallery:
   refreshes via `make viewer`.
 - **The MCP surface is exercised locally only** — no slow-network or
   multi-client testing.
+- **No claim is made about Cypher features beyond what the seven queries and
+  five MCP tools actually execute** — the verified surface is exactly what
+  `make verify` runs, and nothing wider is implied.
 - **`store/catalog.rl` is asserted by counts, not byte-identity** (verify07):
   a rebuild produces an equivalent file with different bytes (WAL/checkpoint
   metadata), so the binary churns in git history while the graph it represents

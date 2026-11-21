@@ -104,7 +104,9 @@ needs.
 
 **Windows:** the wrapper is a shell script — run under **WSL or Git Bash**
 (the official `relate` CLI itself supports Windows natively, but `make` and
-`bin/relate` expect a POSIX shell).
+`bin/relate` expect a POSIX shell). If Windows security blocks the unsigned
+Relate binary (Smart App Control / SmartScreen), WSL sidesteps it — another
+contestant hit exactly this and moved to WSL2.
 
 Run the whole demo with recorded parameters:
 
