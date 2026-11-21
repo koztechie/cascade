@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "cascade": {
+      "command": "./bin/relate",
+      "args": ["serve", "--mcp", "stdio", "--database", "store/catalog.rl", "--read-only"]
+    }
+  }
+}

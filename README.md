@@ -122,6 +122,24 @@ the ceiling:
 | 03 invisible inventory | 150 | 9.1 ms |
 | 04 merge counterfactual | 15 | 1.2 ms |
 
+## Connect an agent (MCP)
+
+The store serves MCP over stdio with two read-only tools — `read_cypher` and
+`get_schema` — so an agent can answer "what breaks?" with paths instead of
+guesses:
+
+```bash
+relate serve --mcp stdio --database store/catalog.rl --read-only
+# on hardware the prebuilt CLI does not support:
+./bin/relate serve --mcp stdio --database store/catalog.rl --read-only
+```
+
+This repository ships a ready [.mcp.json](.mcp.json) — run your agent from
+the repository root and it picks the graph up. Then ask it: *"We are
+discontinuing PU-1004 — what breaks?"* The agent calls `get_schema`, writes
+the Cypher itself, and answers with the exact consequences. `make verify`
+smoke-tests this surface too, including that writes are refused.
+
 ## Limitations
 
 See [`docs/limitations.md`](docs/limitations.md) — what Cascade does not do

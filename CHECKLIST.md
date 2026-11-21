@@ -18,9 +18,10 @@ Internal target: **submit by 9 December**, leave a 2-day buffer.
 - [ ] One-sentence pitch identical in: repo title, GitHub description, first README line, first video frame
 - [ ] Cover image / GIF on the Devpost page (viewer with highlighted blast radius)
 - [ ] Fresh-clone dry run: `git clone` → `make verify` → green, with no manual fixes
-- [ ] `make verify` passes on a clean state
-- [ ] Numbers measured and in README: node/relationship counts, query timings (PROFILE)
-- [ ] Limitations section present (`docs/limitations.md`)
+- [x] `make verify` passes on a clean state (including the MCP surface: handshake, read query, write refusal)
+- [x] Numbers measured and in README: node/relationship counts, query timings (PROFILE)
+- [x] Limitations section present (`docs/limitations.md`)
+- [x] Static viewer built (`viewer.html`, offline, no install)
 - [ ] Video: first frame = the question; SQL-contrast frame; MCP agent scene; burned-in subtitles
 - [ ] dev.to article published (also feeds the community vote)
 - [ ] Interacted on the Devpost discussions page / Neo4j community

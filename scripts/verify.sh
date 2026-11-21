@@ -55,6 +55,21 @@ else
   echo "$out" | grep -q 'feed_mapping' || { echo "FAIL 04: no mapping conflicts";  fail=1; }
 fi
 
+echo "-- 05 MCP surface (read-only agent access)"
+if ! mcp_out=$(printf '%s\n' \
+    '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05"}}' \
+    '{"jsonrpc":"2.0","id":2,"method":"tools/list"}' \
+    '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"read_cypher","arguments":{"query":"MATCH (n:Product) RETURN count(n) AS c"}}}' \
+    '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"read_cypher","arguments":{"query":"CREATE (x:Bad) RETURN x"}}}' \
+    | "$RELATE" serve --mcp stdio --database "$STORE" --read-only); then
+  echo "FAIL 05: MCP server exited non-zero"; fail=1
+else
+  echo "$mcp_out" | grep -q '"name": "read_cypher"' || { echo "FAIL 05: read_cypher missing"; fail=1; }
+  echo "$mcp_out" | grep -q 'row_count'             || { echo "FAIL 05: query through MCP failed"; fail=1; }
+  echo "$mcp_out" | grep -q '"isError": true'       || { echo "FAIL 05: write not refused"; fail=1; }
+  echo "MCP handshake, read query and write refusal checked"
+fi
+
 if [ "$fail" -ne 0 ]; then
   echo "== verify: FAILED =="
   exit 1
