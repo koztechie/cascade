@@ -160,6 +160,20 @@ else
   fi
 fi
 
+echo "-- 11 generator determinism (byte-identical under PYTHONHASHSEED=1)"
+DET=/tmp/cascade-det-$$.cypher
+if ! CASCADE_OUT="$DET" PYTHONHASHSEED=1 python3 scripts/generate_data.py >/dev/null 2>&1; then
+  echo "FAIL 11: generator errored under PYTHONHASHSEED=1"; fail=1
+else
+  if cmp -s data/load.cypher "$DET"; then
+    echo "   OK: byte-identical under a different hash seed"
+  else
+    echo "FAIL 11: generator output differs under PYTHONHASHSEED=1 — not reproducible"
+    fail=1
+  fi
+fi
+rm -f "$DET"
+
 if [ "$fail" -ne 0 ]; then
   echo "== verify: FAILED =="
   exit 1

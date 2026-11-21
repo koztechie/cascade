@@ -102,6 +102,10 @@ otherwise drives the same engine through the embedded Python client
 same engine, same store file. `make verify` bootstraps whatever your machine
 needs.
 
+**Windows:** the wrapper is a shell script — run under **WSL or Git Bash**
+(the official `relate` CLI itself supports Windows natively, but `make` and
+`bin/relate` expect a POSIX shell).
+
 Run the whole demo with recorded parameters:
 
 ```bash
@@ -191,7 +195,11 @@ relate serve --mcp stdio --database store/catalog.rl --read-only
 ```
 
 This repository ships a ready [.mcp.json](.mcp.json) — run your agent from
-the repository root and it picks the graph up. Then ask it: *"We are
+the repository root and it picks the graph up. A drop-in agent skill at
+[`.agents/skills/cascade/SKILL.md`](.agents/skills/cascade/SKILL.md) teaches
+any coding agent the five tools and the honesty rules before it writes a
+single query (no rows → "no evidence in the graph"; every claim carries its
+path). Then ask it: *"We are
 discontinuing PU-1004 — what breaks?"*
 
 ### Live excerpt (recorded 21 Nov 2026 — not scripted)

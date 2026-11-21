@@ -8,6 +8,7 @@ Writes:
 Usage: python3 scripts/generate_data.py
 """
 import json
+import os
 import random
 from pathlib import Path
 
@@ -16,7 +17,10 @@ random.seed(SEED)
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
-OUT = DATA / "load.cypher"
+# CASCADE_OUT lets `make verify` regenerate into a temp file and prove the
+# generator is byte-identical under a different PYTHONHASHSEED (KidneyLoop's
+# reproducibility lesson).
+OUT = Path(os.environ.get("CASCADE_OUT") or (DATA / "load.cypher"))
 PARAMS = DATA / "demo_params.json"
 
 
