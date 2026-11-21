@@ -71,7 +71,7 @@
    ```
 
    Ключові факти: поле `mcp.servers.<name>` (не `mcp.<name>`), `type: "local"` = stdio-процес, `command` — масив argv, обов'язковий `cwd` бо команда відносна, `codemode` за замовчуванням `true` (інструменти стають `tools.cascade.read_cypher` / `tools.cascade.get_schema`), `disabled` замість `enabled`, `protocol` `legacy` за замовчуванням — наш сервер його підтримує. Базовий стан: `opencode mcp list` → *No MCP servers configured* ✓ (чистий старт для кроку 10).
-10. 🟣 **Додати конфіг MCP** (проєктний `opencode.json` → `./bin/relate serve --mcp stdio --database store/catalog.rl --read-only`). **Готово:** файл записаний.
+10. [x] 🟣 **Додати конфіг MCP** (проєктний `opencode.json` → `./bin/relate serve --mcp stdio --database store/catalog.rl --read-only`). ✅ **Виконано 21.11.2026:** записано **два** конфіги — (а) корінь сесії `opencode.json` з абсолютним `cwd` (щоб ця сесія підхопила сервер без перезапуску), (б) репозиторій `cascade/opencode.json` з `cwd: "."` (для тих, хто відкриє репо як проєкт OpenCode). Обидва: JSON валідний ✓; `opencode mcp list` → **`✓ cascade connected`** ✓; **живий доказ** — виклик `tools.cascade.read_cypher` із цієї сесії повернув реальні дані магазину (`Listing 769, Product 600, Page 175, Mapping 34, Category 17`). Сесійний конфіг поза репо (локальний); репозиторійний — у коміті.
 11. 🤝 **Підключити сервер, перевірити інструменти.** **Готово:** `read_cypher` / `get_schema` видимі агенту.
 12. 🤝 **Сцена-тест 1:** «що зламається, якщо зняти PU-1004?» — агент сам читає схему і пише Cypher. **Готово:** відповідь містить конкретні лістинги/фіди/сторінки.
 13. 🤝 **Сцена-тест 2:** чому лістинг відхилено. **Готово:** агент відповідає `gtin` + шлях.
