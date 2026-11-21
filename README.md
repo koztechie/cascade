@@ -136,9 +136,35 @@ relate serve --mcp stdio --database store/catalog.rl --read-only
 
 This repository ships a ready [.mcp.json](.mcp.json) — run your agent from
 the repository root and it picks the graph up. Then ask it: *"We are
-discontinuing PU-1004 — what breaks?"* The agent calls `get_schema`, writes
-the Cypher itself, and answers with the exact consequences. `make verify`
-smoke-tests this surface too, including that writes are refused.
+discontinuing PU-1004 — what breaks?"*
+
+### Live excerpt (recorded 21 Nov 2026 — not scripted)
+
+**You:** What breaks if we stop selling PU-1004?
+
+**Agent** — calls `get_schema`, then writes its own Cypher:
+
+```cypher
+MATCH (l:Listing)-[:OFFERS]->(p:Product {sku: $sku})
+RETURN l.id AS listing, l.platform AS platform, l.status AS status
+ORDER BY l.platform
+```
+
+**Agent:**
+
+> **Two listings stop being sold:** `L-0004-0` — Google Shopping (live) and
+> `L-0004-1` — Rozetka (live). The product page `/p/pu-1004` becomes dead and
+> `/c/sneakers` loses a position; Google Merchant Center's **required `gtin`
+> contract** on the Sneakers category turns the delisting into a feed-vs-catalog
+> mismatch. Attached machinery that loses this product: rules
+> `Sneakers margin floor` + `Sneakers winter promo -15%`, campaigns
+> `Sneakers / Viber` and `Sneakers / Email (SendPulse)`, segments
+> `Sneakers viewers 30d` and `Win-back 180d` — **every claim a path in the graph**.
+
+The full transcript — all five queries of scene 1 and scene 2 (rejection root
+cause → `gtin` + `Listing → Product → Category → Mapping → Feed` path) —
+lives in [`docs/agent-session.md`](docs/agent-session.md). `make verify`
+smoke-tests this surface too, including that write attempts are refused.
 
 ## Limitations
 
