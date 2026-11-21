@@ -18,6 +18,7 @@ Exit codes follow the official CLI: 0 ok, 2 usage error, 6 statement rejected.
 """
 import json
 import sys
+from pathlib import Path
 
 MAX_ROWS = 200
 READ_KEYWORDS = {"MATCH", "OPTIONAL", "WITH", "RETURN", "UNWIND", "CALL",
@@ -297,17 +298,20 @@ def tool_blast_radius(conn, args):
     return json.dumps(payload, ensure_ascii=False, default=str)
 
 
+def _load_query(filename):
+    """Single source of truth (Yokoten/Morrow/ToldOnce pattern): MCP tools run
+    the very same .cypher files as the CLI, report and verify."""
+    path = Path(__file__).resolve().parent.parent / "queries" / filename
+    stmts = list(split_statements(path.read_text(encoding="utf-8")))
+    if not stmts:
+        raise ToolError("query file is empty: " + filename)
+    return stmts[0]
+
+
 def tool_rejection_causes(conn, args):
     """Why listings are rejected: trace from a rejected listing to the
-    required field it lacks and the feed that demands it."""
-    rows = conn.execute(
-        "MATCH (l:Listing {status: 'rejected'})-[:OFFERS]->(p:Product)"
-        "-[:IN_CATEGORY]->(c:Category) "
-        "MATCH (f:Feed)-[:HAS_MAPPING]->(m:Mapping)-[:APPLIES_TO]->(c) "
-        "WHERE m.required AND p.gtin IS NULL "
-        "RETURN l.id AS listing, p.sku AS sku, c.name AS category, "
-        "f.name AS feed, m.target_field AS missing_field "
-        "ORDER BY f.name, l.id LIMIT 25").fetchall()
+    required field it lacks and the feed that demands it. Runs queries/02."""
+    rows = conn.execute(_load_query("02_rejected_root_cause.cypher")).fetchall()
     return json.dumps({
         "causes": rows,
         "note": "proof path for every row: Listing -OFFERS-> Product "
@@ -317,15 +321,8 @@ def tool_rejection_causes(conn, args):
 
 def tool_remediation(conn, args):
     """Which single missing field, once filled, clears the most rejection
-    risk: products to fix and feed risks cleared."""
-    rows = conn.execute(
-        "MATCH (p:Product)-[:IN_CATEGORY]->(c:Category) "
-        "MATCH (f:Feed)-[:HAS_MAPPING]->(m:Mapping)-[:APPLIES_TO]->(c) "
-        "WHERE m.required AND p.gtin IS NULL "
-        "RETURN m.target_field AS missing_field, "
-        "count(DISTINCT p) AS products_to_fix, "
-        "count(*) AS feed_risks_cleared "
-        "ORDER BY feed_risks_cleared DESC").fetchall()
+    risk: products to fix and feed risks cleared. Runs queries/07."""
+    rows = conn.execute(_load_query("07_remediation.cypher")).fetchall()
     return json.dumps({
         "fix": rows,
         "note": "fill the missing field on the listed products to clear the "
