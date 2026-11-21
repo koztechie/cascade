@@ -61,13 +61,22 @@ if ! mcp_out=$(printf '%s\n' \
     '{"jsonrpc":"2.0","id":2,"method":"tools/list"}' \
     '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"read_cypher","arguments":{"query":"MATCH (n:Product) RETURN count(n) AS c"}}}' \
     '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"read_cypher","arguments":{"query":"CREATE (x:Bad) RETURN x"}}}' \
+    '{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"blast_radius","arguments":{"sku":"PU-1004"}}}' \
     | "$RELATE" serve --mcp stdio --database "$STORE" --read-only); then
   echo "FAIL 05: MCP server exited non-zero"; fail=1
 else
   echo "$mcp_out" | grep -q '"name": "read_cypher"' || { echo "FAIL 05: read_cypher missing"; fail=1; }
   echo "$mcp_out" | grep -q 'row_count'             || { echo "FAIL 05: query through MCP failed"; fail=1; }
   echo "$mcp_out" | grep -q '"isError": true'       || { echo "FAIL 05: write not refused"; fail=1; }
-  echo "MCP handshake, read query and write refusal checked"
+  echo "$mcp_out" | grep -q '"name": "blast_radius"' || { echo "FAIL 05: blast_radius missing from catalog"; fail=1; }
+  echo "$mcp_out" | grep -q 'listings'              || { echo "FAIL 05: blast_radius call failed"; fail=1; }
+  cli_count=$("$RELATE" query --database "$STORE" --mode table <<'CYPHER'
+MATCH (n:Product) RETURN count(n) AS products
+CYPHER
+)
+  echo "$cli_count" | grep -q '600' || { echo "FAIL 05: CLI product count not 600"; fail=1; }
+  echo "$mcp_out" | grep -q '600'  || { echo "FAIL 05: MCP product count not 600 (CLI/MCP parity broken)"; fail=1; }
+  echo "MCP handshake, reads, blast_radius tool, write refusal and CLI/MCP parity checked"
 fi
 
 echo "-- 06 rejection risk (proactive, before the marketplace says no)"
@@ -130,6 +139,19 @@ if ! out=$("$RELATE" query --database "$STORE" --mode table < queries/07_remedia
 else
   echo "$out" | sed -n '1,6p'
   echo "$out" | grep -q 'gtin' || { echo "FAIL 09: gtin remediation row missing"; fail=1; }
+fi
+
+echo "-- 10 parameter safety (injection-like sku must return nothing)"
+if ! out=$("$RELATE" query --database "$STORE" --param "sku=PU-1004'OR'1'='1" --mode table < queries/01_blast_radius.cypher); then
+  echo "FAIL 10: query errored"; fail=1
+else
+  echo "$out" | sed -n '1,3p'
+  if echo "$out" | grep -q 'Listing'; then
+    echo "FAIL 10: injection-like parameter returned data — parameterization broken"
+    fail=1
+  else
+    echo "   OK: injection-like parameter returned no rows"
+  fi
 fi
 
 if [ "$fail" -ne 0 ]; then

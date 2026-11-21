@@ -259,6 +259,44 @@ def tool_get_schema(conn, args):
                       ensure_ascii=False, default=str)
 
 
+def tool_blast_radius(conn, args):
+    """Domain tool (CodeContext-style): direct breakage + category machinery +
+    the bounded 4-hop neighbourhood, with an honest label on each layer."""
+    sku = args.get("sku")
+    if not isinstance(sku, str) or not sku.strip():
+        raise ToolError("missing 'sku' (e.g. 'PU-1004')")
+    direct = conn.execute(
+        "MATCH (p:Product {sku: $sku}) "
+        "OPTIONAL MATCH (l:Listing)-[:OFFERS]->(p) "
+        "OPTIONAL MATCH (pg:Page)-[:FEATURES]->(p) "
+        "RETURN count(DISTINCT l) AS listings, count(DISTINCT pg) AS pages",
+        {"sku": sku}).fetchall()
+    category = conn.execute(
+        "MATCH (p:Product {sku: $sku})-[:IN_CATEGORY]->(c:Category) "
+        "OPTIONAL MATCH (r:Rule)-[:APPLIES_TO]->(c) "
+        "OPTIONAL MATCH (ca:Campaign)-[:TARGETS]->(c) "
+        "OPTIONAL MATCH (sg:Segment)-[:FILTERS_BY]->(c) "
+        "OPTIONAL MATCH (f:Feed)-[:HAS_MAPPING]->(m:Mapping)-[:APPLIES_TO]->(c) "
+        "RETURN c.name AS category, count(DISTINCT r) AS rules, "
+        "count(DISTINCT ca) AS campaigns, count(DISTINCT sg) AS segments, "
+        "count(DISTINCT f) AS feeds",
+        {"sku": sku}).fetchall()
+    ball = conn.execute(
+        "MATCH (p:Product {sku: $sku})-[*1..4]-(x) "
+        "WHERE x:Listing OR x:Feed OR x:Rule OR x:Campaign OR x:Page OR x:Segment "
+        "RETURN labels(x)[0] AS type, count(DISTINCT x) AS objects "
+        "ORDER BY objects DESC",
+        {"sku": sku}).fetchall()
+    payload = {
+        "sku": sku,
+        "direct_breakage": direct[0] if direct else {},
+        "category_machinery": category,
+        "neighbourhood_4hops": ball,
+        "label": "direct = real breakage; neighbourhood = context, not breakage",
+    }
+    return json.dumps(payload, ensure_ascii=False, default=str)
+
+
 def tool_write_cypher(conn, args):
     q = args.get("query")
     if not isinstance(q, str) or not q.strip():
@@ -298,6 +336,23 @@ TOOLS = {
         "inputSchema": {"type": "object", "properties": {}},
         "fn": tool_get_schema,
     },
+    "blast_radius": {
+        "description": (
+            "Domain tool: what breaks if we stop selling a SKU. Returns three "
+            "layers with an honest label — direct breakage (its listings and "
+            "product page), the category machinery attached to it (rules, "
+            "campaigns, segments, feed contracts) and the bounded 4-hop "
+            "neighbourhood (context, not breakage)."),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "sku": {"type": "string",
+                        "description": "product SKU, e.g. \"PU-1004\""},
+            },
+            "required": ["sku"],
+        },
+        "fn": tool_blast_radius,
+    },
     "write_cypher": {
         "description": "Run a Cypher statement that may write to the graph.",
         "inputSchema": {
@@ -332,7 +387,7 @@ def mcp_loop(db, read_only):
         print(json.dumps({"error": {"message": str(e)}}))
         sys.exit(1)
 
-    tool_names = ["read_cypher", "get_schema"]
+    tool_names = ["read_cypher", "get_schema", "blast_radius"]
     if not read_only:
         tool_names.append("write_cypher")
 

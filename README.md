@@ -27,6 +27,11 @@ same questions of any product. Together they form a **verified query pack**:
 this README is a hand-picked screenshot. Orphan pages and invisible stock are
 edges that *should exist and don't* — **the missing link is the answer**.
 
+Findings are **candidates for review, not verdicts**: an orphan page may be
+deliberate, and a risk row is a prompt to fix the field — not a judgment on the
+product. The graph also runs **without any AI account**: every query, the
+report and the viewer work standalone; the MCP agent layer is optional.
+
 **Cypher next to the SQL it replaces:** blast radius is one variable-length
 pattern (query `01`). The relational equivalent joins the `Product`,
 `Listing`, `Marketplace`, `Feed`, `Mapping`, `Category`, `Rule`, `Campaign`,
@@ -162,8 +167,10 @@ the ceiling:
 
 ## Connect an agent (MCP)
 
-The store serves MCP over stdio with two read-only tools — `read_cypher` and
-`get_schema` — so an agent can answer "what breaks?" with paths instead of
+The store serves MCP over stdio with three read-only tools — `read_cypher`,
+`get_schema` and the domain tool **`blast_radius(sku)`** (direct breakage +
+category machinery + the bounded 4-hop neighbourhood, each layer labelled
+honestly) — so an agent can answer "what breaks?" with paths instead of
 guesses:
 
 ```bash
