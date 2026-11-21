@@ -52,7 +52,25 @@
 
 ## Фаза B — Агент через MCP (23–25 листопада)
 
-9. 🟣 **Вивчити формат підключення MCP в OpenCode** (skill `opencode`). **Готово:** знаю точний запис конфігу.
+9. [x] 🟣 **Вивчити формат підключення MCP в OpenCode** (skill `opencode`). ✅ **Виконано 21.11.2026:** джерело — офіційна V2-документація `opencode.ai/docs/mcp-servers` (skill забороняє вгадувати). **Точний запис для кроку 10** (проєктний `opencode.json` у корені сесії; зміни застосовуються **без перезапуску** — OpenCode спостерігає за конфігом):
+
+   ```jsonc
+   {
+     "$schema": "https://opencode.ai/config.json",
+     "mcp": {
+       "servers": {
+         "cascade": {
+           "type": "local",
+           "command": ["./bin/relate", "serve", "--mcp", "stdio",
+                       "--database", "store/catalog.rl", "--read-only"],
+           "cwd": "/mnt/data/05_Хакатони/Relate by Neo4j Hackathon/cascade"
+         }
+       }
+     }
+   }
+   ```
+
+   Ключові факти: поле `mcp.servers.<name>` (не `mcp.<name>`), `type: "local"` = stdio-процес, `command` — масив argv, обов'язковий `cwd` бо команда відносна, `codemode` за замовчуванням `true` (інструменти стають `tools.cascade.read_cypher` / `tools.cascade.get_schema`), `disabled` замість `enabled`, `protocol` `legacy` за замовчуванням — наш сервер його підтримує. Базовий стан: `opencode mcp list` → *No MCP servers configured* ✓ (чистий старт для кроку 10).
 10. 🟣 **Додати конфіг MCP** (проєктний `opencode.json` → `./bin/relate serve --mcp stdio --database store/catalog.rl --read-only`). **Готово:** файл записаний.
 11. 🤝 **Підключити сервер, перевірити інструменти.** **Готово:** `read_cypher` / `get_schema` видимі агенту.
 12. 🤝 **Сцена-тест 1:** «що зламається, якщо зняти PU-1004?» — агент сам читає схему і пише Cypher. **Готово:** відповідь містить конкретні лістинги/фіди/сторінки.
