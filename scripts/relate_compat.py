@@ -266,28 +266,12 @@ def tool_blast_radius(conn, args):
     sku = args.get("sku")
     if not isinstance(sku, str) or not sku.strip():
         raise ToolError("missing 'sku' (e.g. 'PU-1004')")
-    direct = conn.execute(
-        "MATCH (p:Product {sku: $sku}) "
-        "OPTIONAL MATCH (l:Listing)-[:OFFERS]->(p) "
-        "OPTIONAL MATCH (pg:Page)-[:FEATURES]->(p) "
-        "RETURN count(DISTINCT l) AS listings, count(DISTINCT pg) AS pages",
-        {"sku": sku}).fetchall()
-    category = conn.execute(
-        "MATCH (p:Product {sku: $sku})-[:IN_CATEGORY]->(c:Category) "
-        "OPTIONAL MATCH (r:Rule)-[:APPLIES_TO]->(c) "
-        "OPTIONAL MATCH (ca:Campaign)-[:TARGETS]->(c) "
-        "OPTIONAL MATCH (sg:Segment)-[:FILTERS_BY]->(c) "
-        "OPTIONAL MATCH (f:Feed)-[:HAS_MAPPING]->(m:Mapping)-[:APPLIES_TO]->(c) "
-        "RETURN c.name AS category, count(DISTINCT r) AS rules, "
-        "count(DISTINCT ca) AS campaigns, count(DISTINCT sg) AS segments, "
-        "count(DISTINCT f) AS feeds",
-        {"sku": sku}).fetchall()
-    ball = conn.execute(
-        "MATCH (p:Product {sku: $sku})-[*1..4]-(x) "
-        "WHERE x:Listing OR x:Feed OR x:Rule OR x:Campaign OR x:Page OR x:Segment "
-        "RETURN labels(x)[0] AS type, count(DISTINCT x) AS objects "
-        "ORDER BY objects DESC",
-        {"sku": sku}).fetchall()
+    direct = conn.execute(_load_query("parts/direct_counts.cypher"),
+                          {"sku": sku}).fetchall()
+    category = conn.execute(_load_query("parts/category_machinery.cypher"),
+                            {"sku": sku}).fetchall()
+    ball = conn.execute(_load_query("parts/impact_ball.cypher"),
+                        {"sku": sku}).fetchall()
     payload = {
         "sku": sku,
         "direct_breakage": direct[0] if direct else {},

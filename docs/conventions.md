@@ -29,10 +29,17 @@ Counts referenced here are contracts asserted by `make verify`.
 
 | Location | What | Plan |
 | --- | --- | --- |
-| `scripts/report.sh` | summary / listings / feed-contract queries (heredocs) | **R3: promote** to `queries/` (or `queries/parts/`) where a file has ≥2 consumers or is user-visible |
-| `scripts/relate_compat.py` `blast_radius` | three inline queries | **R3: promote** to `queries/parts/`, loaded like `rejection_causes`/`remediation` already are |
-| `scripts/build_viewer.py` | node/edge/own projections | **permanent exception** (rule3) |
-| `scripts/verify.sh` | count heredocs | **permanent exception** (rule2) |
+| `scripts/build_viewer.py` | node/edge/own projections | **permanent exception** (rule3): rendering projections, one consumer, not user answers |
+| `scripts/verify.sh` | count heredocs | **permanent exception** (rule2): assertion one-liners |
+
+**Closed by pass R3** (now file-backed in `queries/parts/`): the report's
+summary/listings/feed-contract/verdict queries and the `blast_radius` tool's
+three projections — loaded via stdin (`report.sh`) and `_load_query`
+(compat). Two of them are **shared by two consumers each**:
+`parts/direct_counts.cypher` and `parts/category_machinery.cypher`.
+The `type` vs `impact_type` alias split between `impact_ball.cypher` and
+`impact_summary.cypher` is deliberate: tool payload keys and markdown headers
+are published shapes (see `docs/architecture.md`).
 
 **Consumers of the canon today:** `verify.sh`, `report.sh`, `demo.sh`,
 MCP tools (`_load_query`), README. A new question = a new file in
