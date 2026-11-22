@@ -29,6 +29,7 @@ store: setup data
 	@mkdir -p store
 	@rm -rf $(STORE)
 	$(RELATE) query --database $(STORE) < data/load.cypher
+	$(PYTHON) scripts/normalize_store.py $(STORE)
 	@echo "built $(STORE)"
 
 # Credit-trail's lesson: validate the committed store BEFORE rebuilding it.

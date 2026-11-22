@@ -95,9 +95,15 @@ Stated plainly, in the spirit of the honest status pages in this gallery:
   five MCP tools actually execute** — the verified surface is exactly what
   `make verify` runs, and nothing wider is implied.
 - **`store/catalog.rl` is asserted by counts, not byte-identity** (verify07):
-  a rebuild produces an equivalent file with different bytes (WAL/checkpoint
-  metadata), so the binary churns in git history while the graph it represents
-  stays exactly the same. The baseline, not a hash, is the contract.
+  the graph contract is the baseline, not a hash. The file itself is made
+  byte-stable by `scripts/normalize_store.py`: a read-write checkpoint gives
+  every parquet shard a fresh random id while the payload bytes stay
+  identical, so the engine's raw output would churn in git on every rebuild.
+  The normalizer rewrites only those ids (same length, payload untouched)
+  after `make store` and after every script that opens the store
+  read-write, so a rebuild equals the committed file — checked by rebuilding
+  twice. Read-only opens never trigger it; a manual read-write `relate query`
+  does, and any `make` target restores the stable bytes.
 - **The end-to-end story runs on one SKU (`PU-1004`) and one merge pair.**
   The other queries run catalog-wide, but no second SKU walkthrough has been
   recorded — a single demo SKU can flatter a system, and a small demo set is

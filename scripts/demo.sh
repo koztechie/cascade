@@ -15,35 +15,39 @@ echo "## Cascade demo — store: $STORE"
 
 echo
 echo "### 01 — What breaks if we stop selling $SKU?"
-"$RELATE" query --database "$STORE" --param "sku=$SKU" --mode table \
+"$RELATE" query --database "$STORE" --read-only --param "sku=$SKU" --mode table \
   < queries/01_blast_radius.cypher
 
 echo
 echo "### 02 — Why are listings rejected? (root cause with proof)"
-"$RELATE" query --database "$STORE" --mode table \
+"$RELATE" query --database "$STORE" --read-only --mode table \
   < queries/02_rejected_root_cause.cypher
 
 echo
 echo "### 03 — What is invisible or unlinked right now?"
-"$RELATE" query --database "$STORE" --mode table \
+"$RELATE" query --database "$STORE" --read-only --mode table \
   < queries/03_orphans.cypher
 
 echo
 echo "### 04 — What collides if we merge $FROM into $TO?"
-"$RELATE" query --database "$STORE" --param "from=$FROM" --param "to=$TO" --mode table \
+"$RELATE" query --database "$STORE" --read-only --param "from=$FROM" --param "to=$TO" --mode table \
   < queries/04_merge_conflicts.cypher
 
 echo
 echo "### 05 — What will the marketplace reject next? (proactive, before it says no)"
-"$RELATE" query --database "$STORE" --mode table \
+"$RELATE" query --database "$STORE" --read-only --mode table \
   < queries/05_rejection_risk.cypher
 
 echo
 echo "### 06 — Which promos are active vs expired as of 2026-12-09?"
-"$RELATE" query --database "$STORE" --mode table \
+"$RELATE" query --database "$STORE" --read-only --mode table \
   < queries/06_active_vs_expired.cypher
 
 echo
 echo "### 07 — Which single fix clears the most rejection risk?"
-"$RELATE" query --database "$STORE" --mode table \
+"$RELATE" query --database "$STORE" --read-only --mode table \
   < queries/07_remediation.cypher
+
+# Pass M1: the queries above opened the store read-write and re-randomized
+# shard ids; restore the byte-stable form (stderr — stdout is the demo).
+${PYTHON:-python3} scripts/normalize_store.py "$STORE" >&2

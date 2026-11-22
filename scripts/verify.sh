@@ -40,25 +40,25 @@ query_out() {
 echo "== verify: $STORE (demo sku: $SKU) =="
 
 echo "-- 01 blast radius"
-if query_out 15 "FAIL 01: query errored" "$RELATE" query --database "$STORE" --param "sku=$SKU" --mode table < queries/01_blast_radius.cypher; then
+if query_out 15 "FAIL 01: query errored" "$RELATE" query --database "$STORE" --read-only --param "sku=$SKU" --mode table < queries/01_blast_radius.cypher; then
   echo "$out" | grep -q 'Listing' || { echo "FAIL 01: no Listing impact"; fail=1; }
   echo "$out" | grep -q 'Rule'    || { echo "FAIL 01: no Rule impact";    fail=1; }
   echo "$out" | grep -q 'Page'    || { echo "FAIL 01: no Page impact";    fail=1; }
 fi
 
 echo "-- 02 rejected root cause"
-if query_out 15 "FAIL 02: query errored" "$RELATE" query --database "$STORE" --param "sku=$SKU" --mode table < queries/02_rejected_root_cause.cypher; then
+if query_out 15 "FAIL 02: query errored" "$RELATE" query --database "$STORE" --read-only --param "sku=$SKU" --mode table < queries/02_rejected_root_cause.cypher; then
   echo "$out" | grep -q 'gtin' || { echo "FAIL 02: missing_field 'gtin' not found"; fail=1; }
 fi
 
 echo "-- 03 invisible inventory"
-if query_out 15 "FAIL 03: query errored" "$RELATE" query --database "$STORE" --mode table < queries/03_orphans.cypher; then
+if query_out 15 "FAIL 03: query errored" "$RELATE" query --database "$STORE" --read-only --mode table < queries/03_orphans.cypher; then
   echo "$out" | grep -q 'orphan_page'       || { echo "FAIL 03: no orphan pages";       fail=1; }
   echo "$out" | grep -q 'invisible_product' || { echo "FAIL 03: no invisible products"; fail=1; }
 fi
 
 echo "-- 04 merge counterfactual ($FROM -> $TO)"
-if query_out 20 "FAIL 04: query errored" "$RELATE" query --database "$STORE" --param "from=$FROM" --param "to=$TO" --mode table < queries/04_merge_conflicts.cypher; then
+if query_out 20 "FAIL 04: query errored" "$RELATE" query --database "$STORE" --read-only --param "from=$FROM" --param "to=$TO" --mode table < queries/04_merge_conflicts.cypher; then
   echo "$out" | grep -q 'rule'       || { echo "FAIL 04: no rule conflicts";       fail=1; }
   echo "$out" | grep -q 'campaign'   || { echo "FAIL 04: no campaign conflicts";   fail=1; }
   echo "$out" | grep -q 'feed_mapping' || { echo "FAIL 04: no mapping conflicts";  fail=1; }
@@ -94,7 +94,7 @@ else
   #   MCP stdout double-encodes the tool payload  -> grep -F 'key\": value'
   #   CLI --mode json is plain JSON, spacing may
   #   differ on the official binary               -> grep -E '"key": *value'
-  cli_direct=$("$RELATE" query --database "$STORE" --mode json <<'CYPHER'
+  cli_direct=$("$RELATE" query --database "$STORE" --read-only --mode json <<'CYPHER'
 MATCH (p:Product {sku: 'PU-1004'})
 OPTIONAL MATCH (l:Listing)-[:OFFERS]->(p)
 OPTIONAL MATCH (pg:Page)-[:FEATURES]->(p)
@@ -111,7 +111,7 @@ CYPHER
   echo "$mcp_out" | grep -Fq 'segments\": 2'     || { echo "FAIL 05: blast_radius segments != 2"; fail=1; }
   echo "$mcp_out" | grep -Fq 'feeds\": 1'        || { echo "FAIL 05: blast_radius feeds != 1"; fail=1; }
   echo "$mcp_out" | grep -Fq 'direct = real breakage' || { echo "FAIL 05: blast_radius honesty label missing"; fail=1; }
-  cli_count=$("$RELATE" query --database "$STORE" --mode table <<'CYPHER'
+  cli_count=$("$RELATE" query --database "$STORE" --read-only --mode table <<'CYPHER'
 MATCH (n:Product) RETURN count(n) AS products
 CYPHER
 )
@@ -121,39 +121,39 @@ CYPHER
 fi
 
 echo "-- 06 rejection risk (proactive, before the marketplace says no)"
-if query_out 12 "FAIL 06: query errored" "$RELATE" query --database "$STORE" --mode table < queries/05_rejection_risk.cypher; then
+if query_out 12 "FAIL 06: query errored" "$RELATE" query --database "$STORE" --read-only --mode table < queries/05_rejection_risk.cypher; then
   echo "$out" | grep -q 'gtin'   || { echo "FAIL 06: no gtin-risk rows"; fail=1; }
   echo "$out" | grep -q 'active' || { echo "FAIL 06: no active products at risk"; fail=1; }
 fi
 
 echo "-- 07 baseline counts (self-grading against the README numbers)"
-if query_out 4 "FAIL 07: node count query errored" "$RELATE" query --database "$STORE" --mode table <<< 'MATCH (n) RETURN count(n) AS total_nodes'; then
+if query_out 4 "FAIL 07: node count query errored" "$RELATE" query --database "$STORE" --read-only --mode table <<< 'MATCH (n) RETURN count(n) AS total_nodes'; then
   echo "$out" | grep -q '1667' || { echo "FAIL 07: node baseline drift (expected 1667)"; fail=1; }
 fi
-if query_out - "FAIL 07: relationship count query errored" "$RELATE" query --database "$STORE" --mode table <<< 'MATCH ()-[r]->() RETURN count(r) AS total_rels'; then
+if query_out - "FAIL 07: relationship count query errored" "$RELATE" query --database "$STORE" --read-only --mode table <<< 'MATCH ()-[r]->() RETURN count(r) AS total_rels'; then
   echo "$out" | grep -q '3730' || { echo "FAIL 07: relationship baseline drift (expected 3730)"; fail=1; }
 fi
-if query_out - "FAIL 07: product count query errored" "$RELATE" query --database "$STORE" --mode table <<< 'MATCH (p:Product) RETURN count(p) AS products'; then
+if query_out - "FAIL 07: product count query errored" "$RELATE" query --database "$STORE" --read-only --mode table <<< 'MATCH (p:Product) RETURN count(p) AS products'; then
   echo "$out" | grep -q '600' || { echo "FAIL 07: product baseline drift (expected 600)"; fail=1; }
 fi
-if query_out - "FAIL 07: control count query errored" "$RELATE" query --database "$STORE" --mode table <<< 'MATCH (p:Product) WHERE p.gtin IS NOT NULL RETURN count(p) AS control_products'; then
+if query_out - "FAIL 07: control count query errored" "$RELATE" query --database "$STORE" --read-only --mode table <<< 'MATCH (p:Product) WHERE p.gtin IS NOT NULL RETURN count(p) AS control_products'; then
   echo "$out" | grep -q '553' || { echo "FAIL 07: negative-control drift (expected 553)"; fail=1; }
   echo "   negative control: 553 products with gtin are never flagged"
 fi
 
 echo "-- 08 temporal standing (promo active vs expired as of 2026-12-09)"
-if query_out 8 "FAIL 08: query errored" "$RELATE" query --database "$STORE" --mode table < queries/06_active_vs_expired.cypher; then
+if query_out 8 "FAIL 08: query errored" "$RELATE" query --database "$STORE" --read-only --mode table < queries/06_active_vs_expired.cypher; then
   echo "$out" | grep -q 'active'   || { echo "FAIL 08: no active promo row"; fail=1; }
   echo "$out" | grep -q 'expired' || { echo "FAIL 08: no expired promo row"; fail=1; }
 fi
 
 echo "-- 09 remediation (which one fix clears the most risk)"
-if query_out 6 "FAIL 09: query errored" "$RELATE" query --database "$STORE" --mode table < queries/07_remediation.cypher; then
+if query_out 6 "FAIL 09: query errored" "$RELATE" query --database "$STORE" --read-only --mode table < queries/07_remediation.cypher; then
   echo "$out" | grep -q 'gtin' || { echo "FAIL 09: gtin remediation row missing"; fail=1; }
 fi
 
 echo "-- 10 parameter safety (injection-like sku must return nothing)"
-if query_out 3 "FAIL 10: query errored" "$RELATE" query --database "$STORE" --param "sku=PU-1004'OR'1'='1" --mode table < queries/01_blast_radius.cypher; then
+if query_out 3 "FAIL 10: query errored" "$RELATE" query --database "$STORE" --read-only --param "sku=PU-1004'OR'1'='1" --mode table < queries/01_blast_radius.cypher; then
   if echo "$out" | grep -q 'Listing'; then
     echo "FAIL 10: injection-like parameter returned data — parameterization broken"
     fail=1
@@ -175,6 +175,12 @@ else
   fi
 fi
 rm -f "$DET"
+
+# Pass M1: every gate above opened the store read-write, and a read-write
+# checkpoint re-randomizes the parquet shard ids. Restore the byte-stable
+# form so a rebuild equals the committed file (stderr only — stdout of this
+# script is captured byte-exactly by golden.sh).
+${PYTHON:-python3} scripts/normalize_store.py "$STORE" >&2
 
 if [ "$fail" -ne 0 ]; then
   echo "== verify: FAILED =="

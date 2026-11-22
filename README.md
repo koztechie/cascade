@@ -117,9 +117,13 @@ make demo
 Explore the store by hand:
 
 ```bash
-relate query --database store/catalog.rl \
+relate query --database store/catalog.rl --read-only \
   "MATCH (n) RETURN labels(n)[0] AS label, count(*) AS n ORDER BY n DESC"
 ```
+
+Keep it read-only: a read-write open makes the engine re-randomize the
+store's shard ids, which would rewrite the file (any `make` target restores
+the committed bytes — see `scripts/normalize_store.py`).
 
 ## Where the data lives
 

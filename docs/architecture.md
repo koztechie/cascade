@@ -107,6 +107,12 @@ scripts/generate_data.py  (seed 42; byte-stable under any PYTHONHASHSEED)
 
 Rules of the flow:
 
+- **Shard ids are normalized after every build and after every read-write
+  open** (`scripts/normalize_store.py`, pass M1): the engine re-randomizes
+  them on a read-write checkpoint, so without this step `store/catalog.rl`
+  would churn in git while staying graph-identical. Read-only opens
+  (MCP serve, `check-committed`) never touch it.
+
 - **Nothing hand-edits a generated artifact.** `store/catalog.rl`,
   `data/load.cypher`, `data/demo_params.json`, `viewer.html` are all produced;
   change the generator or the template instead.

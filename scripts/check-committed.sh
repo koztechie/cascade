@@ -22,4 +22,8 @@ CYPHER
 fi
 echo "$out" | tail -n +3 | sed 's/^/   /'
 echo "$out" | grep -qE '[0-9]+' || { echo "FAIL committed: no row count returned"; exit 1; }
+# Pass M1: the committed store must already be normalized, otherwise every
+# rebuild would churn `store/catalog.rl` in git again (idempotent check —
+# a normalized file passes unchanged).
+${PYTHON:-python3} scripts/normalize_store.py --check "$STORE"
 echo "   OK"

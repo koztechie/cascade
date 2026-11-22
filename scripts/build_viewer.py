@@ -44,7 +44,7 @@ RETURN elementId(l) AS lid, elementId(m) AS mid
 
 
 def query(stmt, sku):
-    cmd = [RELATE, "query", "--database", DB, "--mode", "json",
+    cmd = [RELATE, "query", "--database", DB, "--read-only", "--mode", "json",
            "--param", "sku=" + sku]
     proc = subprocess.run(cmd, input=stmt, capture_output=True,
                           text=True, cwd=ROOT)
@@ -131,6 +131,11 @@ def main():
     OUTPUT.write_text(html, encoding="utf-8")
     print("wrote %s (%d nodes, %d edges)" %
           (OUTPUT.name, len(payload["nodes"]), len(payload["edges"])))
+
+    # Pass M1: the queries above opened the store read-write and re-randomized
+    # shard ids; restore the byte-stable form so `git status` stays clean.
+    subprocess.run([sys.executable, str(ROOT / "scripts" / "normalize_store.py"),
+                    DB], check=True)
 
 
 if __name__ == "__main__":
