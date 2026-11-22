@@ -24,13 +24,20 @@ ENTRY SURFACES (public API — stable)
 └── .agents/skills/cascade/ drop-in agent skill (tools + honesty rules)
 
 CORE RUNTIME
-├── scripts/relate_compat.py   fallback CLI, two subcommands:
-│   ├── query path              parse flags → split_statements → execute
-│   │                           → render (table/json/markdown/csv)
-│   └── serve --mcp stdio       mcp_loop → TOOLS:
+├── scripts/relate_compat.py   fallback CLI entry point (stable API, exec'd by
+│   │                           bin/relate) — thin main(), impl in relate_lib:
+│   ├── scripts/relate_lib/     internal package (pass R4)
+│   │   ├── render.py           table/json/markdown/csv rendering
+│   │   ├── query.py            flag parsing, split_statements, run_query,
+│   │   │                       usage/version (exit codes 0/2/6)
+│   │   ├── tools.py            tool impls + TOOLS registry; file-backed via
+│   │   │                       _load_query (queries/parts/, queries/02, 07)
+│   │   └── mcp.py              mcp_loop (stdio JSON-RPC) + parse_serve_args
+│   └── query path              parse flags → split_statements → execute
+│                               → render; serve path: mcp_loop → TOOLS:
 │       ├── read_cypher         generic read (200-row cap, honesty note)
 │       ├── get_schema          labels / properties / patterns
-│       ├── blast_radius(sku)   direct + category + 4-hop ball (inline SQL)
+│       ├── blast_radius(sku)   direct + category + 4-hop ball (file-backed)
 │       ├── rejection_causes    file-backed → queries/02
 │       ├── remediation         file-backed → queries/07
 │       └── (write_cypher)      present but unreachable in --read-only flows
