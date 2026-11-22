@@ -59,7 +59,22 @@ A vector store finds text that *looks like* the question; it cannot say **what
 breaks**, because breakage lives in relationships that have to be traversed
 (listing → product → category → feed contract → rule), not in similarity.
 A graph answers with that traversal, and every answer arrives as a **path** —
-so the consequence is proven, not asserted.
+so the consequence is proven, not asserted. That is also what separates this
+from asking a model: the agent gets **connected context instead of a guess**,
+and every sentence it says back can be checked against the edge that produced
+it.
+
+**Where this is different:** of the **60+ projects in this hackathon's
+gallery, none works on catalog/feed operations** (checked 22 Nov 2026) — the
+"what breaks?" question is asked elsewhere (incidents, data lineage, code
+changes), but nobody points it at a product catalog. Cascade does, and it
+points it where the answer costs money: listings, feeds, rules, campaigns.
+
+**The return:** one `make verify` replaces the Friday spreadsheet review —
+**seven consequences instead of seven tables**, a **one-line verdict** you can
+paste into a ticket, and the widest query runs in **206 ms** on a 2013 laptop.
+The cost side is one **1.1 MB** file: no server, no signup, no directory to
+reconcile.
 
 **Cypher next to the SQL it replaces:** blast radius is one variable-length
 pattern (query `01`). The relational equivalent joins the `Product`,
@@ -88,6 +103,10 @@ The full node and relationship tables live under [How it uses Relate](#how-it-us
 - **Why this mode:** one file *is* the whole database — judges can inspect it,
   commit it, move it, open it. No server, no directory to reconcile; the whole
   interface is `relate query --database store/catalog.rl`.
+- **Portability:** that one file **carries the entire graph** — 1,667 nodes and
+  3,730 relationships in 1.1 MB. Copy it, commit it, mail it, move it to
+  another machine and the whole database travels with it: nothing to stand up,
+  nothing to sync, nothing to sign up for.
 - **What the graph models:**
 
   | Node | Meaning |
@@ -234,7 +253,7 @@ make verify
 must fail before anything rebuilds it), then regenerates the synthetic catalog
 (deterministic, seed 42), rebuilds `store/catalog.rl`, and runs every check:
 seven queries, the MCP surface, baseline counts (self-grading, including the
-negative control of553 clean products) and temporal standing. Expected output
+negative control of 553 clean products) and temporal standing. Expected output
 ends with `== verify: OK ==`.
 The same three gates run on every push to `main` and on every pull request
 in GitHub Actions (badge above), so a green badge means exactly what a green
@@ -300,7 +319,7 @@ demo is falsifiable rather than hand-picked:
 | Active products with no listing and no page | query `03` |
 | Two overlapping price rules on one category (Sneakers) | query `04` |
 | An expired promo still sitting in the graph (Skincare) | query `06` |
-| **Negative control:** the553 products that carry `gtin` are never flagged (47 form the entire risk pool) | queries `05`, `07` |
+| **Negative control:** the 553 products that carry `gtin` are never flagged (47 form the entire risk pool) | queries `05`, `07` |
 
 ## The store in numbers
 
@@ -322,7 +341,7 @@ the ceiling:
 
 ## How this maps to the judging criteria
 
-- **Creativity** — an e-commerce *operations* change-impact graph: of the55
+- **Creativity** — an e-commerce *operations* change-impact graph: of the 60+
   entries in the gallery, none works on catalog/feed operations; the question
   ("what breaks?") is universal in a domain nobody else picked.
 - **Relate and connected context** — single-file store, seven Cypher checks,
