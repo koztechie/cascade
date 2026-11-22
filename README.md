@@ -2,7 +2,10 @@
 
 [![CI](https://github.com/koztechie/cascade/actions/workflows/ci.yml/badge.svg)](https://github.com/koztechie/cascade/actions/workflows/ci.yml)
 
-**One question instead of seven tables: what breaks if we change this? — with the exact graph path as proof for every consequence.**
+**Know the blast radius before it breaks: one Cypher question returns a path through the graph — not a score.**
+
+*Embedded and agent-native — **no signup, no server**: one deterministic,
+inspectable file, and every answer is **connected context you can cite**.*
 
 ## Use case
 

@@ -53,6 +53,13 @@
 4. [x] 🟣 **Додати remote і запушити коміти.** ✅ **Виконано 21.11.2026:** remote `origin → https://github.com/koztechie/cascade.git`, гілка **`main`** запушена без помилок (credential helper через `gh auth setup-git`, upstream `origin/main` налаштовано). Офсайт-бекап усього зробленого: коміти видно на GitHub ✓.
 5. [x] 🟣 **Топіки `relate` + `relate-neo4j-hackathon`** (`gh repo edit --add-topic`). ✅ **Виконано 21.11.2026:** `gh repo edit koztechie/cascade --add-topic relate --add-topic relate-neo4j-hackathon` → API репо повертає `relate, relate-neo4j-hackathon`; на HTML-сторінці репо обидва топіки видно (обов'язковий пункт правил виконано ✓).
 6. [x] 🤝 **Створити чернетку підписання на Devpost** (назва + один рядок; решта — пізніше). ✅ **Виконано 21.11.2026:** чернетка **#1314206** (статус DRAFT, slug `1314206-cascade`), reCAPTCHA пройдено власноруч. Заповнено й збережено: назва **`Cascade`** + elevator pitch (112 символів — те саме речення, що в README/репо). **Усі поля форми оглянуто** — 3 сторінки: *Project overview* (name, pitch, thumbnail) → *Project details* (About markdown, Built with теги, Try-it-out URL, галерея, відео-посилання) → *Submit* (чекбокс Official Rules + `Submit project`). Ризик «форма виявилась несподіваною» знято. Повна карта полів: [`docs/devpost-submission-form.md`](docs/devpost-submission-form.md). **Submit не натискається до 9.12.**
+**⚠️ ОНОВИТИ pitch після B2.2 (22.11.2026):** старий рядок (112 символів) замінити на новий єдиний пітч (**107 символів**, ліміт Devpost =140):
+
+```
+Know the blast radius before it breaks: one Cypher question returns a path through the graph — not a score.
+```
+
+README і опис репо **вже оновлено** цим самим рядком; поле на Devpost заповнює **ти вручну** (відкриття сторінки редагування з агента → redirect на `secure.devpost.com/users/login`, перевірено 22.11).
 7. [x] 🤝 **Сухий прогін № 1:** свіжий `git clone` у тимчасову папку → `make verify`. ✅ **Виконано 21.11.2026:** клонування **з GitHub** (`https://github.com/koztechie/cascade.git`, останній коміт `45ce9b4`) у чистий каталог → `make verify` → **`== verify: OK ==`** за **22 с** — включно з автоматичним bootstrap'ом `.venv` + `relate_db` на CPU без AVX2 (тобто і шлях судді з офіційним CLI, і шлях старої машини з вбудованим клієнтом — обидва зелені). Жодних ручних кроків не знадобилось.
 8. [x] 👤 **Календарні нагадування:** 6.12 різання, 8.12 фінальний огляд, 9.12 подача, 17.12 результат. ✅ **Виконано 21.11.2026 (асистентом):** **4 user-таймери systemd активні** на твоїй машині (`cascade-rem-cut/review/submit/result.timer`, `Persistent=true` — спрацюють і при ввімкненні після вимкнення): 6.12 10:00, 8.12 10:00, 9.12 09:30, 17.12 12:00 (EET) → сповіщення `notify-send -u critical`. Тест-нагадування: `Result=success` ✓. Другий шар для TickTick/Google: [`docs/cascade-reminders.ics`](docs/cascade-reminders.ics) (4 події з нагадуваннями за добу і за15 хв). Третій шар: дати в цьому файлі та в `CHECKLIST.md`.
 
@@ -159,7 +166,7 @@ Documentation and reproducibility 15. **Три висновки з точног�
     Devpost **7/7**. *Інцидент під час виконання: у першій редакції випадково
     випала секція `## How it uses Relate` (Mode/Why/graph-models + таблиці) —
     знайдено перевіркою «7/7 заголовків» і повернуто до редакції.*
-- [ ] 🟣 **B2.2 — Перший рядок пітча + хук (Z1, Z31, D63, D72, Z2, D53):** «…and
+- [x] 🟣 **B2.2 — Перший рядок пітча + хук (Z1, Z31, D63, D72, Z2, D53):** ✅ **ВИКОНАНО 22.11.2026.** «…and
   the answer is a **path through the graph**, not a score»; заголовок — на
   **результат для людини** (Z31); термін **blast radius** — на першому екрані
   (D63, уже вживається); **одна пам'ятна метафора**, яку цитуватимуть (D72).
@@ -170,6 +177,21 @@ Documentation and reproducibility 15. **Три висновки з точног�
     **описі репо** (`gh repo edit --description`) і в **поле pitch на Devpost**
     (крок6) — після переписування оновити **всі три**, щоб не було трьох
     різних пітчів.
+  - **✅ Результат (22.11.2026):** єдиний пітч **107 символів** (ліміт Devpost
+    = 140): **«Know the blast radius before it breaks: one Cypher question
+    returns a path through the graph — not a score.»** Містить **Z1** (path
+    through the graph / not a score), **Z31 + D72** («before it breaks» —
+    пам'ятний хук), **D63** (blast radius на першому екрані); одразу під ним
+    підрядок із лексикою **D53/Z2**: *embedded, agent-native, no signup / no
+    server, deterministic & inspectable, connected context you can cite*.
+    **Синхронізовано 2 з 3 місць:** README ✓ + опис репо ✓ (перевірка: рядки
+    **ідентичні**, `gh repo edit --description` виконано).
+    **⚠️ Devpost pitch — вставити вручну в кроці6:** агент не має сесії
+    (відкриття сторінки редагування → redirect на `secure.devpost.com/users/login`,
+    перевірено 22.11).
+    **Свідоме відхилення від дослівного D53:** у підрядку **не вжито
+    «memory / reasoning»** — наш продукт не має шарів пам'яті та міркувань,
+    стверджувати їх було б перебільшенням (чесність важливіша за лексику).
 - [ ] 🟣 **B2.3 — Персона + історія + aha (D4/D50/D51/D60, V16, D12):** e-commerce
   ops manager, щотижнева таблиця змін; «дізнаєшся про сьомий наслідок **до** того,
   як він зламається»; **людський результат нагорі, а не під переліком фіч** (V16);
