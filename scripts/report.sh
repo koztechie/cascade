@@ -6,6 +6,7 @@ set -euo pipefail
 RELATE="${RELATE:-./bin/relate}"
 STORE="${1:-store/catalog.rl}"
 PARAMS="data/demo_params.json"
+
 SKU=$(${PYTHON:-python3} -c "import json;print(json.load(open('$PARAMS'))['sku'])")
 FROM=$(${PYTHON:-python3} -c "import json;print(json.load(open('$PARAMS'))['merge_from'])")
 TO=$(${PYTHON:-python3} -c "import json;print(json.load(open('$PARAMS'))['merge_into'])")

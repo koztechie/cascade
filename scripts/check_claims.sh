@@ -12,7 +12,6 @@ set -euo pipefail
 
 RELATE="${RELATE:-./bin/relate}"
 STORE="${1:-store/catalog.rl}"
-PYTHON="${PYTHON:-python3}"
 fail=0
 
 need_in() { # file, fixed-string, claim
@@ -36,7 +35,7 @@ TOOLS_LINE=$(printf '%s\n' \
   '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05"}}' \
   '{"jsonrpc":"2.0","id":2,"method":"tools/list"}' \
   | "$RELATE" serve --mcp stdio --database "$STORE" --read-only 2>/dev/null | tail -1)
-NTOOLS=$(printf '%s' "$TOOLS_LINE" | "$PYTHON" -c 'import json,sys; print(len(json.load(sys.stdin)["result"]["tools"]))')
+NTOOLS=$(printf '%s' "$TOOLS_LINE" | ${PYTHON:-python3} -c 'import json,sys; print(len(json.load(sys.stdin)["result"]["tools"]))')
 
 echo "ground truth: queries=$NQ gates=$NGATE tools=$NTOOLS"
 
