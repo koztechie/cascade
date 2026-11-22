@@ -42,7 +42,8 @@ def tool_read_cypher(conn, args, read_only=True):
     kw = first_keyword(q)
     if read_only and kw not in READ_KEYWORDS:
         raise ToolError("Only read queries are allowed for read_cypher "
-                        "(got: %s). Use write_cypher for writes." % (kw or "?"))
+                        "(got: %s). No write tool is exposed by this MCP "
+                        "server." % (kw or "?"))
     params = args.get("params")
     if params is not None and not isinstance(params, dict):
         raise ToolError("'params' must be an object")
@@ -148,19 +149,6 @@ def tool_remediation(conn, args):
     }, ensure_ascii=False, default=str)
 
 
-def tool_write_cypher(conn, args):
-    q = args.get("query")
-    if not isinstance(q, str) or not q.strip():
-        raise ToolError("missing 'query' (a Cypher statement)")
-    params = args.get("params")
-    if params is not None and not isinstance(params, dict):
-        raise ToolError("'params' must be an object")
-    cur = conn.execute(q, params)
-    rows = cur.fetchall()
-    return json.dumps({"row_count": len(rows), "rows": rows[:MAX_ROWS]},
-                      ensure_ascii=False, default=str)
-
-
 TOOLS = {
     "read_cypher": {
         "description": (
@@ -222,18 +210,5 @@ TOOLS = {
             "by payoff. Existing rejected listings still need re-submission."),
         "inputSchema": {"type": "object", "properties": {}},
         "fn": tool_remediation,
-    },
-    "write_cypher": {
-        "description": "Run a Cypher statement that may write to the graph.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "query": {"type": "string", "description": "Cypher statement"},
-                "params": {"type": "object",
-                           "description": "optional parameters"},
-            },
-            "required": ["query"],
-        },
-        "fn": tool_write_cypher,
     },
 }

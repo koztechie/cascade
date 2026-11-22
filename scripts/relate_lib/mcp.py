@@ -26,8 +26,8 @@ def mcp_loop(db, read_only):
 
     tool_names = ["read_cypher", "get_schema", "blast_radius",
                   "rejection_causes", "remediation"]
-    if not read_only:
-        tool_names.append("write_cypher")
+    # Pass R7: no write_cypher — the MCP surface is read-only by design, in
+    # BOTH connection modes; --read-only now only guards the store handle.
 
     for line in sys.stdin:
         line = line.strip()

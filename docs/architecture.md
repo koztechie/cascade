@@ -39,9 +39,9 @@ CORE RUNTIME
 │       ├── get_schema          labels / properties / patterns
 │       ├── blast_radius(sku)   direct + category + 4-hop ball (file-backed)
 │       ├── rejection_causes    file-backed → queries/02
-│       ├── remediation         file-backed → queries/07
-│       └── (write_cypher)      present but unreachable in --read-only flows
-│                               — pending decision R7
+│       └── remediation         file-backed → queries/07 — five tools total,
+│                               read-only by design (pass R7 removed the
+│                               unreachable write_cypher; no write path)
 └── official `relate` binary   used verbatim by judges' machines
 
 DATA GENERATION
