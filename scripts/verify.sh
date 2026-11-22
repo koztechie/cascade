@@ -80,8 +80,11 @@ else
   # blast_radius numeric parity (P0.5): the SAME expected values must come
   # from the CLI path and from the MCP tool, so moving SQL (pass R3) cannot
   # silently change them. Update these six numbers together with the baseline
-  # in gate 07 when the data changes intentionally. Regex `: *N` tolerates
-  # both json.dumps spacing and a compact official-CLI renderer.
+  # in gate 07 when the data changes intentionally.
+  # Pattern styles are empirically verified against the real wire format:
+  #   MCP stdout double-encodes the tool payload  -> grep -F 'key\": value'
+  #   CLI --mode json is plain JSON, spacing may
+  #   differ on the official binary               -> grep -E '"key": *value'
   cli_direct=$("$RELATE" query --database "$STORE" --mode json <<'CYPHER'
 MATCH (p:Product {sku: 'PU-1004'})
 OPTIONAL MATCH (l:Listing)-[:OFFERS]->(p)
@@ -91,13 +94,13 @@ CYPHER
 )
   echo "$cli_direct" | grep -Eq '"listings": *2' || { echo "FAIL 05: CLI direct listings != 2"; fail=1; }
   echo "$cli_direct" | grep -Eq '"pages": *1'    || { echo "FAIL 05: CLI direct pages != 1"; fail=1; }
-  echo "$mcp_out" | grep -Eq '"listings": *2'    || { echo "FAIL 05: blast_radius listings != 2"; fail=1; }
-  echo "$mcp_out" | grep -Eq '"pages": *1'       || { echo "FAIL 05: blast_radius pages != 1"; fail=1; }
-  echo "$mcp_out" | grep -Eq '"category": *"Sneakers"' || { echo "FAIL 05: blast_radius category != Sneakers"; fail=1; }
-  echo "$mcp_out" | grep -Eq '"rules": *2'       || { echo "FAIL 05: blast_radius rules != 2"; fail=1; }
-  echo "$mcp_out" | grep -Eq '"campaigns": *2'   || { echo "FAIL 05: blast_radius campaigns != 2"; fail=1; }
-  echo "$mcp_out" | grep -Eq '"segments": *2'    || { echo "FAIL 05: blast_radius segments != 2"; fail=1; }
-  echo "$mcp_out" | grep -Eq '"feeds": *1'       || { echo "FAIL 05: blast_radius feeds != 1"; fail=1; }
+  echo "$mcp_out" | grep -Fq 'listings\": 2'     || { echo "FAIL 05: blast_radius listings != 2"; fail=1; }
+  echo "$mcp_out" | grep -Fq 'pages\": 1'        || { echo "FAIL 05: blast_radius pages != 1"; fail=1; }
+  echo "$mcp_out" | grep -Fq 'category\": \"Sneakers' || { echo "FAIL 05: blast_radius category != Sneakers"; fail=1; }
+  echo "$mcp_out" | grep -Fq 'rules\": 2'        || { echo "FAIL 05: blast_radius rules != 2"; fail=1; }
+  echo "$mcp_out" | grep -Fq 'campaigns\": 2'    || { echo "FAIL 05: blast_radius campaigns != 2"; fail=1; }
+  echo "$mcp_out" | grep -Fq 'segments\": 2'     || { echo "FAIL 05: blast_radius segments != 2"; fail=1; }
+  echo "$mcp_out" | grep -Fq 'feeds\": 1'        || { echo "FAIL 05: blast_radius feeds != 1"; fail=1; }
   echo "$mcp_out" | grep -Fq 'direct = real breakage' || { echo "FAIL 05: blast_radius honesty label missing"; fail=1; }
   cli_count=$("$RELATE" query --database "$STORE" --mode table <<'CYPHER'
 MATCH (n:Product) RETURN count(n) AS products
