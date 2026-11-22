@@ -21,6 +21,9 @@ ENTRY SURFACES (public API — stable)
 │                           else scripts/relate_compat.py (embedded engine)
 ├── .mcp.json               Claude-style MCP client config (repo root)
 ├── opencode.json           OpenCode MCP client config (repo root)
+├── .github/workflows/ci.yml CI on push to main and on pull requests:
+│                           make verify → make golden → make check-claims,
+│                           then a clean-working-tree assertion (M1)
 └── .agents/skills/cascade/ drop-in agent skill (tools + honesty rules)
 
 CORE RUNTIME

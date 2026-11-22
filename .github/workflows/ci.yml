@@ -1,0 +1,65 @@
+# Cascade — every push to main and every pull request must stay green.
+#
+# Free for a public repository (GitHub Actions minutes are unlimited on
+# public repos). The job runs exactly the three gates a local run uses, in
+# the same order, through the same Makefile targets — no CI-only logic, so a
+# green badge means the same thing as a green local `make verify`.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Least privilege: the job only reads the repository.
+permissions:
+  contents: read
+
+# One run per ref: a newer push cancels the run it supersedes.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gates:
+    name: verify + golden + check-claims
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      # relate_db ships a cp39-abi3 wheel (Requires-Python >=3.9); a pinned
+      # version here also proves the project runs outside our local 3.14.
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # setup → venv (first run) → data → committed-store precheck → store →
+      # 11 gates. The retry-once policy lives in the Makefile, so the known
+      # transient class (one content check returning incomplete output) is
+      # absorbed here exactly as it is locally.
+      - name: Verify — 11 gates + committed store
+        run: make verify
+
+      # Byte-exact parity of the demo/report/verify outputs against
+      # tests/golden/ — the anchor every refactor pass relies on.
+      - name: Golden fixtures (byte-exact)
+        run: make golden
+
+      # Headline claims in README/CHECKLIST/SKILL must match the code.
+      - name: Claims match the code
+        run: make check-claims
+
+      # M1 invariant: nothing above may leave a modified generated file —
+      # the store must stay byte-identical to the committed canonical build.
+      - name: Working tree stays clean (no generated drift)
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error::A gate modified a generated file:"
+            git status --porcelain
+            git --no-pager diff --stat
+            exit 1
+          fi
+          echo "clean — every artifact matches the committed bytes"

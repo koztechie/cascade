@@ -1,5 +1,7 @@
 # Cascade
 
+[![CI](https://github.com/koztechie/cascade/actions/workflows/ci.yml/badge.svg)](https://github.com/koztechie/cascade/actions/workflows/ci.yml)
+
 **One question instead of seven tables: what breaks if we change this? — with the exact graph path as proof for every consequence.**
 
 ## Use case
@@ -91,6 +93,10 @@ must fail before anything rebuilds it), then regenerates the synthetic catalog
 seven queries, the MCP surface, baseline counts (self-grading, including the
 negative control of553 clean products) and temporal standing. Expected output
 ends with `== verify: OK ==`.
+The same three gates run on every push to `main` and on every pull request
+in GitHub Actions (badge above), so a green badge means exactly what a green
+local run means — including the clean-working-tree check that keeps
+`store/catalog.rl` byte-identical to the committed build.
 `make report` produces a paste-into-a-ticket markdown impact report with a
 one-line verdict; `make demo` runs all seven queries interactively.
 
