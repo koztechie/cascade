@@ -6,6 +6,12 @@ Writes:
   data/demo_params.json  - SKU and category pair used by the demo
 
 Usage: python3 scripts/generate_data.py
+
+Structure (pass R2): constants -> small build_* functions -> build() as an
+orchestrator. The ORDER of random.* calls across the build_* functions is the
+contract: it determines every generated value. verify (gate 11) proves the
+output is stable under a different PYTHONHASHSEED; the golden fixtures prove
+it is stable across refactors of this file.
 """
 import json
 import os
@@ -89,11 +95,11 @@ CONFLICT_CATEGORIES = ["Sneakers", "Audio", "Skincare"]
 PRODUCT_COUNT = 600
 
 
-def build():
-    lines = []
-    all_subs = [s for subs in CATEGORIES.values() for s in subs]
+# --- build sections (called from build() in EXACTLY this order; the order of
+# --- random.* calls across them is the data contract — do not reorder) -------
 
-    # --- shared entities -------------------------------------------------
+def build_shared_entities(lines):
+    """Brands, suppliers, categories, marketplaces, feeds. No RNG."""
     for name, country in BRANDS:
         lines.append(f"MERGE (:Brand {{name: {q(name)}, country: {q(country)}}});")
     for name, country, lead in SUPPLIERS:
@@ -119,7 +125,9 @@ def build():
             f"MERGE (:Feed {{name: {q(fname)}, platform: {q(platform)}}});"
         )
 
-    # --- feed mappings (data-quality contract) ---------------------------
+
+def build_feed_mappings(lines, all_subs):
+    """Data-quality contract: which feed requires which field per category."""
     mapping_fields = ["price", "availability", "color", "size", "mpn", "material"]
     for fname, _platform in FEEDS:
         for sub in all_subs:
@@ -146,7 +154,9 @@ def build():
                 f"required: {str(required).lower()}}})-[:APPLIES_TO]->(c);"
             )
 
-    # --- rules ------------------------------------------------------------
+
+def build_rules(lines, all_subs):
+    """Price floors for every category + dated promos on conflict categories."""
     for sub in all_subs:
         lines.append(
             f"MATCH (c:Category {{name: {q(sub)}}}) "
@@ -165,7 +175,9 @@ def build():
             f"-[:APPLIES_TO]->(c);"
         )
 
-    # --- campaigns --------------------------------------------------------
+
+def build_campaigns(lines, all_subs):
+    """Category campaigns plus three brand-awareness campaigns."""
     for i in range(12):
         sub = random.choice(all_subs)
         channel = CHANNELS[i % len(CHANNELS)]
@@ -182,7 +194,9 @@ def build():
             f"channel: 'Meta Ads', budget_uah: 30000}})-[:TARGETS]->(b);"
         )
 
-    # --- segments ---------------------------------------------------------
+
+def build_segments(lines):
+    """CRM segments; one brand-scoped segment proves FILTERS_BY -> Brand."""
     segments = [
         ("Loyalty 90d", "Skincare"), ("Win-back 180d", "Sneakers"),
         ("Sneakers viewers 30d", "Sneakers"), ("High AOV", "Audio"),
@@ -203,7 +217,9 @@ def build():
                 f"-[:FILTERS_BY]->(b);"
             )
 
-    # --- products ---------------------------------------------------------
+
+def build_products(lines):
+    """The catalog itself; returns the product records later sections need."""
     products = []
     for i in range(PRODUCT_COUNT):
         parent = random.choice(list(CATEGORIES))
@@ -242,8 +258,11 @@ def build():
             "sku": sku, "sub": sub, "status": status,
             "has_gtin": has_gtin, "listings": [], "page": False,
         })
+    return products
 
-    # --- listings ---------------------------------------------------------
+
+def build_listings(lines, products):
+    """Marketplace listings; discontinued products are fully delisted."""
     for idx, p in enumerate(products):
         if p["status"] == "discontinued":
             continue  # delisted: no live listings at all
@@ -270,7 +289,9 @@ def build():
             )
             p["listings"].append((lid, mp, lst))
 
-    # --- pages ------------------------------------------------------------
+
+def build_pages(lines, products, all_subs):
+    """Site pages and the deliberate-orphan link structure."""
     for parent, subs in CATEGORIES.items():
         url = f"/c/{slug(parent)}"
         lines.append(
@@ -336,15 +357,20 @@ def build():
                 f"CREATE (a)-[:LINKS_TO]->(b);"
             )
 
-    # --- demo parameters --------------------------------------------------
-    demo_sku = None
+
+def pick_demo_sku(products):
+    """First Sneakers product that makes the demo story work."""
     for p in products:
         if (p["sub"] == "Sneakers" and p["status"] == "active"
                 and p["has_gtin"] and len(p["listings"]) >= 2):
-            demo_sku = p["sku"]
-            break
-    if demo_sku is None:  # deterministic fallback
-        demo_sku = next(p["sku"] for p in products if p["status"] == "active")
+            return p["sku"]
+    # deterministic fallback
+    return next(p["sku"] for p in products if p["status"] == "active")
+
+
+def emit_outputs(lines, products):
+    """Write the load script and the demo parameters."""
+    demo_sku = pick_demo_sku(products)
 
     DATA.mkdir(parents=True, exist_ok=True)
     OUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -356,6 +382,21 @@ def build():
 
     print(f"wrote {len(lines)} statements -> {OUT}")
     print(f"demo sku: {demo_sku} (merge {PARAMS})")
+
+
+def build():
+    lines = []
+    all_subs = [s for subs in CATEGORIES.values() for s in subs]
+
+    build_shared_entities(lines)          # no RNG
+    build_feed_mappings(lines, all_subs)  # RNG group 1 of 6
+    build_rules(lines, all_subs)          # no RNG
+    build_campaigns(lines, all_subs)      # RNG group 2 of 6
+    build_segments(lines)                 # RNG group 3 of 6
+    products = build_products(lines)      # RNG group 4 of 6
+    build_listings(lines, products)       # RNG group 5 of 6
+    build_pages(lines, products, all_subs)  # RNG group 6 of 6
+    emit_outputs(lines, products)
 
 
 if __name__ == "__main__":
