@@ -15,6 +15,22 @@ change is scattered across product feeds, marketplace listings, price rules,
 campaigns, landing pages and CRM segments — today it lives in spreadsheets and
 tribal knowledge, and nobody finds the seventh consequence until it breaks.
 
+**Who this is for:** the e-commerce **operations manager** who owns the weekly
+change spreadsheet — SKU retired, price moved, categories merged — together
+with marketplace/feed managers and the AI agents that assist them (the same
+queries are served over MCP). The author runs these systems for a living, so
+this is that weekly conversation, moved into a graph: you learn the seventh
+consequence **before it breaks**, not on Friday in production.
+
+### What a non-technical person sees
+
+No Cypher required — the graph in business words: a **product** sits in a
+**category**; it has **listings** on marketplaces; each **feed** demands
+certain fields (a missing `gtin` gets a listing rejected); **rules** and
+**campaigns** point at categories; **pages** link products and categories.
+Change one product and the picture shows what else moves — highlighted, with
+the reason beside each edge.
+
 Cascade models that blast radius as a graph and answers, in one Cypher
 statement each:
 
@@ -36,11 +52,6 @@ Findings are **candidates for review, not verdicts**: an orphan page may be
 deliberate, and a risk row is a prompt to fix the field — not a judgment on the
 product. The graph also runs **without any AI account**: every query, the
 report and the viewer work standalone; the MCP agent layer is optional.
-
-**Who benefits:** e-commerce operators, marketplace/feed managers, and the AI
-agents that assist them (the same queries are served over MCP). The author runs
-these systems for a living — this is the weekly spreadsheet conversation, moved
-into a graph.
 
 ## Why a graph — and why not a vector store
 

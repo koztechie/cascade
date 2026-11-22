@@ -192,11 +192,25 @@ Documentation and reproducibility 15. **Три висновки з точног�
     **Свідоме відхилення від дослівного D53:** у підрядку **не вжито
     «memory / reasoning»** — наш продукт не має шарів пам'яті та міркувань,
     стверджувати їх було б перебільшенням (чесність важливіша за лексику).
-- [ ] 🟣 **B2.3 — Персона + історія + aha (D4/D50/D51/D60, V16, D12):** e-commerce
+- [x] 🟣 **B2.3 — Персона + історія + aha (D4/D50/D51/D60, V16, D12):** ✅ **ВИКОНАНО 22.11.2026.** e-commerce
   ops manager, щотижнева таблиця змін; «дізнаєшся про сьомий наслідок **до** того,
   як він зламається»; **людський результат нагорі, а не під переліком фіч** (V16);
   окремий короткий блок **«що бачить нетехнічна людина»** — граф перекладений
   бізнес-словами: продукт, лістинги, фіди, правила, кампанії (D12). **[6/8]**
+  - **✅ Результат (22.11.2026):** у `## Use case` персона **винесено нагорі** —
+    одразу після історії проблеми, **ДО** списку семи запитів (V16): абзац
+    *«Who this is for: the e-commerce operations manager who owns the weekly
+    change spreadsheet… you learn the seventh consequence **before it breaks**,
+    not on Friday in production»* — він поглинув старий абзац «Who benefits»
+    (оператори + marketplace/feed managers + AI-агенти + «author runs these
+    systems for a living»), який прибрано, щоб не дублювати.
+    **Новий блок `### What a non-technical person sees`** (D12): граф
+    бізнес-словами — product → category → listings → feed (missing `gtin` →
+    rejected) → rules/campaigns → pages, «change one product and the picture
+    shows what else moves». **Без Cypher.**
+    **Валідація:** `check-claims` =0, `golden` =0, `verify` =0 FAIL; елементи
+    на місці (operations manager · before it breaks ×2 · non-technical ·
+    listings/feeds/rules/campaigns) ✓.
 - [ ] 🟣 **B2.4 — Диференціація + «чому не вектор» + ROI + portability
   (D52/D43/D74/Z5):**
   «серед 60+ робіт галереї жодна не працює з catalog/feed operations»
