@@ -6,9 +6,9 @@ RELATE="${RELATE:-./bin/relate}"
 STORE="${1:-store/catalog.rl}"
 PARAMS="data/demo_params.json"
 
-SKU=$(python3 -c "import json;print(json.load(open('$PARAMS'))['sku'])")
-FROM=$(python3 -c "import json;print(json.load(open('$PARAMS'))['merge_from'])")
-TO=$(python3 -c "import json;print(json.load(open('$PARAMS'))['merge_into'])")
+SKU=$(${PYTHON:-python3} -c "import json;print(json.load(open('$PARAMS'))['sku'])")
+FROM=$(${PYTHON:-python3} -c "import json;print(json.load(open('$PARAMS'))['merge_from'])")
+TO=$(${PYTHON:-python3} -c "import json;print(json.load(open('$PARAMS'))['merge_into'])")
 
 echo "## Cascade demo — store: $STORE"
 

@@ -68,8 +68,9 @@ VERIFICATION STACK (in execution order)
                              tests/golden/ (same retry policy as make verify)
 
 PRESENTATION
-├── scripts/report.sh        markdown report + one-line verdict (inline SQL
-│                            for the verdict only — see conventions)
+├── scripts/report.sh        markdown report + one-line verdict (queries
+│                            from queries/parts/ via stdin; verdict is a
+│                            ${PYTHON:-python3} formatter — see conventions)
 ├── scripts/demo.sh          headline queries, fixed parameters
 ├── scripts/build_viewer.py  queries the store → viewer.html
 │   ├── templates/viewer.template.html

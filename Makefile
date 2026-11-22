@@ -36,30 +36,30 @@ check-committed: setup
 	@RELATE=$(RELATE) bash scripts/check-committed.sh $(STORE)
 
 verify: setup data check-committed store
-	@if RELATE=$(RELATE) bash scripts/verify.sh $(STORE); then :; else \
+	@if RELATE=$(RELATE) PYTHON=$(PYTHON) bash scripts/verify.sh $(STORE); then :; else \
 	  echo "== verify: first pass hit a failure — retrying once on the same store =="; \
 	  echo "== (documented transient class: one content check returns incomplete output; a real bug fails both passes) =="; \
-	  RELATE=$(RELATE) bash scripts/verify.sh $(STORE); \
+	  RELATE=$(RELATE) PYTHON=$(PYTHON) bash scripts/verify.sh $(STORE); \
 	fi
 
 demo: store
-	@RELATE=$(RELATE) bash scripts/demo.sh $(STORE)
+	@RELATE=$(RELATE) PYTHON=$(PYTHON) bash scripts/demo.sh $(STORE)
 
 viewer: setup store
 	$(PYTHON) scripts/build_viewer.py
 
 report: setup store
-	@RELATE=$(RELATE) bash scripts/report.sh $(STORE)
+	@RELATE=$(RELATE) PYTHON=$(PYTHON) bash scripts/report.sh $(STORE)
 
 # --- Golden fixtures (P0.1): the parity anchor for every refactor pass. ---
 # `make golden`        — compares fresh outputs against the committed snapshots.
 # `make golden-update` — refreshes snapshots (only after an INTENTIONAL change;
 #                        review `git diff tests/golden` before committing).
 golden: setup store
-	@RELATE=$(RELATE) bash scripts/golden.sh check "$(STORE)"
+	@RELATE=$(RELATE) PYTHON=$(PYTHON) bash scripts/golden.sh check "$(STORE)"
 
 golden-update: setup store
-	@RELATE=$(RELATE) bash scripts/golden.sh update "$(STORE)"
+	@RELATE=$(RELATE) PYTHON=$(PYTHON) bash scripts/golden.sh update "$(STORE)"
 
 check-claims: setup store
 	@RELATE=$(RELATE) PYTHON=$(PYTHON) bash scripts/check_claims.sh "$(STORE)"

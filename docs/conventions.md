@@ -67,9 +67,10 @@ MCP tools (`_load_query`), README. A new question = a new file in
 ##3. Python / shell conventions
 
 - **`PYTHON`:** Makefile declares `PYTHON ?= python3`; shell scripts must use
-  `${PYTHON:-python3}` instead of a bare `python3`. *(Current state:*
-  `demo.sh`, `report.sh`, `verify.sh` still call `python3` directly —
-  **pass R5** unifies them; until then this rule applies to new code only.)*
+  `${PYTHON:-python3}` instead of a bare `python3`. *(Closed by pass R5:*
+  `demo.sh`, `report.sh`, `verify.sh` now all use it, and the Makefile passes
+  `PYTHON=$(PYTHON)` to every script target — override with
+  `make verify PYTHON=/path/to/python`.)*
 - **Every shell script starts with `set -euo pipefail`.**
 - **Failure messages follow `FAIL NN: reason`** — stable, grep-able; `verify`
   tests and the golden fixture depend on this exact wording.

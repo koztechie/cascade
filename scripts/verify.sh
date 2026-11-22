@@ -7,9 +7,9 @@ RELATE="${RELATE:-./bin/relate}"
 STORE="${1:-store/catalog.rl}"
 PARAMS="data/demo_params.json"
 
-SKU=$(python3 -c "import json;print(json.load(open('$PARAMS'))['sku'])")
-FROM=$(python3 -c "import json;print(json.load(open('$PARAMS'))['merge_from'])")
-TO=$(python3 -c "import json;print(json.load(open('$PARAMS'))['merge_into'])")
+SKU=$(${PYTHON:-python3} -c "import json;print(json.load(open('$PARAMS'))['sku'])")
+FROM=$(${PYTHON:-python3} -c "import json;print(json.load(open('$PARAMS'))['merge_from'])")
+TO=$(${PYTHON:-python3} -c "import json;print(json.load(open('$PARAMS'))['merge_into'])")
 
 fail=0
 
@@ -164,7 +164,7 @@ fi
 
 echo "-- 11 generator determinism (byte-identical under PYTHONHASHSEED=1)"
 DET=/tmp/cascade-det-$$.cypher
-if ! CASCADE_OUT="$DET" PYTHONHASHSEED=1 python3 scripts/generate_data.py >/dev/null 2>&1; then
+if ! CASCADE_OUT="$DET" PYTHONHASHSEED=1 ${PYTHON:-python3} scripts/generate_data.py >/dev/null 2>&1; then
   echo "FAIL 11: generator errored under PYTHONHASHSEED=1"; fail=1
 else
   if cmp -s data/load.cypher "$DET"; then
