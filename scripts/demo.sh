@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Run all four demo queries with the parameters recorded at data generation.
+# Run all seven demo queries (queries/01..07) with the parameters recorded
+# at data generation.
 set -euo pipefail
 
 RELATE="${RELATE:-./bin/relate}"
@@ -31,3 +32,18 @@ echo
 echo "### 04 — What collides if we merge $FROM into $TO?"
 "$RELATE" query --database "$STORE" --param "from=$FROM" --param "to=$TO" --mode table \
   < queries/04_merge_conflicts.cypher
+
+echo
+echo "### 05 — What will the marketplace reject next? (proactive, before it says no)"
+"$RELATE" query --database "$STORE" --mode table \
+  < queries/05_rejection_risk.cypher
+
+echo
+echo "### 06 — Which promos are active vs expired as of 2026-12-09?"
+"$RELATE" query --database "$STORE" --mode table \
+  < queries/06_active_vs_expired.cypher
+
+echo
+echo "### 07 — Which single fix clears the most rejection risk?"
+"$RELATE" query --database "$STORE" --mode table \
+  < queries/07_remediation.cypher

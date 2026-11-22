@@ -92,7 +92,7 @@ seven queries, the MCP surface, baseline counts (self-grading, including the
 negative control of553 clean products) and temporal standing. Expected output
 ends with `== verify: OK ==`.
 `make report` produces a paste-into-a-ticket markdown impact report with a
-one-line verdict; `make demo` runs the headline queries interactively.
+one-line verdict; `make demo` runs all seven queries interactively.
 
 If your CPU predates AVX2, the prebuilt binary refuses to start — that is
 exactly the hardware this project is for. The repository ships `bin/relate`,

@@ -71,7 +71,7 @@ PRESENTATION
 ├── scripts/report.sh        markdown report + one-line verdict (queries
 │                            from queries/parts/ via stdin; verdict is a
 │                            ${PYTHON:-python3} formatter — see conventions)
-├── scripts/demo.sh          headline queries, fixed parameters
+├── scripts/demo.sh          all seven queries, fixed parameters
 ├── scripts/build_viewer.py  queries the store → viewer.html
 │   ├── templates/viewer.template.html
 │   └── vendor/cytoscape.min.js (MIT, vendored)
@@ -99,7 +99,7 @@ scripts/generate_data.py  (seed 42; byte-stable under any PYTHONHASHSEED)
         ├── verify.sh          gates 01–11  ──► "== verify: OK =="
         ├── golden.sh check    diff vs tests/golden/{demo,report,verify}
         ├── report.sh          markdown + verdict   (stdout)
-        ├── demo.sh            headline queries     (stdout)
+        ├── demo.sh            all seven queries  (stdout)
         ├── build_viewer.py    ──► viewer.html (offline, no server)
         └── relate_compat serve --mcp stdio --read-only
                                 ──►5 tools for any MCP client

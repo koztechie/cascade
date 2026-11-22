@@ -16,7 +16,7 @@ has to discover it the hard way.
 
 ## Queries
 
-- **Fixed scenarios.** The four demo queries are the product. Arbitrary
+- **Fixed scenarios.** The seven demo queries are the product. Arbitrary
   natural-language questions are not answered without an agent layer on top
   (an MCP endpoint is provided; see below).
 - **Fixed depth.** Blast radius traverses up to 4 hops; deeper impact exists in
