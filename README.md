@@ -86,7 +86,9 @@ which is why nobody writes it on a Friday.
 
 **An agent asks → five read-only MCP tools → the graph → an auditable path
 comes back.** Nothing writes, nothing guesses: `read_cypher`, `get_schema`,
-`blast_radius`, `rejection_causes`, `remediation`.
+`blast_radius`, `rejection_causes`, `remediation`. **The path is the proof** —
+not a confidence score, not a summary: a route through the graph you can open
+in the viewer and run again yourself.
 
 ## What connects to what
 
@@ -131,21 +133,26 @@ Queries that check existence (`03`, `05`) report the objects themselves; every
 
 ## Run it in 60 seconds (what a judge can explore)
 
-1. **Open [`viewer.html`](viewer.html)** — the pre-built blast-radius graph of
-   the demo product: offline, no install, no server. Click a node to isolate
-   its edges. Rebuild it any time with `make viewer`.
-2. **Run `make verify`** — eleven gates: every query, the MCP surface with all
-   five tools, baseline counts, temporal standing, remediation and a
-   parameter-injection test. Ends with `== verify: OK ==`.
-3. **Run `make report`** — a paste-into-a-ticket markdown impact report that
-   opens with a one-line verdict.
-4. **Ask an agent** — the committed `.mcp.json` wires any MCP client to five
-   read-only tools: `read_cypher`, `get_schema`, `blast_radius`,
-   `rejection_causes`, `remediation`.
-5. **Read [`docs/agent-session.md`](docs/agent-session.md)** — a real recorded
-   Q&A, query by query, including the agent correcting its own first query.
+1. **Open [`viewer.html`](viewer.html)** — the demo blast radius, already
+   built: offline, no server, **no query written**. That is your first
+   insight. (`make viewer` rebuilds it.)
+2. **Run `make verify`** — eleven gates, ending `== verify: OK ==` in **12 s**
+   on the floor machine.
+
+Then go deeper: `make report` (the one-line verdict, again no Cypher) ·
+`make demo` (all seven queries) · ask an agent via [`.mcp.json`](.mcp.json) ·
+read [`docs/agent-session.md`](docs/agent-session.md).
 
 ## For your agent
+
+Relate's own promise, as the hackathon page puts it: **"One command installs a
+skill into the coding agents you already use, so they can find it and start
+using it on their own."** Cascade ships that outcome as files already committed
+here — [`.mcp.json`](.mcp.json) for any MCP client,
+[`opencode.json`](opencode.json) for OpenCode, and
+[`.agents/skills/cascade/SKILL.md`](.agents/skills/cascade/SKILL.md) for any
+coding agent — so it **works with what you already use**: no new IDE, no new
+account, no new workflow to learn.
 
 The store serves MCP over stdio with five read-only tools — `read_cypher`,
 `get_schema`, and the domain tools **`blast_radius(sku)`** (direct breakage +

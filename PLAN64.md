@@ -258,7 +258,7 @@ Documentation and reproducibility 15. **Три висновки з точног�
   - **Валідація:** `check-claims` =0, `golden` =0, `verify` =0 FAIL;
     `store/catalog.rl` у `git status` **не з'явився** (M1); одруківок
     літера+цифра більше немає (окрім легітимного «Neo4j»).
-- [ ] 🟣 **B2.5 — Блоки «Run it in 60 seconds» (D2 + D73 — воронка know→use),
+- [x] 🟣 **B2.5 — Блоки «Run it in 60 seconds» (D2 + D73 — воронка know→use),
   «For your agent» (D41/D21/D22/D31 + Z41 інтеграції як сила + Z51 «працює з
   тим, що вже є»), теза «аудований шлях» (D71/D23) і явне «перший інсайт — без
   жодного запиту» (D11: `viewer.html` / `make report` без Cypher).**
@@ -271,7 +271,60 @@ Documentation and reproducibility 15. **Три висновки з точног�
   першого графа**, тож наш блок «60 seconds» має бути **не довшим за їхній
   quickstart** (судді порівнюють швидкість старту з власним досвідом продукту;
   це частина30-бального «instructions, running, exploring»).
-  **[7–8/8]**
+  **[7–8/8]** ✅ **ВИКОНАНО 23.11.2026.**
+  - **✅ Результат (23.11.2026):**
+    1. **«Run it in 60 seconds» переписано під критерій терсності.** Було
+       **5 пунктів / 189 слів** → стало **2 кроки + один рядок «Then go
+       deeper» / 77 слів**. Виміряно проти офіційного quickstart
+       (relatedb.ai/#quickstart): **їхній = 88 слів** → **наш 77 < 88 ✓**.
+       *Перший варіант цього проходу був 189 слів і критерій ПРОВАЛИВ —
+       зловив власний валідатор порівнянням, стиснуто повторно.*
+    2. **D73 (воронка know→use):** крок1 *know* (viewer, нуль зусиль) →
+       крок2 *use* (`make verify`) → рядок *adopt* (`make report` →
+       `make demo` → агент → транскрипт).
+    3. **D11 (перший інсайт без жодного запиту) — явно двічі:** крок1
+       «**no query written**. That is your first insight» (+ `make viewer`
+       реконструює файл), і `make report` — «the one-line verdict, **again
+       no Cypher**».
+    4. **Цитата продукту дослівно** в `## For your agent`: *«One command
+       installs a skill into the coding agents you already use, so they can
+       find it and start using it on their own.»* — **звірено з
+       relate.devpost.com машинно, точний збіг ✓** (не з пам'яті).
+    5. **Z41 + Z51:** одразу під цитатою — три закомічені інтеграції
+       (`.mcp.json` для будь-якого MCP-клієнта / `opencode.json` /
+       `SKILL.md` для будь-якого coding-агента) = ми віддаємо **той самий
+       результат**, але файлами вже в репозиторії → **«works with what you
+       already use»**, no new IDE / no new account / no new workflow.
+    6. **D71/D23 (теза «аудований шлях»)** — у `## The mental model`
+       додано: **«The path is the proof — not a confidence score, not a
+       summary: a route through the graph you can open in the viewer and run
+       again yourself»**.
+    7. **Виміряна чесність «60 seconds»:** `make verify` = **12.16 s**,
+       `make report` = **8.32 s** — **на цьому ж процесорі, 2013 AMD A4-4020
+       без AVX2**, тобто саме «підлогова» машина з таблиці таймінгів README
+       (перевірено `grep 'model name' /proc/cpuinfo`). У блоці: «`== verify:
+       OK ==` in **12 s** on the floor machine».
+  - **⚠️ Виправлення хибної передумови цього пункту:** план стверджував
+    *«офіційний Resources-старт — це **2 кроки** до першого графа»*.
+    **Це неправильно:** relatedb.ai/#quickstart сам каже **«Four steps to your
+    first query»** (4 кроки), а сторінка install — *«It takes about two
+    minutes»*. План недооцінив їхній старт у **2 рази**. Наш блок усе одно
+    **коротший (77 < 88 слів) і з меншою кількістю кроків (2 < 4)**, тож
+    критерій виконано з запасом. **«2 кроки» у публічні тексти не переносив.**
+  - **✅ Опційне (порівняння з офіційним встановлювачем навичок) — зроблено як
+    дослідження, у README НЕ додано.** У docs Relate є `relate skill install`
+    (SKILL.md + 15 reference-файлів, без мережі, байти звіряються зсередини
+    бінарника), `npx skills add https://relatedb.ai --skill relate` (лише
+    SKILL.md, перевірка `sha256:`) і ручне копіювання з SHA-256 (усе —
+    verified 1.2.0, last_updated 20.11.2026). **Наш** підхід — закомічений
+    `.agents/skills/cascade/SKILL.md`, без встановлювача, **версіонується
+    разом із кодом**. Свідомо не писав це в README: (а) їхній встановлювач
+    ставить навичку **про сам Relate**, а наша — **про Cascade**, це різні
+    речі; (б) твердження про чужу CLI-команду може застаріти. Залишено тут як
+    доказ, що варіант розглянуто (позначено «не обов'язково, не блокує»).
+  - **Валідація:** `check-claims` =0 (**усі 12 охоронюваних рядків на місці**
+    після стиснення блоку), `golden` =0, `verify` =0 FAIL;
+    `store/catalog.rl` у `git status` не з'явився (M1).
 - [ ] 🟣 **B2.6 — Чесність і ясність:** V2 — виправити «of the 55 entries» →
   **62** (перевірено 22.11) або без точного числа **[8/8]**; V12/V4/V14/V5 +
   **Z12** (мова = вимірювані факти) — прибрати гіп-лексику, припущення без
