@@ -67,6 +67,25 @@ need_in README.md "3,730"      "relationship baseline in README"
 need_in README.md "600 products" "product baseline in README"
 need_in README.md "553"        "negative-control baseline in README"
 
+# --- version policy (M4): Makefile pin == docs/versions.md == the venv ------
+PIN=$(sed -n 's/^RELATE_DB_VERSION *:= *//p' Makefile | tr -d ' ')
+if [ -z "$PIN" ]; then
+  echo "CLAIM FAIL: Makefile has no RELATE_DB_VERSION pin (M4 policy)"
+  fail=1
+else
+  need_in Makefile 'relate_db==$(RELATE_DB_VERSION)' "make venv installs the pin"
+  need_in docs/versions.md "relate_db==$PIN" "pinned engine version recorded in docs/versions.md"
+  if [ -x .venv/bin/pip ]; then
+    INSTALLED=$(.venv/bin/pip show relate-db 2>/dev/null | sed -n 's/^Version: *//p' || true)
+    if [ -n "$INSTALLED" ] && [ "$INSTALLED" != "$PIN" ]; then
+      echo "CLAIM FAIL: .venv has relate-db $INSTALLED but the pin is $PIN (M4 policy)"
+      fail=1
+    fi
+  else
+    echo "note: no .venv — pin and docs checked, installed version skipped"
+  fi
+fi
+
 # --- summary ---------------------------------------------------------------
 if [ "$fail" -ne 0 ]; then
   echo "== check-claims: FAILED =="

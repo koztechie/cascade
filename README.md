@@ -104,7 +104,9 @@ If your CPU predates AVX2, the prebuilt binary refuses to start — that is
 exactly the hardware this project is for. The repository ships `bin/relate`,
 a wrapper that uses the official CLI when it runs on your machine and
 otherwise drives the same engine through the embedded Python client
-(`relate_db` on PyPI, installed into `.venv` by `make venv`): same commands,
+(`relate_db` on PyPI, installed into `.venv` by `make venv`, **pinned** —
+see [`docs/versions.md`](docs/versions.md) for the version and the update
+procedure): same commands,
 same engine, same store file. `make verify` bootstraps whatever your machine
 needs.
 

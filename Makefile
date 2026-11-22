@@ -4,6 +4,11 @@
 RELATE  ?= ./bin/relate
 PYTHON  ?= python3
 STORE   := store/catalog.rl
+# Engine pin (M4): the embedded engine (`relate_db`) version this repository
+# is tested against. Bumping it is a dependency change — the procedure lives
+# in docs/versions.md (recreate .venv, full verify + golden + check-claims,
+# CI green) and `make check-claims` fails while the pin and that page disagree.
+RELATE_DB_VERSION := 1.2.0
 export PATH := $(HOME)/.local/bin:$(PATH)
 
 .PHONY: all setup venv data store check-committed verify demo viewer report golden golden-update check-claims clean
@@ -19,8 +24,8 @@ setup:
 
 venv:
 	$(PYTHON) -m venv .venv
-	.venv/bin/pip install -q relate_db
-	@echo "created .venv with the embedded relate_db client"
+	.venv/bin/pip install -q relate_db==$(RELATE_DB_VERSION)
+	@echo "created .venv with the embedded relate_db client (relate_db $(RELATE_DB_VERSION))"
 
 data:
 	$(PYTHON) scripts/generate_data.py
