@@ -134,7 +134,7 @@ Documentation and reproducibility 15. **Три висновки з точног�
 - [x] 🤝 **V1 — Файли аналізу суддів видалено** з репо. ✅ **Виконано 22.11.2026:**
   публічний «як отримати максимум від судді» у репо, який читають судді, — ризик
   довіри саме перед тими, хто цінує чесність.
-- [ ] 🟣 **B2.1 — Порядок верхівки README** (зведений Z30/Z7/Z10/Z20/Z40/Z3/Z6/Z9/Z11/Z21, **Z4**, **D62**):
+- [x] 🟣 **B2.1 — Порядок верхівки README** (зведений Z30/Z7/Z10/Z20/Z40/Z3/Z6/Z9/Z11/Z21, **Z4**, **D62**): ✅ **ВИКОНАНО 22.11.2026.**
   1) історія проблеми людини + одне речення, що це; 2) aha + диференціація +
   «чому граф, а не вектор»; 3) ментальна модель одним рядком («агент → 5
   інструментів → граф → шлях»); 4) «What connects to what»; 5) «Run it in 60
@@ -148,6 +148,17 @@ Documentation and reproducibility 15. **Три висновки з точног�
     розкриття AI-допомоги**, а саме розкриття — як *«no AI runs inside the
     product»* (детермінований Cypher). Щоб суддя ніколи не прочитав
     «AI-assisted» раніше за «it actually runs».
+  - **✅ Результат (22.11.2026):** верхівку переписано в заданому порядку —
+    `Use case → Why a graph, not a vector store (НОВЕ) → The mental model
+    (НОВЕ) → What connects to what (НОВЕ) → How it uses Relate → Run it in
+    60 seconds → For your agent (додано `opencode.json`) → From an agent
+    answer to a decision / handover (НОВЕ) → Evidence and engineering proof
+    (НОВЕ) → When not to use Cascade → технічні деталі`. AI-розкриття лишилось
+    **внизу** (рядок «no AI runs inside the product» — після доказу запуску ✓).
+    **Валідація:** `check-claims` =0, `golden` =0, `verify` =0 FAIL, шаблон
+    Devpost **7/7**. *Інцидент під час виконання: у першій редакції випадково
+    випала секція `## How it uses Relate` (Mode/Why/graph-models + таблиці) —
+    знайдено перевіркою «7/7 заголовків» і повернуто до редакції.*
 - [ ] 🟣 **B2.2 — Перший рядок пітча + хук (Z1, Z31, D63, D72, Z2, D53):** «…and
   the answer is a **path through the graph**, not a score»; заголовок — на
   **результат для людини** (Z31); термін **blast radius** — на першому екрані

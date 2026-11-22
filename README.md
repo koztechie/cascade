@@ -34,16 +34,39 @@ deliberate, and a risk row is a prompt to fix the field — not a judgment on th
 product. The graph also runs **without any AI account**: every query, the
 report and the viewer work standalone; the MCP agent layer is optional.
 
+**Who benefits:** e-commerce operators, marketplace/feed managers, and the AI
+agents that assist them (the same queries are served over MCP). The author runs
+these systems for a living — this is the weekly spreadsheet conversation, moved
+into a graph.
+
+## Why a graph — and why not a vector store
+
+A vector store finds text that *looks like* the question; it cannot say **what
+breaks**, because breakage lives in relationships that have to be traversed
+(listing → product → category → feed contract → rule), not in similarity.
+A graph answers with that traversal, and every answer arrives as a **path** —
+so the consequence is proven, not asserted.
+
 **Cypher next to the SQL it replaces:** blast radius is one variable-length
 pattern (query `01`). The relational equivalent joins the `Product`,
 `Listing`, `Marketplace`, `Feed`, `Mapping`, `Category`, `Rule`, `Campaign`,
 `Page` and `Segment` tables with a recursive CTE for the hops — ten tables deep,
 which is why nobody writes it on a Friday.
 
-**Who benefits:** e-commerce operators, marketplace/feed managers, and the AI
-agents that assist them (the same queries are served over MCP). The author runs
-these systems for a living — this is the weekly spreadsheet conversation, moved
-into a graph.
+## The mental model
+
+**An agent asks → five read-only MCP tools → the graph → an auditable path
+comes back.** Nothing writes, nothing guesses: `read_cypher`, `get_schema`,
+`blast_radius`, `rejection_causes`, `remediation`.
+
+## What connects to what
+
+- `Product` → `Listing` → `Marketplace` — where it is actually sold
+- `Product` → `Category` → `Rule`, `Campaign`, `Segment` — the commercial machinery pointed at it
+- `Category` → `Mapping` → `Feed` — the field contract each feed enforces (e.g. a required `gtin`)
+- `Page` → `Product` / `Category` — what the site shows and links
+
+The full node and relationship tables live under [How it uses Relate](#how-it-uses-relate).
 
 ## How it uses Relate
 
@@ -72,6 +95,112 @@ Where the answer is a consequence, it arrives as a **path** — the route from
 the change to the consequence, so the consequence is proven, not asserted.
 Queries that check existence (`03`, `05`) report the objects themselves; every
 *why*-question answers with a path.
+
+## Run it in 60 seconds (what a judge can explore)
+
+1. **Open [`viewer.html`](viewer.html)** — the pre-built blast-radius graph of
+   the demo product: offline, no install, no server. Click a node to isolate
+   its edges. Rebuild it any time with `make viewer`.
+2. **Run `make verify`** — eleven gates: every query, the MCP surface with all
+   five tools, baseline counts, temporal standing, remediation and a
+   parameter-injection test. Ends with `== verify: OK ==`.
+3. **Run `make report`** — a paste-into-a-ticket markdown impact report that
+   opens with a one-line verdict.
+4. **Ask an agent** — the committed `.mcp.json` wires any MCP client to five
+   read-only tools: `read_cypher`, `get_schema`, `blast_radius`,
+   `rejection_causes`, `remediation`.
+5. **Read [`docs/agent-session.md`](docs/agent-session.md)** — a real recorded
+   Q&A, query by query, including the agent correcting its own first query.
+
+## For your agent
+
+The store serves MCP over stdio with five read-only tools — `read_cypher`,
+`get_schema`, and the domain tools **`blast_radius(sku)`** (direct breakage +
+category machinery + the bounded 4-hop neighbourhood, each layer labelled
+honestly), **`rejection_causes`** (why listings are rejected, with the proof
+path) and **`remediation`** (the one fix, ranked by payoff) — so an agent can
+answer "what breaks?" with paths instead of guesses:
+
+```bash
+relate serve --mcp stdio --database store/catalog.rl --read-only
+# on hardware the prebuilt CLI does not support:
+./bin/relate serve --mcp stdio --database store/catalog.rl --read-only
+```
+
+This repository ships a ready [.mcp.json](.mcp.json) — run your agent from
+the repository root and it picks the graph up. For OpenCode there is also an
+[`opencode.json`](opencode.json) in the repository root with the same server,
+so the graph appears as `tools.cascade.*` without any manual wiring. A drop-in
+agent skill at [`.agents/skills/cascade/SKILL.md`](.agents/skills/cascade/SKILL.md)
+teaches any coding agent the five tools and the honesty rules before it writes
+a single query (no rows → "no evidence in the graph"; every claim carries its
+path). Then ask it: *"We are discontinuing PU-1004 — what breaks?"*
+
+### Live excerpt (recorded 21 Nov 2026 — not scripted)
+
+**You:** What breaks if we stop selling PU-1004?
+
+**Agent** — calls `get_schema`, then writes its own Cypher:
+
+```cypher
+MATCH (l:Listing)-[:OFFERS]->(p:Product {sku: $sku})
+RETURN l.id AS listing, l.platform AS platform, l.status AS status
+ORDER BY l.platform
+```
+
+**Agent:**
+
+> **Two listings stop being sold:** `L-0004-0` — Google Shopping (live) and
+> `L-0004-1` — Rozetka (live). The product page `/p/pu-1004` becomes dead and
+> `/c/sneakers` loses a position; Google Merchant Center's **required `gtin`
+> contract** on the Sneakers category turns the delisting into a feed-vs-catalog
+> mismatch. Attached machinery that loses this product: rules
+> `Sneakers margin floor` + `Sneakers winter promo -15%`, campaigns
+> `Sneakers / Viber` and `Sneakers / Email (SendPulse)`, segments
+> `Sneakers viewers 30d` and `Win-back 180d` — **every claim a path in the graph**.
+
+The full transcript — all five queries of scene 1 and scene 2 (rejection root
+cause → `gtin` + `Listing → Product → Category → Mapping → Feed` path) —
+lives in [`docs/agent-session.md`](docs/agent-session.md). `make verify`
+smoke-tests this surface too, including that write attempts are refused.
+
+## From an agent answer to a decision
+
+One handover, three surfaces: the agent replies with a **path** → open
+[`viewer.html`](viewer.html) to see that path highlighted in the graph → run
+`make report` and paste its one-line verdict into the ticket. The terminal,
+the browser and the ticket are the same answer in three forms — nobody has to
+translate between them.
+
+## Evidence and engineering proof
+
+Every number above is produced by a run, not typed by hand:
+
+- **`make verify`** — eleven gates plus a committed-store precheck: seven
+  queries, the MCP surface, baseline counts (self-grading, including the
+  negative control of 553 clean products), temporal standing, remediation and
+  a parameter-injection test. Ends with `== verify: OK ==`.
+- **`make golden`** — the demo, report and verify outputs are compared
+  byte-for-byte against committed fixtures, so a refactor cannot quietly
+  change an answer.
+- **`make check-claims`** — every headline number in this README is reconciled
+  against the code (queries, gates, tools, baselines).
+- **CI** — the same three gates run on every push to `main` and every pull
+  request (badge above), plus a clean-working-tree assertion that keeps
+  `store/catalog.rl` byte-identical to the committed build.
+- **Determinism** — the generator is seed 42 and is re-run under a different
+  `PYTHONHASHSEED` inside verify, so the data is reproducible row for row.
+
+## When not to use Cascade
+
+See [`docs/limitations.md`](docs/limitations.md) — what Cascade does not do
+and why, in the same spirit as Relate's own limitations page. When the graph
+holds no evidence for a question, the answer is **no rows** — Cascade reports
+insufficient evidence instead of inventing a confident conclusion.
+
+---
+
+Technical details below: setup, data, numbers, mapping to the judging criteria.
 
 ## Setup and run
 
@@ -159,22 +288,6 @@ demo is falsifiable rather than hand-picked:
 | An expired promo still sitting in the graph (Skincare) | query `06` |
 | **Negative control:** the553 products that carry `gtin` are never flagged (47 form the entire risk pool) | queries `05`, `07` |
 
-## What a judge can explore in 60 seconds
-
-1. **Open [`viewer.html`](viewer.html)** — the pre-built blast-radius graph of
-   the demo product: offline, no install, no server. Click a node to isolate
-   its edges. Rebuild it any time with `make viewer`.
-2. **Run `make verify`** — eleven gates: every query, the MCP surface with all
-   five tools, baseline counts, temporal standing, remediation and a
-   parameter-injection test. Ends with `== verify: OK ==`.
-3. **Run `make report`** — a paste-into-a-ticket markdown impact report that
-   opens with a one-line verdict.
-4. **Ask an agent** — the committed `.mcp.json` wires any MCP client to five
-   read-only tools: `read_cypher`, `get_schema`, `blast_radius`,
-   `rejection_causes`, `remediation`.
-5. **Read [`docs/agent-session.md`](docs/agent-session.md)** — a real recorded
-   Q&A, query by query, including the agent correcting its own first query.
-
 ## The store in numbers
 
 | Metric | Value |
@@ -192,57 +305,6 @@ the ceiling:
 | 02 rejected root cause | 25 | 3.4 ms |
 | 03 invisible inventory | 150 | 9.1 ms |
 | 04 merge counterfactual | 15 | 1.2 ms |
-
-## Connect an agent (MCP)
-
-The store serves MCP over stdio with five read-only tools — `read_cypher`,
-`get_schema`, and the domain tools **`blast_radius(sku)`** (direct breakage +
-category machinery + the bounded 4-hop neighbourhood, each layer labelled
-honestly), **`rejection_causes`** (why listings are rejected, with the proof
-path) and **`remediation`** (the one fix, ranked by payoff) — so an agent can
-answer "what breaks?" with paths instead of guesses:
-
-```bash
-relate serve --mcp stdio --database store/catalog.rl --read-only
-# on hardware the prebuilt CLI does not support:
-./bin/relate serve --mcp stdio --database store/catalog.rl --read-only
-```
-
-This repository ships a ready [.mcp.json](.mcp.json) — run your agent from
-the repository root and it picks the graph up. A drop-in agent skill at
-[`.agents/skills/cascade/SKILL.md`](.agents/skills/cascade/SKILL.md) teaches
-any coding agent the five tools and the honesty rules before it writes a
-single query (no rows → "no evidence in the graph"; every claim carries its
-path). Then ask it: *"We are
-discontinuing PU-1004 — what breaks?"*
-
-### Live excerpt (recorded 21 Nov 2026 — not scripted)
-
-**You:** What breaks if we stop selling PU-1004?
-
-**Agent** — calls `get_schema`, then writes its own Cypher:
-
-```cypher
-MATCH (l:Listing)-[:OFFERS]->(p:Product {sku: $sku})
-RETURN l.id AS listing, l.platform AS platform, l.status AS status
-ORDER BY l.platform
-```
-
-**Agent:**
-
-> **Two listings stop being sold:** `L-0004-0` — Google Shopping (live) and
-> `L-0004-1` — Rozetka (live). The product page `/p/pu-1004` becomes dead and
-> `/c/sneakers` loses a position; Google Merchant Center's **required `gtin`
-> contract** on the Sneakers category turns the delisting into a feed-vs-catalog
-> mismatch. Attached machinery that loses this product: rules
-> `Sneakers margin floor` + `Sneakers winter promo -15%`, campaigns
-> `Sneakers / Viber` and `Sneakers / Email (SendPulse)`, segments
-> `Sneakers viewers 30d` and `Win-back 180d` — **every claim a path in the graph**.
-
-The full transcript — all five queries of scene 1 and scene 2 (rejection root
-cause → `gtin` + `Listing → Product → Category → Mapping → Feed` path) —
-lives in [`docs/agent-session.md`](docs/agent-session.md). `make verify`
-smoke-tests this surface too, including that write attempts are refused.
 
 ## How this maps to the judging criteria
 
@@ -268,13 +330,6 @@ docs — while **no AI runs inside the product**: every runtime answer is
 deterministic Cypher against the store, and the graph outranks any model
 (`docs/limitations.md`). The only third-party front-end asset is cytoscape.js
 (MIT), vendored in `vendor/`.
-
-## Limitations
-
-See [`docs/limitations.md`](docs/limitations.md) — what Cascade does not do
-and why, in the same spirit as Relate's own limitations page. When the graph
-holds no evidence for a question, the answer is **no rows** — Cascade reports
-insufficient evidence instead of inventing a confident conclusion.
 
 ## Beyond one file
 
