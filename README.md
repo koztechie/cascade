@@ -182,6 +182,12 @@ relate serve --mcp stdio --database store/catalog.rl --read-only
 ./bin/relate serve --mcp stdio --database store/catalog.rl --read-only
 ```
 
+**Read-only and bounded are a deliberate choice.** For an analytics tool,
+refusing every write is a stronger guarantee than promising not to clobber:
+`--read-only` makes the server refuse every write, so **it cannot delete
+anyone's graph — including yours**, whatever an agent asks it to do.
+`make verify` smoke-tests exactly that.
+
 This repository ships a ready [.mcp.json](.mcp.json) — run your agent from
 the repository root and it picks the graph up. For OpenCode there is also an
 [`opencode.json`](opencode.json) in the repository root with the same server,

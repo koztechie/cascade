@@ -278,6 +278,66 @@ ffmpeg -y -loop 1 -i sql-frame.png -t 15 -r 30 \
   -c:v libx264 -crf 18 -movflags +faststart sql-take1.mp4
 ```
 
+## Сцена 4 плану = сцена 3 шот-листа — Агент через MCP (крок 24)
+
+**Позиція:** 0:35–0:55 · **20 с** · 1 команда + 1 екран.
+
+### ✅ Знято 23.11.2026 — обидва дублі готові
+
+| Файл | Параметри |
+| --- | --- |
+| `/tmp/opencode/scene4/scene4-take1.mp4` | h264 · **1920×1080** · 30 fps · **20.000 с** · 425 КБ (темп 4/5/11 с) |
+| `/tmp/opencode/scene4/scene4-take2.mp4` | h264 · 1920×1080 · 30 fps · **20.000 с** · 426 КБ (темп 3/6/11 с) |
+
+**Дублі = дві монтажні версії** з різним темпом (контент детермінований —
+той самий живий транскрипт).
+
+### У кадрі — СПРАВЖНІЙ MCP-обмін, не макет
+
+Дані знято **живим викликом** `./bin/relate serve --mcp stdio --read-only`:
+`initialize` → `tools/list` → `tools/call read_cypher`. Відповідь — **2 рядки
+× 4 хопи**:
+
+```
+Listing:  https://rozetka.example/pu-1004
+Product:  PulseKit Sneakers Edge Sand
+Category: Sneakers
+Mapping:  gtin
+Feed:     Google Merchant Center
+```
+
+(другий рядок — той самий шлях для `google-shopping.example/pu-1004`.)
+
+**Три стани в таймлайні** (наростання перевірено: 21 432 → 40 642 → 57 136
+світлих пікселів):
+1. **0–4 с** — команда `serve --mcp stdio … --read-only` + «connected — 5
+   read-only tools» (`read_cypher · get_schema · blast_radius ·
+   rejection_causes · remediation`);
+2. **4–9 с** — питання *«We are discontinuing PU-1004 — what breaks?»* + виклик
+   `read_cypher` із реальним Cypher;
+3. **9–20 с** — `→ 2 rows · 4 hops` і обидва шляхи.
+
+### Титр D5 (у кадрі, нижня третина)
+
+> **Read-only and bounded — a deliberate choice.** For an analytics tool,
+> refusing every write is a stronger guarantee than promising not to clobber:
+> **it cannot delete anyone's graph, including yours.**
+
+**Де лежить те саме речення в текстах:** буліона *«Share graph state safely…
+without clobbering»* **у наших документах немає** (перевірено grep'ом — це
+захищене копірайт-обладнання Relate на сторінці конкурсу), тому речення D5
+**додано в README**, у `## For your agent`, одразу після блоку команди
+`serve`. Воно спирається на те, що вже перевірено: `make verify` (гейт `05`)
+**саме це і тестує** — що запис відмовляється.
+
+**Повторити:**
+```bash
+python3 /tmp/opencode/scene4/build_stages.py     # 3 PNG з mcp.json
+ffmpeg -loop 1 -t 4 -i stage1.png -loop 1 -t 5 -i stage2.png -loop 1 -t 11 -i stage3.png \
+  -filter_complex "[0:v][1:v][2:v]concat=n=3:v=1:a=0,fps=30,format=yuv420p" \
+  -c:v libx264 -crf 18 -movflags +faststart scene4-take1.mp4
+```
+
 ## Крок 20 — демо-стейт (репетиція пройдена 23.11.2026)
 
 **Прогін у свіжій оболонці (`bash --noprofile --norc`): усі сцени
