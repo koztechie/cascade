@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cascade — SQL vs Cypher</title>
+<!--
+  Крок 23 — сцена «SQL-контраст».
+  ЧИСЛА ЗВІРЕНІ З README (секція «Cypher next to the SQL it replaces»):
+  перелік рахувався скриптом → рівно 10 таблиць; у титулі кроку23 було
+  «7 таблиць і 7 JOIN'ів» — це не має підстав у наших опублікованих
+  твердженнях, тому на картці TEN TABLES.
+  Палітра — та сама, що в viewer.html і scene1.html. Без JS, без зовнішніх
+  ресурсів і шрифтів.
+-->
+<style>
+  :root{
+    --bg:#0e1116; --panel:#161b22; --text:#e6edf3;
+    --muted:#8b949e; --accent:#58a6ff; --border:#30363d;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--text)}
+  body{
+    font:400 clamp(18px,2.1vw,30px)/1.45 ui-sans-serif,system-ui,-apple-system,
+          "Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  main{
+    position:relative;min-height:100vh;
+    display:flex;flex-direction:column;justify-content:center;
+    gap:.7em;padding:8vh 7vw;
+  }
+  .brand{
+    position:absolute;top:6vh;left:7vw;
+    font-size:.42em;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+  }
+  h1{
+    margin:0;font-weight:600;letter-spacing:-.015em;
+    font-size:2.05em;line-height:1.12;text-wrap:balance;
+  }
+  h1 em{font-style:normal;color:var(--accent)}
+  .rule{width:14vw;min-width:90px;height:3px;border:0;background:var(--accent);margin:.2em 0 .1em}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:2.4em;margin-top:.5em}
+  .cols section{
+    background:var(--panel);border:1px solid var(--border);border-radius:10px;
+    padding:1.1em 1.3em;
+  }
+  .cols h2{
+    margin:0 0 .35em;font-size:.62em;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);font-weight:600;
+  }
+  .num{margin:0;font-size:1.75em;font-weight:600;line-height:1.1}
+  .sql .num{color:var(--text)}
+  .cy .num{color:var(--accent)}
+  .small{margin:.5em 0 0;font-size:.6em;line-height:1.5;color:var(--muted)}
+  .small b{color:var(--text);font-weight:600}
+</style>
+<main>
+  <span class="brand">Cascade</span>
+  <h1>Ten tables in SQL.<br><em>One pattern in Cypher.</em></h1>
+  <hr class="rule">
+  <div class="cols">
+    <section class="sql">
+      <h2>SQL</h2>
+      <p class="num">10 tables</p>
+      <p class="small"><b>Product · Listing · Marketplace · Feed · Mapping ·
+      Category · Rule · Campaign · Page · Segment</b> — joined with a recursive
+      CTE for every hop.</p>
+    </section>
+    <section class="cy">
+      <h2>Cypher</h2>
+      <p class="num">1 pattern</p>
+      <p class="small">Blast radius (query <b>01</b>) is a single
+      variable-length traversal outward from the product — the same answer,
+      stated as code rather than as a claim.</p>
+    </section>
+  </div>
+</main>
+</html>

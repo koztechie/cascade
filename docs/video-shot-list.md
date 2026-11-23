@@ -221,6 +221,56 @@ ffmpeg -y -loop 1 -i scene1-frame.png -t 15 -r 30 \
 **Повторити:** той самий скрипт (у `PLAN64`, крок 22) — послідовність
 знімків 4 с до кліку + 16 с після, `ffmpeg -framerate <fps> -vf "fps=30"`.
 
+## Сцена 3 (крок 23) — SQL-контраст
+
+### ⚠️ Число в титулі виправлено: «7 таблиць» → **ten tables**
+
+Титул кроку23 — *«у SQL це 7 таблиць і 7 JOIN'ів»* — **не має підстав** у
+наших опублікованих твердженнях. Перелік у README (секція
+**«Cypher next to the SQL it replaces»**) **пораховано скриптом: рівно 10**
+(`Product · Listing · Marketplace · Feed · Mapping · Category · Rule ·
+Campaign · Page · Segment`), і README прямо каже **«ten tables»** — це
+твердження охороняє `check-claims` через B2.6. На екран виводити «7» означало б
+**суперечність із власним README**. Тому на картці — **ten tables**.
+
+### ✅ Знято 23.11.2026 — обидва дублі готові
+
+| Файл | Параметри |
+| --- | --- |
+| `/tmp/opencode/sql/sql-take1.mp4` | h264 · **1920×1080** · 30 fps · **15.000 с** · 220 КБ (fade 0.5 с) |
+| `/tmp/opencode/sql/sql-take2.mp4` | h264 · 1920×1080 · 30 fps · **15.000 с** · 241 КБ (fade 0.8 с) |
+
+Джерело: [`sql-contrast.html`](../sql-contrast.html) — та сама палітра, що в
+`viewer.html` / `scene1.html`; **0 JS, 0 зовнішніх ресурсів**.
+
+**Що у кадрі (перевірено візуально):** заголовок *«Ten tables in SQL. **One
+pattern in Cypher.**»* → дві панелі: **SQL** = `10 tables` + повний перелік
+із 10 назв + «joined with a recursive CTE for every hop» · **Cypher** =
+`1 pattern` (query `01`, one variable-length traversal).
+
+### 📌 Статус у структурі відео
+
+Ця сцена — **додатковий вставка-кадр**, а не частина з п'яти основних сцен
+шот-листа (рішення кроку22: шот-лист визначає порядок). Вирішити про
+використання на **кроці 26 (склейка)**: якщо вставляти — **триматися бюджету**
+(ціль 60–90 с, жорсткий ліміт правил §4 — 120 с), тобто або скоротити іншу
+сцену, або прийняти довший метраж.
+
+**Повторити:**
+```bash
+python3 -c "
+from playwright.sync_api import sync_playwright
+from pathlib import Path
+with sync_playwright() as p:
+    b=p.chromium.launch(headless=True)
+    pg=b.new_page(viewport={'width':1920,'height':1080})
+    pg.goto(Path('sql-contrast.html').resolve().as_uri()); pg.wait_for_timeout(400)
+    pg.screenshot(path='sql-frame.png'); b.close()"
+ffmpeg -y -loop 1 -i sql-frame.png -t 15 -r 30 \
+  -vf "fade=t=in:st=0:d=0.5,fade=t=out:st=14.5:d=0.5,format=yuv420p" \
+  -c:v libx264 -crf 18 -movflags +faststart sql-take1.mp4
+```
+
 ## Крок 20 — демо-стейт (репетиція пройдена 23.11.2026)
 
 **Прогін у свіжій оболонці (`bash --noprofile --norc`): усі сцени
