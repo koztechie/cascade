@@ -13,14 +13,14 @@
 | Поле | Обов'язкове | Стан / план |
 | --- | --- | --- |
 | `* Project name` | так | ✅ **Cascade** (заповнено 21.11) |
-| `* Elevator pitch` (textarea) | так | ✅ *«What breaks if we change this? One Cypher question instead of seven tables — with the exact graph path as proof.»* (112 символів, заповнено 21.11) |
+| `* Elevator pitch` (textarea) | так | ⚠️ **ОНОВИТИ ПЕРЕД ПОДАЧЕЮ:** у полі досі **старий** текст (112 символів, заповнено 21.11). Замінити на єдиний пітч із B2.2 — **107 символів** (ліміт Devpost =140), той самий, що в README і в описі репо: *«Know the blast radius before it breaks: one Cypher question returns a path through the graph — not a score.»* |
 | `Edit thumbnail` (file) | ні | ⬜ План: GIF/PNG із вьюера (крок 30) |
 
 ## Сторінка 2 — Project details (Project Story)
 
 | Поле | Обов'язкове | План наповнення |
 | --- | --- | --- |
-| `* About the project` (textarea, markdown, placeholder `## Inspiration...`) | так | ⬜ З **README** (крок 39): Use case → How it uses Relate (mode / why / what the graph models) → Setup and run → Where the data lives → Limitations |
+| `* About the project` (textarea, markdown, placeholder `## Inspiration...`) | так | 🟣 **ТЕКСТ ГОТОВ** — [`docs/devpost-description.md`](devpost-description.md) (B2.7, 23.11): 5 заголовків шаблону в порядку + окрема секція `What connects to what` + заява §4 (Product capabilities / third-party / AI tools). **Вставити вручну** — сесії в агента немає |
 | `* Built with` (теги, select2) | так | ⬜ `relate`, `python`, `cytoscape`, `graph database`, `mcp` (крок 40) |
 | `"Try it out" links` (URL) | ні | ⬜ `https://github.com/koztechie/cascade` (крок 40) |
 | `Image gallery` (file, drag&drop) | ні | ⬜ Скріншоти вьюера (крок 32) |

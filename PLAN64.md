@@ -430,10 +430,72 @@ Documentation and reproducibility 15. **Три висновки з точног�
     валідні; порядок 16 секцій відповідає B2.1; скан гіп-лексики чистий
     (єдиний збіг «always the right» — це **заперечна** фраза); одруківок
     немає; `store/catalog.rl` у `git status` не з'явився (M1).
-- [ ] 🟣 **B2.7 — Опис Devpost (крок 39; D8, Z50):** draft **#1314206** за шаблоном
+- [x] 🟣 **B2.7 — Опис Devpost (крок 39; D8, Z50):** ✅ **ВИКОНАНО 23.11.2026.** draft **#1314206** за шаблоном
   (Use case / Mode / Why this mode / What the graph models / Setup and run /
   Where the data lives + «what connects to what»), написаний як стратегічна
   історія: проблема → чому граф → аудований доказ → шлях адопції. **[1–3/8]**
+  - **✅ Результат: створено [`docs/devpost-description.md`](docs/devpost-description.md)** —
+    готовий текст (**151 рядок**) між маркерами `ПОЧАТОК` / `КІНЕЦЬ`, який
+    вставляється в поле `* About the project`.
+    **Структура = 8 секцій, шаблонні 5 — у правильному порядку:**
+    `# Cascade` + пітч(107) → **`## Use case`** (проблема + персона + сім
+    запитів + **чому граф** на кінці) → **`## What connects to what`** →
+    **`## How it uses Relate`** (`- Mode:` / `- Why this mode:` /
+    `- What the graph models:`) → **`## What is verified…`** →
+    **`## Setup and run`** → **`## Where the data lives`** →
+    **`## Product capabilities, third-party tools and AI tools`**.
+    Дуга відповідає вимозі: **проблема → чому граф → аудований доказ → шлях
+    адопції** (доказ покладено між «How it uses Relate» і «Setup», щоб
+    відносний порядок 5 шаблонних заголовків лишився дослівним).
+  - **🔍 Шаблон звірено дослівно зі сторінки конкурсу (перетягнув 23.11,
+    кеш зник):** `# Project name / One-line pitch / ## Use case / ## How it
+    uses Relate (Mode: | Why this mode: | What the graph models:) / ## Setup
+    and run / ## Where the data lives`. Чекліст подачі дослівно:
+    **«Project description: the use case, and what connects to what»** — тому
+    «what connects to what» **винесено в окрему секцію**, а не заховано.
+  - **⚖️ Заява §4 — джерело перечитано, і крок39 виявився неточним:**
+    - §4 дослівно: *«A statement of which **Product capabilities, third-party
+      tools, and AI tools** the project uses»* → остання секція тексту
+      покриває всі три.
+    - §3 дослівно: *«meaningful use of Relate, **for example** through the
+      CLI, embedded use, WebAssembly, MCP, Bolt or HTTP, hybrid retrieval, or
+      a connection to Neo4j or Aura»*. У кроці39 перелік був записаний
+      **скорочено** (без WebAssembly / Bolt-HTTP / hybrid retrieval). Перелік
+      «for example» = **не вичерпний**, тож підмножина достатня — але
+      **буквального цитування скороченого варіанта я уникнув** (щоб не
+      видавалось за дослівну цитату).
+    - Вживано лише ті поверхні, якими **справді** користуємось: **CLI ·
+      embedded use · MCP · single-file `.rl` · Cypher**; Bolt/HTTP/Rust
+      подано **позитивно** («вмикається, коли каталог виросте» →
+      *Beyond one file*), не як перелік того, «чого не зробили».
+      **WebAssembly і hybrid retrieval не згадано навмисно** (M3 відкладено;
+      вектор поза обсягом — і це не пропуск, якщо мовчати).
+    - Third-party: `cytoscape.js` (MIT, вендорений) + Relate/`relate_db`
+      (Apache-2.0). AI: асистоване будівництво під керівництвом власника +
+      **«no AI runs inside the product»**. Originality: написано для цього
+      конкурсу, сторонній application-code не перевикористано.
+  - **✅ Валідація тексту (скриптом, до коміту):** 5 шаблонних заголовків у
+    правильному порядкові індекси `[0,2,4,5]` ✓ · `- Mode:` / `- Why this
+    mode:` / `- What the graph models:` ✓ · секція `What connects to what` ✓ ·
+    §4 усі 10 маркерів ✓ · **імен суддів 0** ✓ · пітч **дослівно = README =
+    репо (107 символів)** ✓ · числа 1,667 / 3,730 / 600 / 553 / 1.1 MB /
+    12 s / eleven gates / seven / five tools — усі на місці ✓ · markdown-паркани
+    **парні (4 і 2)** ✓ · скан гіп-лексики чистий ✓ · `check-claims` =0,
+    `golden` =0, `verify` =0 FAIL ✓.
+  - **📌 Актуалізовано заодно `docs/devpost-submission-form.md`** (дві
+    застарілі записи, які могли б привести до хибної вставки):
+    1. поле *Elevator pitch* позначено **⚠️ ОНОВИТИ** — у ньому досі **старий
+       112-символьний** текст (заповнено 21.11), а треба новий **107-символьний**
+       із B2.2;
+    2. поле *About the project* тепер вказує на готовий текст
+       (раніше — «⬜ з README»).
+  - **⚠️ Не зроблено (твоя рука, немає сесії Devpost):** вставка тексту в
+    поле + оновлення *Elevator pitch*. Обидві дії — на сторінці
+    `…/1314206-cascade/project-overview`.
+  - **⬜ Відкрито до зйомки:** пункт про **згенерований голос (ElevenLabs)** у
+    секції AI tools — залишено явним коментарем-місцем у тексті; дописати
+    після кроку28, **якщо** голос синтетичний (крок39 вимагає подавати це як
+    інженерну дисципліну, а не виправдання — D33).
 - [ ] 👤 **B2.8 — Рішення по D16/D75 («прецедент-рішення в графі»): ТАК/НІ —
   ДО зйомки.** Нова фіча ~3–4 год, підтримують 3–4 судді з 8; якщо «ні» —
   описати наявний ланцюжок «вердикт → причина → шлях» як прецедент у
