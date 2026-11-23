@@ -89,6 +89,39 @@
 [`scene1.html`](../scene1.html). Відкрити → `F11` на весь екран → знімати
 **~15 с** (вікно сцени 1: 0:00–0:15).
 
+### ✅ Знято 23.11.2026 — обидва дублі готові
+
+| Файл | Параметри |
+| --- | --- |
+| `/tmp/opencode/scene1/scene1-take1.mp4` | h264 · **1920×1080** · 30 fps · **15.000 с** · 149 КБ (fade 0.5 с) |
+| `/tmp/opencode/scene1/scene1-take2.mp4` | h264 · 1920×1080 · 30 fps · **15.000 с** · 180 КБ (fade 0.8 с) |
+| `/tmp/opencode/scene1/scene1-frame.png` | перший кадр 1920×1080 — постер/прев'ю |
+
+**Метод — не запис екрана, а рендер.** Знімати робочий стіл **не став**:
+у кадрі на той момент були відкриті робочі й особисті вікна (шляхи,
+підключення, файли) — **саме те, що §11 і крок 17 забороняють показувати**, а
+на переходах (запуск/закриття браузера) стіл з'явився б у кадрі на частку
+секунди. Замість цього картку **відрендерено головно** → у кадрі **взагалі
+немає десктопу**, кроп не потрібен, розмір рівно 1080p.
+
+**Повторити (файли відтворювані, одна команда):**
+```bash
+cd <repo>
+python3 -c "
+from playwright.sync_api import sync_playwright
+from pathlib import Path
+with sync_playwright() as p:
+    b=p.chromium.launch(headless=True)
+    pg=b.new_page(viewport={'width':1920,'height':1080})
+    pg.goto(Path('scene1.html').resolve().as_uri()); pg.wait_for_timeout(300)
+    pg.screenshot(path='scene1-frame.png'); b.close()"
+ffmpeg -y -loop 1 -i scene1-frame.png -t 15 -r 30 \
+  -vf "fade=t=in:st=0:d=0.5,fade=t=out:st=14.5:d=0.5,format=yuv420p" \
+  -c:v libx264 -crf 18 -movflags +faststart scene1-take1.mp4
+```
+*Потрібен `python3 -m playwright install chromium` (одноразово, 114 МіБ) —
+системний Chrome на цій машині зламаний (`crashpad`, exit 133).*
+
 | Елемент | Текст (дослівно) |
 | --- | --- |
 | Заголовок | `We are discontinuing PU-1004 — what breaks?` |
