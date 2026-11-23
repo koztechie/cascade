@@ -220,6 +220,21 @@ One handover, three surfaces: the agent replies with a **path** → open
 the browser and the ticket are the same answer in three forms — nobody has to
 translate between them.
 
+### The chain behind that decision: verdict → reason → path
+
+Every answer here has the same three parts. The **verdict** is the one line
+`make report` prints. The **reason** is the table beneath it — which objects,
+and why. The **path** is the route through the graph that produced both, and
+pasting the printed statement back into
+`relate query --database store/catalog.rl --read-only` returns the same rows.
+
+That is what lets a decision be audited later without trusting a summary: not
+a note saying someone decided, but the inputs, the route and the output, still
+reproducible from the committed store. What it deliberately is **not** is a
+history of earlier decisions — the graph is current-state only
+([`docs/limitations.md`](docs/limitations.md)): it records the catalog as it
+stands, not the choices that shaped it.
+
 ## Evidence and engineering proof
 
 Every number in this README comes from a run, not from typing — and each claim
