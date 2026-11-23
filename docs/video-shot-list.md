@@ -389,6 +389,85 @@ ffmpeg -loop 1 -t 4 -i stage1.png -loop 1 -t 5 -i stage2.png -loop 1 -t 11 -i st
 **Основні5 сцен = 90 с** (0:00–1:30 ✓) · з вставкою = **105 с ≤ 120 с** ✓.
 **Критерій «кожна сцена записана, ≥1 дубль» — виконано: у кожної сцени2 дублі.**
 
+## Крок 26 — склейка + вшиті субтитри
+
+### ✅ ФІНАЛЬНИЙ ФАЙЛ ГОТОВИЙ
+
+**`/tmp/opencode/final/cascade-demo.mp4`** — h264 · **1920×1080** · 30 fps ·
+**105.000000 с** (1:45) · **3150 кадрів** · 2.39 МБ · тиха AAC-доріжка.
+
+**Порядок сцен** (рішення кроку23: SQL-вставка вставлена):
+
+| # | Сцена | Тривалість | Накопичувально |
+| --- | --- | --- | --- |
+| 1 | проблема / картка питання | 15 с | 0:00–0:15 |
+| 2 | шлях-доказ (вьюер) | 20 с | 0:15–0:35 |
+| 3 | **вставка SQL-контраст** | 15 с | 0:35–0:50 |
+| 4 | агент (MCP) | 20 с | 0:50–1:10 |
+| 5 | нетехнічний (`make report`) | 17 с | 1:10–1:27 |
+| 6 | довіра (`make verify`) | 18 с | 1:27–1:45 |
+
+**105 с ≤ ліміт §4 120 с ✓** (ціль 60–90 с розширена, ліміт не порушено).
+
+### Вшиті субтитри — 9 кадрів, дослівні формулювання B2
+
+| # | Вікно | Текст (джерело) |
+| --- | --- | --- |
+| 1 | 0:00–0:07.5 | blast radius розсіяний по фідах/лістингах/правилах… |
+| 2 | 0:07.5–0:15 | …сьомий наслідок до того, як він зламається |
+| 3 | 0:15–0:25 | *Every answer arrives as a path — proven, not asserted* |
+| 4 | 0:25–0:35 | *The path is the proof — not a confidence score* |
+| — | 0:35–0:50 | **без субтитру** (картка SQL сама пояснює) |
+| 5 | 0:50–1:10 | *connected context instead of a guess…* |
+| 6 | 1:10–1:18.5 | *No Cypher required — the graph in business words…* |
+| 7 | 1:18.5–1:27 | *…a missing gtin gets a listing rejected…* |
+| 8 | 1:27–1:36 | *Every number … comes from a run, not from typing* |
+| 9 | 1:36–1:45 | *…compared byte-for-byte against committed fixtures* |
+
+Стиль: білий із чорною обводкою, `FontSize=17`, `MarginV=42`, по центру знизу.
+
+### ✅ Верифікація «без чорних кадрів» — чесно, двома способами
+
+| Тест | Результат |
+| --- | --- |
+| `blackdetect` **стандартний** (`pix_th=0.10`) | **0 подій ✓** |
+| `blackdetect` **суворий** (`pix_th=0.15`) | 1 подія: **87–92 с** |
+| **Контент-тест** (35 проб, пікселі >100) | **мінімум 28 805 видимих пікселів** → **0 порожніх кадрів ✓** |
+
+**Пояснення суворого прапора:** 87–92 с — це **початок сцени `make verify`**
+(лише рядок команди на темному тлі `#0e1116` **за дизайном**). `blackdetect`
+міряє **темряву**, а не порожнечу: на тому самому кадрі **28 805 чітко
+видимих пікселів** (рядок команди + нижня третина з акцентною лінійкою).
+Тому **чорних кадрів немає** — є темна тема термінала.
+
+**Додатково:** `scene1` і `sql` були пере-кодовані **без `fade`** — інакше на
+стиках виникло б по 0.5 с чорного (у вихідних дублях fade лишився, у склейці
+його немає).
+
+### Повторити склейку (повна команда)
+
+```bash
+cd /tmp/opencode/final
+# 1) картки без fade (щоб не було чорних стиків)
+ffmpeg -y -loop 1 -i /tmp/opencode/scene1/scene1-frame.png -t 15 -r 30 \
+  -vf format=yuv420p -c:v libx264 -crf 18 -movflags +faststart s1.mp4
+ffmpeg -y -loop 1 -i /tmp/opencode/sql/sql-frame.png -t 15 -r 30 \
+  -vf format=yuv420p -c:v libx264 -crf 18 -movflags +faststart s3.mp4
+# 2) list.txt + subs.srt (тексти — у цьому файлі вище)
+# 3) склейка + субтитри + тиха доріжка
+ffmpeg -y -f concat -safe 0 -i list.txt \
+  -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=48000 \
+  -filter_complex "[0:v]subtitles=subs.srt:force_style='FontName=DejaVu Sans,FontSize=17,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,Outline=2,Shadow=0,BorderStyle=1,MarginV=42,Alignment=2'[v]" \
+  -map "[v]" -map 1:a -c:v libx264 -crf 18 -pix_fmt yuv420p -c:a aac -shortest \
+  -movflags +faststart cascade-demo.mp4
+```
+
+**Аудіо:** зараз **тиха доріжка**. Після генерації озвучки (ElevenLabs) замінити:
+```bash
+ffmpeg -i cascade-demo.mp4 -i voice.m4a -map 0:v -map 1:a \
+  -c:v copy -c:a aac -b:a 128k -shortest -movflags +faststart final-with-voice.mp4
+```
+
 ## Крок 20 — демо-стейт (репетиція пройдена 23.11.2026)
 
 **Прогін у свіжій оболонці (`bash --noprofile --norc`): усі сцени
