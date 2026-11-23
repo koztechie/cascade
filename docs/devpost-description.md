@@ -60,6 +60,12 @@ change spreadsheet — SKU retired, price moved, categories merged — together
 with marketplace/feed managers and the AI agents that assist them. You learn
 the seventh consequence **before it breaks**, not on Friday in production.
 
+**The challenge asks for connected data that helps "agents, apps, or people" —
+Cascade answers with all three from one graph:** the **agent** over MCP (five
+read-only tools), the **app** as `viewer.html` and a one-line `make report`,
+and the **person** above — an operations manager who never has to write
+Cypher.
+
 Cascade answers seven of those questions, one Cypher statement each: what
 breaks if we stop selling this product · why is this listing rejected · what
 is invisible or unlinked right now · what collides if we merge two categories
@@ -205,7 +211,9 @@ code. *(Додати «generated voice in the demo video» — якщо у ві�
 - [ ] **Пітч однаковий** із README і описом репо (107 символів; поле
       *Elevator pitch* на сторінці 1 оновити на цей самий, воно досі містить
       старий 112-символьний — див. `devpost-submission-form.md`).
-- [ ] **Жодних імен суддів** (перевірити: `grep -iE "hunger|kollegger|reif|oskar|lyon|yaru|kate smith|stephen chin"`).
+- [ ] **Жодних імен суддівської панелі** — за рішенням **V1** імена не
+      зберігаються в репозиторії; шаблон пошуку тримати **поза** ним
+      (у приватних нотатках), а не в цьому файлі.
 - [ ] Числа збігаються з README: 1,667 · 3,730 · 600 · 553 · 1.1 MB · 12 s ·
       11 gates · 7 queries · 5 tools · 60+.
 

@@ -594,11 +594,47 @@ Documentation and reproducibility 15. **Три висновки з точног�
   - **Валідація:** `check-claims` =0 (12/12), `golden` =0, `verify` =0 FAIL ·
     якорі валідні · `store/catalog.rl` не з'явився (M1) · `git status` чистий
     від сторонніх файлів.
-- [ ] 🟣 **B2.10 — Віддзеркалити тріаду самого виклику: «agents, apps, or people»**
+- [x] 🟣 **B2.10 — Віддзеркалити тріаду самого виклику: «agents, apps, or people»** ✅ **ВИКОНАНО 23.11.2026.**
   (дослівна фраза зі сторінки конкурсу). У нас є **всі три**: агент (MCP),
   застосунок (вьюер/звіт), людина (опс-персона) — назвати це явно в README і
   описі Devpost. Більшість команд зроблять лише «для агентів» → наша
   повнота = перевага в Usefulness/Clarity. **[2/8]**
+  - **🔍 Фраза звірена дослівно зі сторінки конкурсу (перетягнув 23.11),
+    повний контекст:** *the challenge: **"Context, connected"** … Build a
+    project that shows how connected data helps **agents, apps, or people**
+    find and use the relationships that matter.* (Там само: **736
+    participants**; «Your project can be new or extend something you already
+    have. Share your code and documentation so others can learn from and
+    reuse your work.»)
+  - **✅ Додано в два тексти, ідентично за змістом:**
+    - **README**, `## Use case`, одразу після блоку «Not a developer tool»
+      (тобто після персони й «What a non-technical person sees» — тому
+      вказівка «the **person** above» точна):
+      ***«The challenge names three audiences — "agents, apps, or people" —
+      and Cascade serves all three from the same graph: the agent, over MCP
+      with five read-only tools; the app, as `viewer.html` and the one-line
+      `make report`; the person above, who never has to write Cypher. One
+      store, one set of paths, three ways in.»***
+    - **`docs/devpost-description.md`**, `## Use case`, під абзацом *Who this
+      is for* — той самий мапінг, стисліший (це паст-блок, піде в Devpost).
+  - **⚠️ ІНЦИДЕНТ, який я спричинив і сам зловив:** у **B2.7** я вписав у
+    чек-лист цього ж файлу **шаблон `grep` разом з іменами суддів** — аби
+    перевірити їхню відсутність, тобто **заніс у репозиторій те, чого V1
+    прямо забороняє зберігати**. Знайшов лише зараз, бо **розширив обсяг
+    скана** (раніше перевіряв лише паст-частину файлу, а не весь). Виправлено:
+    рядок замінено на посилання на рішення V1 **без вимови імен**, а шаблон
+    пошуку лишено поза репозиторієм. *Висновок на майбутнє: скан V1 треба
+    запускати **по всьому файлу**, а не по витягнутій частині.*
+  - **✅ Валідація:**
+    - дослівна фраза **«agents, apps, or people»** — **в обох** текстах ✓;
+      усі три поверхні названі явно (`the **agent**` / `the **app**` /
+      `the **person**` — по 1 у кожному файлі) ✓;
+    - **V1-скан усіх 58 відстежуваних файлів → 0 збігів** ✓;
+    - опис Devpost не постраждав: шаблонні 5 заголовків у порядку `[0,2,4,5]`,
+      `What connects to what` ✓, заява §4 ✓, **паркани парні** (4 / 2) ✓;
+    - `check-claims` =0 (12/12), `golden` =0, `verify` =0 FAIL · якорі
+      валідні · `store/catalog.rl` не з'явився (M1) · імен суддів у плані 0.
+  - **📈 ФАЗА B2 ЗАКРИТО: B2.1–B2.10 усі виконані.**
 
 ## Фаза C — Відео 60–90 секунд (26–30 листопада)
 

@@ -35,6 +35,12 @@ the reason beside each edge.
 operations manager can act on — the Cypher underneath is the audit trail, not
 the interface.
 
+**The challenge names three audiences — "agents, apps, or people" — and
+Cascade serves all three from the same graph:** the **agent**, over MCP with
+five read-only tools; the **app**, as `viewer.html` and the one-line
+`make report`; the **person** above, who never has to write Cypher. One store,
+one set of paths, three ways in.
+
 Cascade models that blast radius as a graph and answers, in one Cypher
 statement each:
 
