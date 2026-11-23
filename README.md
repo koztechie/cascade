@@ -75,10 +75,11 @@ and every sentence it says back can be checked against the edge that produced
 it.
 
 **Where this is different:** of the **60+ projects in this hackathon's
-gallery, none works on catalog/feed operations** (counted 22 Nov 2026) — the
-"what breaks?" question is asked elsewhere too (incidents, data lineage, code
-changes), but no entry points it at a product catalog. Cascade points it where
-the answer costs money: listings, feeds, rules, campaigns.
+gallery, none works on catalog/feed operations** (every entry re-read on
+23 Nov 2026, 67 in all). The "what breaks?" question is asked elsewhere too
+(incidents, data lineage, code changes), but no entry points it at a product
+catalog. Cascade points it where the answer costs money: listings, feeds,
+rules, campaigns.
 
 **The return:** **seven consequences instead of seven tables**, a **one-line
 verdict** you can paste into a ticket, and the blast-radius query (475 rows)
