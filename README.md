@@ -31,6 +31,10 @@ certain fields (a missing `gtin` gets a listing rejected); **rules** and
 Change one product and the picture shows what else moves — highlighted, with
 the reason beside each edge.
 
+**Not a developer tool:** the deliverable is a sentence and a picture an
+operations manager can act on — the Cypher underneath is the audit trail, not
+the interface.
+
 Cascade models that blast radius as a graph and answers, in one Cypher
 statement each:
 
@@ -53,6 +57,12 @@ deliberate, and a risk row is a prompt to fix the field — not a judgment on th
 product. The graph also runs **without any AI account**: every query, the
 report and the viewer work standalone; the MCP agent layer is optional.
 
+**When this is the wrong tool:** when the graph has no edges for the question —
+an **empty blast radius is not proof that a change is safe**, only that the
+graph saw no connection. Cascade also has no history to query, no live
+marketplace or CRM feeds, no semantic search, and one writer per store.
+[The limits in full](#when-not-to-use-cascade).
+
 ## Why a graph — and why not a vector store
 
 A vector store finds text that *looks like* the question; it cannot say **what
@@ -65,22 +75,20 @@ and every sentence it says back can be checked against the edge that produced
 it.
 
 **Where this is different:** of the **60+ projects in this hackathon's
-gallery, none works on catalog/feed operations** (checked 22 Nov 2026) — the
-"what breaks?" question is asked elsewhere (incidents, data lineage, code
-changes), but nobody points it at a product catalog. Cascade does, and it
-points it where the answer costs money: listings, feeds, rules, campaigns.
+gallery, none works on catalog/feed operations** (counted 22 Nov 2026) — the
+"what breaks?" question is asked elsewhere too (incidents, data lineage, code
+changes), but no entry points it at a product catalog. Cascade points it where
+the answer costs money: listings, feeds, rules, campaigns.
 
-**The return:** one `make verify` replaces the Friday spreadsheet review —
-**seven consequences instead of seven tables**, a **one-line verdict** you can
-paste into a ticket, and the widest query runs in **206 ms** on a 2013 laptop.
-The cost side is one **1.1 MB** file: no server, no signup, no directory to
-reconcile.
+**The return:** **seven consequences instead of seven tables**, a **one-line
+verdict** you can paste into a ticket, and the blast-radius query (475 rows)
+runs in **206 ms** on a 2013 laptop — timings, and the machine they came from,
+are in [The store in numbers](#the-store-in-numbers). The cost side is one
+**1.1 MB** file: no server, no signup, no directory to reconcile.
 
-**Cypher next to the SQL it replaces:** blast radius is one variable-length
-pattern (query `01`). The relational equivalent joins the `Product`,
-`Listing`, `Marketplace`, `Feed`, `Mapping`, `Category`, `Rule`, `Campaign`,
-`Page` and `Segment` tables with a recursive CTE for the hops — ten tables deep,
-which is why nobody writes it on a Friday.
+**Cypher next to the SQL it replaces:** one pattern here, **ten tables** there —
+the pattern, the join list and the recursive CTE are
+[down in the technical details](#cypher-next-to-the-sql-it-replaces).
 
 ## The mental model
 
@@ -214,29 +222,50 @@ translate between them.
 
 ## Evidence and engineering proof
 
-Every number above is produced by a run, not typed by hand:
+Every number in this README comes from a run, not from typing — and each claim
+traces back to the thing that produced it:
 
-- **`make verify`** — eleven gates plus a committed-store precheck: seven
-  queries, the MCP surface, baseline counts (self-grading, including the
-  negative control of 553 clean products), temporal standing, remediation and
-  a parameter-injection test. Ends with `== verify: OK ==`.
-- **`make golden`** — the demo, report and verify outputs are compared
-  byte-for-byte against committed fixtures, so a refactor cannot quietly
-  change an answer.
-- **`make check-claims`** — every headline number in this README is reconciled
-  against the code (queries, gates, tools, baselines).
-- **CI** — the same three gates run on every push to `main` and every pull
-  request (badge above), plus a clean-working-tree assertion that keeps
-  `store/catalog.rl` byte-identical to the committed build.
-- **Determinism** — the generator is seed 42 and is re-run under a different
-  `PYTHONHASHSEED` inside verify, so the data is reproducible row for row.
+| Claim in this README | Where it is checked |
+| --- | --- |
+| What the seven queries return | `make verify` gates `01`–`04`, `06`, `08`, `09` assert the expected rows; `make golden` freezes the full output in `tests/golden/` |
+| **Eleven gates** exist | `scripts/check_claims.sh` counts the gate markers inside `scripts/verify.sh`; a missing gate fails |
+| **Five read-only tools**, by name | `check-claims` asks the live MCP server for `tools/list`; a rename or a sixth tool fails |
+| **1,667** nodes · **3,730** relationships · **600 products** · **553** clean | `verify` gate `07` (self-grading against this README), reconciled by `check-claims` |
+| **47** in the risk pool | 600 − 553, both figures asserted by gate `07` |
+| Outputs cannot drift during a refactor | `make golden` compares the demo, report and verify output byte for byte with committed fixtures |
+| `== verify: OK ==` in **12 s** · **206 ms** for the blast-radius query | measured on the 2013 AMD A4-4020 in [The store in numbers](#the-store-in-numbers) |
+| A **one-line verdict** | the `**Verdict:**` line `make report` writes, frozen in `tests/golden/report.md` |
+| Values stay values, not injected code | `verify` gate `10` passes an injection-like `sku` and requires no rows |
+| The data is reproducible row for row | `verify` gate `11` regenerates under a different `PYTHONHASHSEED` and requires byte-identical output |
+| What you cloned is what you ran | `make check-committed` opens the committed store **before** anything rebuilds it; CI asserts a clean working tree |
+| The engine version cannot drift silently | `check-claims` compares the `Makefile` pin against `docs/versions.md` and the installed `.venv` |
+
+`make verify` is the single entry point: committed-store precheck first, then
+the eleven gates above, ending with `== verify: OK ==`. CI runs `verify`,
+`golden` and `check-claims` on every push and pull request, so a green badge
+means what a green local run means.
 
 ## When not to use Cascade
 
-See [`docs/limitations.md`](docs/limitations.md) — what Cascade does not do
-and why, in the same spirit as Relate's own limitations page. When the graph
-holds no evidence for a question, the answer is **no rows** — Cascade reports
-insufficient evidence instead of inventing a confident conclusion.
+[`docs/limitations.md`](docs/limitations.md) is the full list, in the same
+spirit as Relate's own limitations page. Condensed: the catalog is synthetic,
+there are no live integrations, the seven queries are the product (anything
+else needs an agent on top), blast radius stops at 4 hops, the graph is
+current-state only, there is no semantic search, and Relate allows one writer
+per store.
+
+Two of those matter more than the rest:
+
+- **No evidence means no rows.** When the graph has nothing to show for a
+  question, Cascade reports insufficient evidence instead of inventing a
+  confident conclusion.
+- **Absence of impact is not proof of safety.** An empty blast radius means the
+  graph saw no connection, not that the change is harmless — which is why
+  query `03` exists, to print what the graph is missing rather than let
+  silence reassure you.
+
+Nothing here assumes a graph is always the right tool: if a relationship was
+never recorded, no amount of traversal will produce it.
 
 ---
 
@@ -256,18 +285,14 @@ cd cascade
 make verify
 ```
 
-`make verify` first opens the **committed** store read-only (a broken commit
-must fail before anything rebuilds it), then regenerates the synthetic catalog
-(deterministic, seed 42), rebuilds `store/catalog.rl`, and runs every check:
-seven queries, the MCP surface, baseline counts (self-grading, including the
-negative control of 553 clean products) and temporal standing. Expected output
-ends with `== verify: OK ==`.
-The same three gates run on every push to `main` and on every pull request
-in GitHub Actions (badge above), so a green badge means exactly what a green
-local run means — including the clean-working-tree check that keeps
-`store/catalog.rl` byte-identical to the committed build.
-`make report` produces a paste-into-a-ticket markdown impact report with a
-one-line verdict; `make demo` runs all seven queries interactively.
+`make verify` opens the **committed** store read-only first (a broken commit
+must fail before anything rebuilds it), regenerates the synthetic catalog
+(seed 42), rebuilds `store/catalog.rl`, and runs the eleven gates — each one
+traced under [Evidence and engineering proof](#evidence-and-engineering-proof).
+Expected output ends with `== verify: OK ==`; CI runs the same gates on every
+push and pull request, so a green badge means what a green local run means.
+`make report` writes the paste-into-a-ticket markdown report with its one-line
+verdict; `make demo` runs all seven queries interactively.
 
 If your CPU predates AVX2, the prebuilt binary refuses to start — that is
 exactly the hardware this project is for. The repository ships `bin/relate`,
@@ -346,11 +371,20 @@ the ceiling:
 | 03 invisible inventory | 150 | 9.1 ms |
 | 04 merge counterfactual | 15 | 1.2 ms |
 
+## Cypher next to the SQL it replaces
+
+Blast radius (query `01`) is a single variable-length pattern. The relational
+equivalent joins the `Product`, `Listing`, `Marketplace`, `Feed`, `Mapping`,
+`Category`, `Rule`, `Campaign`, `Page` and `Segment` tables with a recursive CTE
+for the hops — **ten tables**. That gap is the whole argument for the graph,
+stated as code rather than as a claim.
+
 ## How this maps to the judging criteria
 
 - **Creativity** — an e-commerce *operations* change-impact graph: of the 60+
-  entries in the gallery, none works on catalog/feed operations; the question
-  ("what breaks?") is universal in a domain nobody else picked.
+  entries in the gallery, none works on catalog/feed operations; the same
+  "what breaks?" question is asked about incidents, data lineage and code
+  changes, and this is the gallery entry that points it at a catalog.
 - **Relate and connected context** — single-file store, seven Cypher checks,
   MCP with five read-only tools (`read_cypher`, `get_schema`, `blast_radius`,
   `rejection_causes`, `remediation`), every answer a traversal with the path as
@@ -367,9 +401,9 @@ the ceiling:
 
 Built with AI assistance under the owner's direction — design, code, tests and
 docs — while **no AI runs inside the product**: every runtime answer is
-deterministic Cypher against the store, and the graph outranks any model
-(`docs/limitations.md`). The only third-party front-end asset is cytoscape.js
-(MIT), vendored in `vendor/`.
+deterministic Cypher against the store, and where a model and the graph
+disagree, the graph wins (`docs/limitations.md`). The only third-party
+front-end asset is cytoscape.js (MIT), vendored in `vendor/`.
 
 ## Beyond one file
 
