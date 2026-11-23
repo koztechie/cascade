@@ -151,7 +151,7 @@ Queries that check existence (`03`, `05`) report the objects themselves; every
 1. **Open [`viewer.html`](viewer.html)** — the demo blast radius, already
    built: offline, no server, **no query written**. That is your first
    insight. (`make viewer` rebuilds it.)
-2. **Run `make verify`** — eleven gates, ending `== verify: OK ==` in **12 s**
+2. **Run `make verify`** — eleven gates, ending `== verify: OK ==` in **12–17 s**
    on the floor machine.
 
 Then go deeper: `make report` (the one-line verdict, again no Cypher) ·
@@ -255,7 +255,7 @@ traces back to the thing that produced it:
 | **1,667** nodes · **3,730** relationships · **600 products** · **553** clean | `verify` gate `07` (self-grading against this README), reconciled by `check-claims` |
 | **47** in the risk pool | 600 − 553, both figures asserted by gate `07` |
 | Outputs cannot drift during a refactor | `make golden` compares the demo, report and verify output byte for byte with committed fixtures |
-| `== verify: OK ==` in **12 s** · **206 ms** for the blast-radius query | measured on the 2013 AMD A4-4020 in [The store in numbers](#the-store-in-numbers) |
+| `== verify: OK ==` in **12–17 s** · **206 ms** for the blast-radius query | measured on the 2013 AMD A4-4020 in [The store in numbers](#the-store-in-numbers) |
 | A **one-line verdict** | the `**Verdict:**` line `make report` writes, frozen in `tests/golden/report.md` |
 | Values stay values, not injected code | `verify` gate `10` passes an injection-like `sku` and requires no rows |
 | The data is reproducible row for row | `verify` gate `11` regenerates under a different `PYTHONHASHSEED` and requires byte-identical output |

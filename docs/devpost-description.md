@@ -145,7 +145,7 @@ cd cascade
 make verify
 ```
 
-Expected output ends with `== verify: OK ==` (about **12 s** on a 2013 floor
+Expected output ends with `== verify: OK ==` (about **12–17 s** on a 2013 floor
 machine). On hardware the prebuilt CLI does not support, `bin/relate` drives
 the same engine through the pinned Python client — same commands, same store.
 
@@ -214,7 +214,7 @@ code. *(Додати «generated voice in the demo video» — якщо у ві�
 - [ ] **Жодних імен суддівської панелі** — за рішенням **V1** імена не
       зберігаються в репозиторії; шаблон пошуку тримати **поза** ним
       (у приватних нотатках), а не в цьому файлі.
-- [ ] Числа збігаються з README: 1,667 · 3,730 · 600 · 553 · 1.1 MB · 12 s ·
+- [ ] Числа збігаються з README: 1,667 · 3,730 · 600 · 553 · 1.1 MB · 12–17 s ·
       11 gates · 7 queries · 5 tools · 60+.
 
 ## Відкриті нотатки
