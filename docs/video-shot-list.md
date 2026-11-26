@@ -474,27 +474,31 @@ ffmpeg -loop 1 -t 4 -i stage1.png -loop 1 -t 5 -i stage2.png -loop 1 -t 11 -i st
 стиках виникло б по 0.5 с чорного (у вихідних дублях fade лишився, у склейці
 його немає).
 
-### Повторити склейку (повна команда)
+### Повторити збірку
+
+**Збірку ведуть скрипти в репозиторії** (переживають очищення `/tmp`):
 
 ```bash
-cd /tmp/opencode/final
-# 1) картки без fade (щоб не було чорних стиків)
-ffmpeg -y -loop 1 -i /tmp/opencode/scene1/scene1-frame.png -t 15 -r 30 \
-  -vf format=yuv420p -c:v libx264 -crf 18 -movflags +faststart s1.mp4
-ffmpeg -y -loop 1 -i /tmp/opencode/sql/sql-frame.png -t 15 -r 30 \
-  -vf format=yuv420p -c:v libx264 -crf 18 -movflags +faststart s3.mp4
-# 2) list.txt + subs.srt (тексти — у цьому файлі вище)
-# 3) склейка + субтитри + тиха доріжка
-ffmpeg -y -f concat -safe 0 -i list.txt \
-  -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=48000 \
-  -filter_complex "[0:v]subtitles=subs.srt:force_style='FontName=DejaVu Sans,FontSize=17,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,Outline=2,Shadow=0,BorderStyle=1,MarginV=42,Alignment=2'[v]" \
-  -map "[v]" -map 1:a -c:v libx264 -crf 18 -pix_fmt yuv420p -c:a aac -shortest \
-  -movflags +faststart cascade-demo.mp4
+python3 video/render_assets.py   # асети: картки, кадри вьюера, живий MCP, make report/verify
+python3 video/build_video.py     # рух + переходи + музика + субтитри → video/cascade-demo.mp4
 ```
 
-**Аудіо:** зараз **тиха доріжка**. Після генерації озвучки (ElevenLabs) замінити:
+**Що робить `build_video.py`:** дрібні стадії (4–5 на сцену) → **повільний
+zoom** на кожній сцені (`zoompan`) → **`xfade` 0.5 с** між сценами →
+**оригінальна музика** (синтез у самому скрипті: drone A1+E2 з LFO ·
+sub-pulse 100 BPM · Am-акорд · riser · impact; peak −3 dBFS, mean −17.3 dB) →
+внутрішні субтитри → **`video/cascade-demo.mp4` (90.000 с)**.
+
+**Чому скрипти в репо, а не в `/tmp`:** тимчасова тека очищалась **4 рази**
+за цю сесію; скрипти в репозиторії дозволяють відтворити все з чистого
+клону за ~4 хвилини.
+
+**Аудіо:** у файлі **оригінальна музика** — вона згенерована нашим же
+скриптом, тому це **наша власна робота** і §4 («треті матеріали — лише з
+дозволу») не застосовується. Після генерації ШІ-озвучки (варіанти — секція
+«Озвучка: варіанти та ліцензії») замінити доріжку:
 ```bash
-ffmpeg -i cascade-demo.mp4 -i voice.m4a -map 0:v -map 1:a \
+ffmpeg -i video/cascade-demo.mp4 -i voice.m4a -map 0:v -map 1:a \
   -c:v copy -c:a aac -b:a 128k -shortest -movflags +faststart final-with-voice.mp4
 ```
 
