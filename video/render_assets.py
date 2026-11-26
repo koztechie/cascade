@@ -56,6 +56,49 @@ with sync_playwright() as pw:
         page.screenshot(path=str(OUT / f"card-{name}.png"))
     ok.append("card: 4 reveal stages")
 
+    # ---- 1a. SQL contrast card (single still, zoom is added at encode) ----
+    page.goto((REPO / "sql-contrast.html").resolve().as_uri(), wait_until="load")
+    page.wait_for_timeout(350)
+    page.screenshot(path=str(OUT / "sql.png"))
+    ok.append("sql: still")
+
+    # ---- 1b. question card: the FULL card from frame 0 -------------------
+    # Staged fragments produced two identical early frames and an empty first
+    # frame, which breaks the step 27 rule that frame 0 carries the question.
+    # A single still plus a slow zoom keeps frame 0 correct.
+    page.goto((REPO / "scene1.html").resolve().as_uri(), wait_until="load")
+    page.wait_for_timeout(450)
+    page.screenshot(path=str(OUT / "question.png"))
+    ok.append("question: full still")
+
+    # ---- 1b. animated cards: capture frames DURING the CSS animation ----
+    # scale.html and close.html animate themselves, so screenshotting over
+    # time yields real motion frames (DOM animation — no canvas involved).
+    for name, seconds in (("scale", 13.0), ("close", 8.0)):
+        pg2 = browser.new_page(viewport={"width": 1920, "height": 1080},
+                               device_scale_factor=1)
+        d = OUT / name
+        if d.exists():
+            for old in d.iterdir():
+                old.unlink()          # stale frames would break f%04d numbering
+        d.mkdir(exist_ok=True)
+        pg2.goto((REPO / f"{name}.html").resolve().as_uri(), wait_until="load")
+        pg2.wait_for_timeout(1000)     # first line fully entered before frame 0
+        stamps = []
+        t_end = time.time() + seconds
+        while time.time() < t_end:
+            i = len(stamps)
+            # JPEG with a .jpg name: ffmpeg's png decoder rejects jpeg bytes
+            pg2.screenshot(path=str(d / f"f{i:04d}.jpg"), type="jpeg",
+                           quality=92)
+            stamps.append(time.time())
+            pg2.wait_for_timeout(110)
+        span = stamps[-1] - stamps[0]
+        (OUT / f"{name}.txt").write_text(f"{len(stamps)} {span}\n")
+        ok.append(f"{name}: {len(stamps)} frames over {span:.2f}s "
+                  f"(scene {seconds:.0f}s)")
+        pg2.close()
+
     # ---- 2. viewer: capture sequence with a real click ------------------
     ctx = browser.new_context(viewport={"width": 1920, "height": 1080},
                               device_scale_factor=1)

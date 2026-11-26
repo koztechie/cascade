@@ -1,15 +1,20 @@
 #!/usr/bin/env python3
-"""Build the Cascade demo video: motion, crossfades, original score, subtitles.
+"""Build the Cascade demo video v2: hard-cut structure built for impact.
 
-Pipeline
---------
-  1. terminal stage pages  -> PNG   (finer staging = more on-screen events)
-  2. scenes                -> mp4   (staged reveals + slow zoom via zoompan)
-  3. score                 -> wav   (synthesised here: our own work, CC-free)
-  4. xfade chain + burned subtitles + score -> video/cascade-demo.mp4 (90 s)
+Eight scenes, 90.000 s total, hard cuts (a punchier rhythm than crossfades),
+an original score whose accents land on the reveals, and burned subtitles.
 
-Requires: video/render_assets.py has been run (assets in /tmp/opencode/vassets).
-Run:       python3 video/build_video.py
+  1 question  10s   hook — first frame must be the question (step 27)
+  2 scale     13s   600 / 1,667 / 3,730 -> 475 consequences -> 1 file
+  3 viewer    17s   the path, revealed by a real click
+  4 sql       11s   ten tables vs one pattern
+  5 agent     17s   live MCP exchange, read-only claim
+  6 verdict   9s    the one line from make report
+  7 verify    5s    == verify: OK ==
+  8 close     8s    pitch + repository + friction claims
+
+Requires: python3 video/render_assets.py
+Run:      python3 video/build_video.py
 """
 import json
 import math
@@ -27,23 +32,24 @@ OUT = REPO / "video" / "cascade-demo.mp4"
 W.mkdir(parents=True, exist_ok=True)
 
 FPS = 30
-D_XFADE = 0.5
-# source durations chosen so the xfade chain lands on exactly 90.000 s
-SCENES = {
-    "card":   16,
-    "viewer": 21,
-    "agent":  20,
-    "report": 18,
-    "verify": 17,
-}
-ORDER = ["card", "viewer", "agent", "report", "verify"]
+SCENES = [
+    ("question", 10),
+    ("scale",    13),
+    ("viewer",   17),
+    ("sql",      11),
+    ("agent",    17),
+    ("verdict",   9),
+    ("verify",    5),
+    ("close",     8),
+]
+assert sum(d for _, d in SCENES) == 90, sum(d for _, d in SCENES)
 
 
 def sh(cmd: str) -> None:
     r = subprocess.run(cmd, shell=True, capture_output=True, text=True)
     if r.returncode != 0:
-        print(r.stderr[-1200:], file=sys.stderr)
-        sys.exit(f"FAILED: {cmd[:160]}")
+        print(r.stderr[-1400:], file=sys.stderr)
+        sys.exit(f"FAILED: {cmd[:170]}")
 
 
 def esc(s: str) -> str:
@@ -51,7 +57,7 @@ def esc(s: str) -> str:
 
 
 # --------------------------------------------------------------------------
-# 1. terminal stage pages
+# terminal stage pages (unchanged styling from v1)
 # --------------------------------------------------------------------------
 TERM = """<!doctype html><html lang="en"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>Cascade</title>
@@ -89,16 +95,16 @@ T_AGENT = ('<div class="title"><b>Read-only and bounded — a deliberate choice.
            'For an analytics tool, refusing every write is a stronger guarantee than '
            'promising not to clobber: <b>it cannot delete anyone\'s graph, '
            'including yours.</b></div>')
-T_REPORT = ('<div class="title"><b>One line you can paste into a ticket.</b> '
-            'make report writes the verdict first — every table under it is a '
-            'live Cypher result.</div>')
+T_VERDICT = ('<div class="title"><b>One line you can paste into a ticket.</b> '
+             'make report writes the verdict first — every table under it is a '
+             'live Cypher result.</div>')
 T_VERIFY = ('<div class="title"><b>Eleven gates, then a green line.</b> '
             'make verify grades itself: queries, MCP surface, baselines, '
             'injection, determinism.</div>')
 
 
-def build_stages():
-    """Return {scene: [(png, seconds), ...]} for the three terminal scenes."""
+def stage_plans():
+    """Return {name: ([(html, seconds)...], title)} for the staged scenes."""
     out = {}
 
     mcp = json.loads((A / "mcp.json").read_text())
@@ -119,7 +125,7 @@ def build_stages():
     a4 = a3 + (f'\n\n<span class="res">→ {mcp["payload"]["row_count"]} rows · '
                f'{rows[0]["hops"]} hops</span>\n<pre class="out">{rowb(rows[0])}</pre>')
     a5 = a4 + f'\n\n<pre class="out">{rowb(rows[1])}</pre>'
-    out["agent"] = ([(a1, 3), (a2, 4), (a3, 5), (a4, 4), (a5, 4)], T_AGENT)
+    out["agent"] = ([(a1, 3), (a2, 3), (a3, 4), (a4, 4), (a5, 3)], T_AGENT)
 
     rep = (A / "report.out").read_text(errors="replace").splitlines()
     ri = next(i for i, l in enumerate(rep) if l.startswith("**Verdict:**"))
@@ -128,231 +134,232 @@ def build_stages():
     ver = (f'<span class="verdict"><span class="ok">{esc(rep[ri])}</span></span>\n'
            + "".join(f'<span class="dim">{esc(l)}</span>\n'
                      for l in rep[ri + 1:ri + 4]))
-    r1 = cmd
-    r2 = cmd + gen
-    r3 = cmd + gen + '<span class="dim">…</span>\n' + ver
-    r4 = r3 + "".join(f'<span class="dim">{esc(l)}</span>\n'
-                      for l in rep[ri + 4:ri + 9])
-    out["report"] = ([(r1, 3), (r2, 4), (r3, 5), (r4, 6)], T_REPORT)
+    out["verdict"] = ([(cmd, 2), (cmd + gen, 3),
+                       (cmd + gen + '<span class="dim">…</span>\n' + ver, 4)],
+                      T_VERDICT)
 
-    ver_out = (A / "verify.out").read_text(errors="replace").splitlines()
-    gates = [i for i, l in enumerate(ver_out) if l.startswith("-- ")]
-    vi = next(i for i, l in enumerate(ver_out) if "verify: OK" in l)
+    vo = (A / "verify.out").read_text(errors="replace").splitlines()
+    gates = [i for i, l in enumerate(vo) if l.startswith("-- ")]
+    vi = next(i for i, l in enumerate(vo) if "verify: OK" in l)
     vcmd = '<span class="ps">$</span> <span class="cmd">make verify</span>\n'
-    head = "".join(f'<span class="gate">{esc(ver_out[i])}</span>\n'
-                   for i in gates[:4])
-    mid = "".join(f'<span class="gate">{esc(ver_out[i])}</span>\n'
-                  for i in gates[4:8])
-    tail = "".join(f'<span class="gate">{esc(ver_out[i])}</span>\n'
-                   for i in gates[8:])
-    okl = f'<span class="ok">{esc(ver_out[vi])}</span>\n'
-    v1 = vcmd
-    v2 = vcmd + head
-    v3 = vcmd + head + mid
-    v4 = vcmd + head + mid + tail
-    v5 = v4 + okl
-    out["verify"] = ([(v1, 3), (v2, 4), (v3, 4), (v4, 3), (v5, 3)], T_VERIFY)
+    head = "".join(f'<span class="gate">{esc(vo[i])}</span>\n' for i in gates[:6])
+    rest = "".join(f'<span class="gate">{esc(vo[i])}</span>\n' for i in gates[6:])
+    out["verify"] = ([(vcmd, 2),
+                      (vcmd + head + '<span class="dim">…</span>\n' + rest +
+                       f'<span class="ok">{esc(vo[vi])}</span>\n', 3)],
+                     T_VERIFY)
+
+    # question card: four reveal fragments of scene1.html
+    src = (REPO / "scene1.html").read_text(encoding="utf-8")
+    head, tail = src.split("<main>", 1)
+    head += "<main>"
+    tail = tail[tail.rindex("</main>"):]
+    frags = ['<span class="brand">Cascade</span>',
+             '<span class="brand">Cascade</span>\n  <p class="q">We are discontinuing <b>PU-1004</b> — what breaks?</p>',
+             '<span class="brand">Cascade</span>\n  <p class="q">We are discontinuing <b>PU-1004</b> — what breaks?</p>\n  <hr class="rule">',
+             '<span class="brand">Cascade</span>\n  <p class="q">We are discontinuing <b>PU-1004</b> — what breaks?</p>\n  <hr class="rule">\n  <p class="p">Know the blast radius before it breaks: one Cypher question returns a path through the graph — not a score.</p>']
+    out["question"] = ([(head + f + tail, 2.5) for f in frags], None)
     return out
 
 
-def render_stage_pages(stages):
+def render_stages(plan):
     from playwright.sync_api import sync_playwright
     with sync_playwright() as pw:
         b = pw.chromium.launch(headless=True)
         pg = b.new_page(viewport={"width": 1920, "height": 1080},
                         device_scale_factor=1)
-        plan = {}
-        for name, (parts, title) in stages.items():
+        result = {}
+        for name, (parts, title) in plan.items():
             seq = []
-            for i, (body, _dur) in enumerate(parts, 1):
-                html = TERM.replace("__BODY__", body).replace("__TITLE__", title)
+            for i, (body, dur) in enumerate(parts, 1):
+                html = TERM.replace("__BODY__", body).replace("__TITLE__",
+                                                              title or "")
                 f = W / f"{name}-{i}.html"
                 f.write_text(html, encoding="utf-8")
                 pg.goto(f.resolve().as_uri(), wait_until="load")
-                pg.wait_for_timeout(200)
+                pg.wait_for_timeout(220)
                 png = W / f"{name}-{i}.png"
                 pg.screenshot(path=str(png))
-                seq.append((str(png), _dur))
-            plan[name] = seq
+                seq.append((str(png), dur))
+            result[name] = seq
         b.close()
-    return plan
+    return result
 
 
-def encode_scene(name, seq, total):
-    """Concatenate staged stills with their hold times, then add a slow zoom."""
-    listf = W / f"{name}-stills.txt"
+def concat_stills(name, seq):
+    """Hold each still for its duration; returns a clip path."""
     lines = []
     for png, dur in seq:
-        lines.append(f"file '{png}'")
-        lines.append(f"duration {dur}")
-    lines.append(f"file '{seq[-1][0]}'")   # ffmpeg concat quirk: repeat last
+        lines += [f"file '{png}'", f"duration {dur}"]
+    lines.append(f"file '{seq[-1][0]}'")
+    listf = W / f"{name}-stills.txt"
     listf.write_text("\n".join(lines) + "\n")
-
-    # how many frames this scene must produce
-    n = int(round(total * FPS))
     raw = W / f"{name}-raw.mp4"
     sh(f"ffmpeg -y -v error -f concat -safe 0 -i {listf} -vsync vfr "
        f"-vf fps={FPS},format=yuv420p -c:v libx264 -crf 16 -preset fast {raw}")
+    return raw
 
-    # continuous slow zoom (motion on every frame) + drift-free centring
-    zoom = W / f"{name}.mp4"
+
+def encode_sequence(name, frames_dir, span, total):
+    """Encode a captured frame sequence to exactly `total` seconds.
+
+    fps is derived from the SCENE length, not the measured capture span, so a
+    capture that fell a fraction short still yields a full-length clip; the
+    few percent of speed change is imperceptible.
+    """
+    n = len(list(frames_dir.glob("*.png"))) + len(list(frames_dir.glob("*.jpg")))
+    fps = round(n / total, 3)
+    raw = W / f"{name}-raw.mp4"
+    pat = "f%04d.png" if list(frames_dir.glob("*.png")) else "f%04d.jpg"
+    sh(f"ffmpeg -y -v error -framerate {fps} -i {frames_dir / pat} "
+       f"-vf fps={FPS},format=yuv420p -c:v libx264 -crf 16 -preset fast "
+       f"-t {total} {raw}")
+    return raw
+
+
+def add_zoom(raw, total):
+    """Slow continuous zoom so no frame is ever static.
+
+    tpad clones the tail so a clip whose source is a fraction short still
+    lands on its exact planned duration; -t then trims the ones that are long.
+    """
+    out = W / (raw.stem.replace("-raw", "") + ".mp4")
     sh(f"ffmpeg -y -v error -i {raw} -vf "
-       f'"zoompan=z=\'1+0.00030*on\':d=1:'
+       f'"zoompan=z=\'1+0.00032*on\':d=1:'
        f'x=\'iw/2-(iw/zoom/2)\':y=\'ih/2-(ih/zoom/2)\':'
-       f's=1920x1080:fps={FPS}",format=yuv420p '
-       f"-t {total} -c:v libx264 -crf 18 -preset fast {zoom}")
-    return zoom
+       f's=1920x1080:fps={FPS}",format=yuv420p,'
+       f"tpad=stop_mode=clone:stop_duration=3 "
+       f"-t {total} -c:v libx264 -crf 18 -preset fast {out}")
+    return out
 
 
 # --------------------------------------------------------------------------
-# 3. original score — synthesised, so it is our own work (Section 4 safe)
+# score: our own synthesised audio, so section 4 needs no third-party grant
 # --------------------------------------------------------------------------
-def build_score(path: pathlib.Path, seconds: float = 90.0, sr: int = 44100):
+def build_score(path, seconds=90.0, sr=44100):
     n = int(seconds * sr)
     t = np.arange(n) / sr
-    mix = np.zeros(n, dtype=np.float64)
+    mix = np.zeros(n)
 
-    # sustained drone: A1 + fifth
     lfo = 0.5 + 0.5 * np.sin(2 * np.pi * 0.05 * t)
     mix += 0.30 * lfo * np.sin(2 * np.pi * 55.00 * t)
-    mix += 0.18 * lfo * np.sin(2 * np.pi * 82.41 * t + 0.4)
+    mix += 0.17 * lfo * np.sin(2 * np.pi * 82.41 * t + 0.4)
 
-    # soft sub pulse on a 100 BPM grid, entering after the cold open
-    period = 0.6
-    phase = np.mod(t, period)
-    env = np.exp(-phase / 0.085) * (t > 5.0)
-    mix += 0.42 * env * np.sin(2 * np.pi * 52.0 * t)
+    # pulse on a 100 BPM grid from the cold open onward
+    ph = np.mod(t, 0.6)
+    mix += 0.40 * np.exp(-ph / 0.085) * (t > 3.0) * np.sin(2 * np.pi * 52.0 * t)
 
-    # pad chord from the first scene change, fading out before the ending
-    pad_env = np.clip((t - 14.0) / 6.0, 0, 1) * np.clip((74.0 - t) / 8.0, 0, 1)
+    # pad across the middle
+    pad = np.clip((t - 10.0) / 5.0, 0, 1) * np.clip((78.0 - t) / 7.0, 0, 1)
     for f in (220.00, 261.63, 329.63):
-        mix += 0.085 * pad_env * np.sin(2 * np.pi * f * t + f)
+        mix += 0.085 * pad * np.sin(2 * np.pi * f * t + f)
 
-    # riser into the final beat
-    rise = np.clip((t - 70.0) / 16.0, 0, 1)
-    sweep = np.sin(2 * np.pi * (200.0 + 1300.0 * rise) * t)
-    rng = np.random.default_rng(7)
-    noise = rng.standard_normal(n)
-    mix += 0.16 * (rise ** 2) * sweep + 0.10 * (rise ** 2) * noise
+    # accents: the scale reveal, the contrast, and the close
+    for at, amp in ((10.0, 0.85), (40.0, 0.75), (82.0, 1.0)):
+        hit = np.exp(-np.clip(t - at, 0, None) / 0.55) * (t >= at)
+        mix += amp * hit * np.sin(2 * np.pi * 48.0 * t)
+        mix += 0.30 * amp * hit * np.random.default_rng(int(at)).standard_normal(n)
 
-    # impact on the closing frame
-    hit = np.exp(-np.clip(t - 86.5, 0, None) / 0.45) * (t >= 86.5)
-    mix += 0.55 * hit * np.sin(2 * np.pi * 48.0 * t)
-    mix += 0.22 * hit * noise
+    # riser into the closing card
+    rise = np.clip((t - 74.0) / 7.0, 0, 1)
+    mix += 0.15 * (rise ** 2) * np.sin(2 * np.pi * (220 + 1200 * rise) * t)
+    mix += 0.09 * (rise ** 2) * np.random.default_rng(11).standard_normal(n)
 
-    # fades and soft limit
-    mix *= np.clip(t / 1.5, 0, 1)
-    mix *= np.clip((seconds - t) / 1.5, 0, 1)
-    mix = np.tanh(mix * 1.15)
+    mix *= np.clip(t / 1.2, 0, 1)
+    mix *= np.clip((seconds - t) / 1.2, 0, 1)
+    mix = np.tanh(mix * 1.2)
     peak = np.max(np.abs(mix)) or 1.0
-    mix *= 10 ** (-3.0 / 20.0) / peak          # -3 dBFS peak
+    mix *= 10 ** (-3.0 / 20.0) / peak
 
-    # gentle stereo width: tiny delay + detune on the right channel
     delay = int(0.008 * sr)
     right = np.concatenate([np.zeros(delay), mix[:-delay]])
-    right = 0.82 * right + 0.18 * mix
-    stereo = np.stack([mix, right], axis=1)
-    data = (stereo * 32767).astype(np.int16)
-
+    stereo = np.stack([mix, 0.82 * right + 0.18 * mix], axis=1)
     with wave.open(str(path), "w") as w:
-        w.setnchannels(2)
-        w.setsampwidth(2)
-        w.setframerate(sr)
-        w.writeframes(data.tobytes())
-    rms = float(np.sqrt(np.mean(mix ** 2)))
+        w.setnchannels(2); w.setsampwidth(2); w.setframerate(sr)
+        w.writeframes((stereo * 32767).astype(np.int16).tobytes())
     print(f"  score: {seconds:.0f}s  peak={20*math.log10(np.max(np.abs(mix))):.1f} dBFS  "
-          f"rms={20*math.log10(rms):.1f} dBFS")
+          f"rms={20*math.log10(np.sqrt(np.mean(mix**2))):.1f} dBFS")
 
 
-# --------------------------------------------------------------------------
+SUBS = """1
+00:00:00,400 --> 00:00:09,500
+Every week an e-commerce team changes something — and nobody finds the seventh consequence until it breaks.
+
+2
+00:00:10,400 --> 00:00:22,500
+The blast radius of a single change — counted, not estimated.
+
+3
+00:00:23,400 --> 00:00:39,500
+Every answer arrives as a path — so the consequence is proven, not asserted.
+
+4
+00:00:40,400 --> 00:00:50,500
+Ten tables and a recursive CTE — or one variable-length pattern.
+
+5
+00:00:51,400 --> 00:01:07,500
+The agent gets connected context instead of a guess, and every sentence it says back can be checked against the edge that produced it.
+
+6
+00:01:08,000 --> 00:01:16,500
+No Cypher required — the graph in business words.
+
+7
+00:01:17,400 --> 00:01:21,500
+Every number comes from a run, not from typing.
+"""
+
+
 def main():
     print("1) stage pages …")
-    plan = render_stage_pages(build_stages())
+    plan = stage_plans()
+    staged = render_stages(plan)
 
-    print("2) encode scenes (staged reveals + slow zoom) …")
-    clips = {}
-    # card + viewer come from pre-rendered assets, terminals from `plan`
-    card_seq = [(str(A / f"card-stage{i}.png"), d)
-                for i, d in enumerate([3, 4, 4, 5], 1)]
+    print("2) encode scenes …")
+    clips = []
+    # image-sequence scenes captured by render_assets.py
+    seq_scenes = {}
+    for name in ("scale", "close"):
+        n, span = (A / f"{name}.txt").read_text().split()
+        seq_scenes[name] = (A / name, float(span))
     n_v, span_v = (A / "viewer.txt").read_text().split()
-    fps_v = round(int(n_v) / float(span_v), 3)
-    clips["card"] = encode_scene("card", card_seq, SCENES["card"])
-    # viewer: image2 sequence at its real capture pace, then zoom.
-    # NOTE: the concat demuxer collapses an image list without `duration`
-    # entries into a single frame — use the pattern demuxer instead.
-    sh(f"ffmpeg -y -v error -framerate {fps_v} -i {A}/viewer/f%04d.png "
-       f"-vf fps={FPS},format=yuv420p -c:v libx264 -crf 16 -preset fast "
-       f"{W}/viewer-raw.mp4")
-    sh(f"ffmpeg -y -v error -i {W}/viewer-raw.mp4 -vf "
-       f'"zoompan=z=\'1+0.00030*on\':d=1:'
-       f'x=\'iw/2-(iw/zoom/2)\':y=\'ih/2-(ih/zoom/2)\':'
-       f's=1920x1080:fps={FPS}",format=yuv420p -t {SCENES["viewer"]} '
-       f"-c:v libx264 -crf 18 -preset fast {W}/viewer.mp4")
-    clips["viewer"] = W / "viewer.mp4"
-    for name in ("agent", "report", "verify"):
-        clips[name] = encode_scene(name, plan[name], SCENES[name])
-        print(f"  {name}: {SCENES[name]}s")
+    seq_scenes["viewer"] = (A / "viewer", float(span_v))
+
+    for name, total in SCENES:
+        if name in seq_scenes:
+            d, span = seq_scenes[name]
+            raw = encode_sequence(name, d, span, total)
+        elif name in ("sql", "question"):
+            sh(f"ffmpeg -y -v error -loop 1 -i {A}/{name}.png -t {total} "
+               f"-r {FPS} -vf format=yuv420p -c:v libx264 -crf 16 -preset fast "
+               f"{W}/{name}-raw.mp4")
+            raw = W / f"{name}-raw.mp4"
+        else:
+            raw = concat_stills(name, staged[name])
+        clip = add_zoom(raw, total)
+        clips.append(clip)
+        print(f"  {name:9s} {total}s")
 
     print("3) score …")
     wav = W / "score.wav"
     build_score(wav)
 
-    print("4) assemble: xfade + subtitles + score …")
+    print("4) hard cuts + subtitles + score …")
     srt = W / "subs.srt"
     srt.write_text(SUBS, encoding="utf-8")
-    fc = [
-        f"[0:v][1:v]xfade=transition=fade:duration={D_XFADE}:offset={16-D_XFADE}[a]",
-        f"[a][2:v]xfade=transition=fade:duration={D_XFADE}:offset={16+21-2*D_XFADE}[b]",
-        f"[b][3:v]xfade=transition=fade:duration={D_XFADE}:offset={16+21+20-3*D_XFADE}[c]",
-        f"[c][4:v]xfade=transition=fade:duration={D_XFADE}:offset={16+21+20+18-4*D_XFADE}[v]",
-        f"[v]subtitles={srt}:force_style='FontName=DejaVu Sans,FontSize=17,"
-        f"PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,Outline=2,"
-        f"Shadow=0,BorderStyle=1,MarginV=42,Alignment=2'[vo]",
-    ]
-    ins = " ".join(f"-i {clips[c]}" for c in ORDER)
-    sh(f"ffmpeg -y -v error {ins} -i {wav} -filter_complex \"{' ; '.join(fc)}\" "
-       f"-map \"[vo]\" -map 5:a -c:v libx264 -crf 18 -preset medium "
+    # hard cuts: concat demuxer, then burn subtitles, then mux the score
+    lst = W / "final-list.txt"
+    lst.write_text("".join(f"file '{c}'\n" for c in clips))
+    sh(f"ffmpeg -y -v error -f concat -safe 0 -i {lst} -i {wav} "
+       f"-filter_complex \"[0:v]subtitles={srt}:force_style='FontName=DejaVu Sans,"
+       f"FontSize=17,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,Outline=2,"
+       f"Shadow=0,BorderStyle=1,MarginV=42,Alignment=2'[v]\" "
+       f"-map \"[v]\" -map 1:a -c:v libx264 -crf 18 -preset medium "
        f"-pix_fmt yuv420p -c:a aac -b:a 192k -shortest "
        f"-movflags +faststart \"{OUT}\"")
     print(f"  -> {OUT}")
 
-
-SUBS = """1
-00:00:00,000 --> 00:00:07,500
-The blast radius of that one change is scattered across product feeds, marketplace listings, price rules, campaigns, landing pages and CRM segments
-
-2
-00:00:07,500 --> 00:00:15,000
-— today it lives in spreadsheets and tribal knowledge, and nobody finds the seventh consequence until it breaks.
-
-3
-00:00:15,800 --> 00:00:25,500
-Every answer arrives as a path — so the consequence is proven, not asserted.
-
-4
-00:00:25,500 --> 00:00:35,500
-The path is the proof — not a confidence score, not a summary: a route through the graph you can open in the viewer and run again yourself.
-
-5
-00:00:36,300 --> 00:00:55,000
-The agent gets connected context instead of a guess, and every sentence it says back can be checked against the edge that produced it.
-
-6
-00:00:55,800 --> 00:01:04,000
-No Cypher required — the graph in business words: a product sits in a category; it has listings on marketplaces;
-
-7
-00:01:04,000 --> 00:01:12,500
-each feed demands certain fields (a missing gtin gets a listing rejected); rules and campaigns point at categories; pages link products and categories.
-
-8
-00:01:13,000 --> 00:01:21,500
-Every number in this README comes from a run, not from typing.
-
-9
-00:01:21,500 --> 00:01:29,500
-The demo, report and verify outputs are compared byte-for-byte against committed fixtures, so a refactor cannot quietly change an answer.
-"""
 
 if __name__ == "__main__":
     main()

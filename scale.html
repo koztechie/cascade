@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cascade — scale</title>
+<!--
+  Scale card. Every number is taken from the README and asserted by
+  make verify / check-claims: 600 products, 1,667 nodes, 3,730 relationships,
+  475 rows of query 01, 1.1 MB store. Nothing here is invented.
+  CSS-only staggered reveal: screenshotting at different times yields the
+  staged frames, so no JavaScript is needed.
+-->
+<style>
+  :root{--bg:#0e1116;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--text)}
+  body{font:400 clamp(20px,2.6vw,44px)/1.25 ui-sans-serif,system-ui,
+       -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       -webkit-font-smoothing:antialiased}
+  main{position:relative;min-height:100vh;display:flex;flex-direction:column;
+       justify-content:center;gap:.34em;padding:9vh 8vw}
+  .brand{position:absolute;top:6vh;left:8vw;font-size:.34em;letter-spacing:.16em;
+         text-transform:uppercase;color:var(--muted)}
+  .rise{opacity:0;transform:translateY(34px);
+        animation:rise .6s cubic-bezier(.16,.84,.3,1) forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+  .d1{animation-delay:.30s} .d2{animation-delay:1.35s}
+  .d3{animation-delay:2.60s} .d4{animation-delay:3.45s}
+  .d5{animation-delay:4.70s} .d6{animation-delay:5.70s}
+  .small{font-size:.56em;color:var(--muted);letter-spacing:.01em}
+  .small b{color:var(--text);font-weight:600}
+  .huge{font-size:2.5em;font-weight:700;letter-spacing:-.03em;line-height:1;
+        color:var(--accent);text-shadow:0 0 42px rgba(88,166,255,.35)}
+  .sub{font-size:.62em;color:var(--text);font-weight:600;letter-spacing:.02em}
+  .rule{width:16vw;min-width:120px;height:4px;background:var(--accent);
+        border:0;margin:.34em 0 .1em;transform-origin:left;
+        animation:grow .7s cubic-bezier(.16,.84,.3,1) forwards;
+        opacity:0;transform:scaleX(0)}
+  @keyframes grow{to{opacity:1;transform:scaleX(1)}}
+  .file{font-size:.66em;color:var(--text)}
+  .file b{color:var(--accent);font-weight:700}
+</style>
+<main>
+  <span class="brand">Cascade</span>
+  <div class="rise d1 small"><b>600</b> products · <b>1,667</b> nodes · <b>3,730</b> relationships</div>
+  <div class="rise d3 huge">475 consequences</div>
+  <div class="rise d4 sub">from ONE discontinued product</div>
+  <hr class="rule d5">
+  <div class="rise d6 file"><b>1 file</b> · 1.1 MB · no server · no signup</div>
+</main>
+</html>

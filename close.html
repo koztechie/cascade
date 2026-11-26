@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cascade — close</title>
+<!--
+  Closing card. Carries the pitch verbatim from the README (107 chars, the
+  same string used in the repo description and the Devpost elevator pitch)
+  plus the repository address and the three friction claims, all of which the
+  README states: no signup, no server, eleven gates green.
+-->
+<style>
+  :root{--bg:#0e1116;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--text)}
+  body{font:400 clamp(19px,2.4vw,40px)/1.3 ui-sans-serif,system-ui,
+       -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       -webkit-font-smoothing:antialiased}
+  main{position:relative;min-height:100vh;display:flex;flex-direction:column;
+       justify-content:center;gap:.5em;padding:9vh 8vw}
+  .brand{position:absolute;top:6vh;left:8vw;font-size:.34em;letter-spacing:.16em;
+         text-transform:uppercase;color:var(--muted)}
+  .rise{opacity:0;transform:translateY(30px);
+        animation:rise .65s cubic-bezier(.16,.84,.3,1) forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+  .d1{animation-delay:.30s} .d2{animation-delay:1.50s}
+  .d3{animation-delay:2.60s} .d4{animation-delay:3.60s}
+  h1{margin:0;font-size:1.85em;font-weight:700;letter-spacing:-.025em;
+     line-height:1.14;text-wrap:balance}
+  h1 em{font-style:normal;color:var(--accent)}
+  .pitch{margin:0;max-width:34ch;font-size:.6em;line-height:1.5;color:var(--muted)}
+  .rule{width:16vw;min-width:120px;height:4px;background:var(--accent);
+        border:0;margin:.1em 0}
+  .repo{font-size:.68em;color:var(--text);font-family:ui-monospace,SFMono-Regular,
+        Menlo,Consolas,monospace}
+  .repo b{color:var(--accent);font-weight:700}
+  .facts{font-size:.52em;color:var(--muted);letter-spacing:.04em;
+         text-transform:uppercase}
+</style>
+<main>
+  <span class="brand">Cascade</span>
+  <h1 class="rise d1">Know the blast radius<br><em>before it breaks.</em></h1>
+  <p class="pitch rise d2">one Cypher question returns a path through the
+  graph — not a score.</p>
+  <hr class="rule rise d3">
+  <div class="repo rise d3">github.com/<b>koztechie/cascade</b></div>
+  <div class="facts rise d4">no signup · no server · one file · 11 gates green</div>
+</main>
+</html>
