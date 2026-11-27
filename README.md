@@ -516,8 +516,15 @@ stated as code rather than as a claim.
 Built with AI assistance under the owner's direction — design, code, tests and
 docs — while **no AI runs inside the product**: every runtime answer is
 deterministic Cypher against the store, and where a model and the graph
-disagree, the graph wins (`docs/limitations.md`). The only third-party
-front-end asset is cytoscape.js (MIT), vendored in `vendor/`.
+disagree, the graph wins (`docs/limitations.md`).
+
+**Licenses.** This repository is [MIT](LICENSE). Third-party: **cytoscape.js**
+(MIT) is vendored in `vendor/`, its copyright notice kept intact inside the
+file; **Relate** and the **`relate_db`** client are **Apache-2.0** and are
+installed by you rather than vendored — no binary is redistributed here
+(`bin/relate` is a wrapper script); the demo's voice is **Kokoro-82M**
+(Apache-2.0). The viewer embeds **no font files** — it renders in system fonts.
+The demo video, its music and the screenshots are this project's own work.
 
 ## Beyond one file
 
