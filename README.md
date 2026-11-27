@@ -12,6 +12,8 @@ inspectable file, and every answer is **connected context you can cite**.*
 *That is [`viewer.html`](viewer.html) above: **click a product**, and every edge
 it touches lights up — brand, supplier, category, listings, feed contract — each
 one a **real relationship** read from `store/catalog.rl`, not a mock-up.*
+**Prefer to watch?** The **1:30 demo** — voice, subtitles, no login — is on
+[YouTube](https://youtu.be/EuO9WT4_lPc).
 
 **Explore in the browser, nothing to install** — `viewer.html` keeps that
 literal: the graph is **pre-generated and offline**, so opening it needs no
@@ -19,6 +21,18 @@ server, no signup and no build step. It is an **equivalent way in**, not a
 lesser one — the same edges the CLI and MCP serve, rendered for a person. A
 **live** WASM-backed viewer (the catalog changing under you) is the planned
 **M3** follow-up.
+
+**New to graphs? Start here — look, run, ask.** Open [`viewer.html`](viewer.html)
+(the GIF above is that screen), run `make verify`, then point any MCP client at
+[`.mcp.json`](.mcp.json) and ask *"We are discontinuing PU-1004 — what breaks?"*.
+*What you'll learn: what a blast radius is, why a path beats a score, and how to
+read one without writing Cypher.*
+
+**How it uses Relate, in one line:** one **single-file** store
+(`store/catalog.rl`, 1.1 MB) behind the CLI, the Python client and **five
+read-only MCP tools** — *why this mode*: that file **is** the whole database, so
+anyone can inspect it, commit it and move it with nothing to stand up.
+[Details below →](#how-it-uses-relate)
 
 ## Use case
 
@@ -299,6 +313,19 @@ Every answer here has the same three parts. The **verdict** is the one line
 and why. The **path** is the route through the graph that produced both, and
 pasting the printed statement back into
 `relate query --database store/catalog.rl --read-only` returns the same rows.
+
+**Why exactly so** — the verdict is a chain, not an opinion: `PU-1004` carries
+two `OFFERS` listings, so both stop being sold; the product page `FEATURES`
+that SKU, so it dies with them; its category carries a required `gtin` mapping,
+so the feed contract breaks. Every arrow above is an edge in the committed
+store, which is why the same statement re-run returns the same rows.
+
+**Risk → action, in the same document.** Section 4 of the report lists the
+**47 products** that will fail the **next feed sync** (missing `gtin`); section
+7 names the one fix — backfill `gtin` for those 47 — and what it clears: **67
+feed risks**. The escalation trigger is not a judgement call: the report states
+it as a deadline (*will fail the next feed sync*), so the reader knows both
+what is at risk and what to do about it.
 
 That is what lets a decision be audited later without trusting a summary: not
 a note saying someone decided, but the inputs, the route and the output, still
