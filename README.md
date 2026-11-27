@@ -248,13 +248,49 @@ cause → `gtin` + `Listing → Product → Category → Mapping → Feed` path)
 lives in [`docs/agent-session.md`](docs/agent-session.md). `make verify`
 smoke-tests this surface too, including that write attempts are refused.
 
+### The shape of an agent-ready answer
+
+A tool result an agent can quote without paraphrasing: the count first, the
+rows under it, and an honest note when the answer is cut short. These are
+**real responses** from the server above — `make verify` replays all of them
+on every run.
+
+**A count arrives with its rows:**
+
+```json
+{"row_count": 1, "rows": [{"c": 600}]}
+```
+
+**A big answer admits it instead of lying by omission** — 769 listings match,
+200 come back (rows elided here):
+
+```json
+{"row_count": 769, "rows": [ … ], "truncated": true,
+ "note": "truncated at 200 rows — narrow the query (add a WHERE or LIMIT)"}
+```
+
+**A write is refused in words, not silently:**
+
+```json
+{"content": [{"type": "text",
+  "text": "Only read queries are allowed for read_cypher (got: CREATE). No write tool is exposed by this MCP server."}],
+ "isError": true}
+```
+
+The domain tools answer the same way, with the claim labelled rather than
+left to inference — `blast_radius("PU-1004")` returns `direct_breakage`
+(2 listings, 1 page), `category_machinery`, the bounded 4-hop
+`neighbourhood_4hops` and the line that keeps them apart: *"direct = real
+breakage; neighbourhood = context, not breakage"*
+
 ## From an agent answer to a decision
 
 One handover, three surfaces: the agent replies with a **path** → open
 [`viewer.html`](viewer.html) to see that path highlighted in the graph → run
 `make report` and paste its one-line verdict into the ticket. The terminal,
 the browser and the ticket are the same answer in three forms — nobody has to
-translate between them.
+translate between them. And because `make report` writes **markdown**, the
+report is portable too: paste the verdict, or attach the file, unchanged.
 
 ### The chain behind that decision: verdict → reason → path
 
