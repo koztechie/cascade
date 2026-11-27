@@ -530,4 +530,31 @@ The demo video, its music and the screenshots are this project's own work.
 
 The Cypher here is standard: when a catalog outgrows a single process, the same
 queries run on Neo4j / Neo4j Aura, and a subgraph can be pulled into Relay for
-local work and pushed back. Nothing in Cascade needs rewriting to get there.
+local work and pushed back — over **MCP, Bolt or HTTP**, the transports the
+product exposes for exactly that. Nothing in Cascade needs rewriting to get
+there; growing past one file is a change of address, not a rewrite.
+
+## Use this template, add your case
+
+The shape is deliberately generic: a committed store, eleven gates, a one-line
+verdict, five read-only MCP tools. To point it at your own catalog, change the
+generator (`scripts/generate_data.py`, seed 42) and `data/demo_params.json`,
+then adjust the seven questions in `queries/` — each one a single statement you
+can copy out on its own. The report is markdown, so your case ends up in a
+ticket, a gist or a fork without reformatting anything.
+
+The pattern is not ours alone. The official
+[`jexp/relate-ideas`](https://github.com/jexp/relate-ideas) vault collects it as
+**Code Graph** (*"what breaks if I delete this function?"*), **Dependency Radar**
+and **blast radius**; Cascade is that same change-impact pattern applied to
+**e-commerce catalog and feed operations** — a domain its examples do not cover.
+If you build on this, a fork or an issue is what the licence is for.
+
+### What we learned
+
+- **A path beats a score.** A route someone can re-run from the committed store
+  gets believed; a number they have to take on trust does not.
+- **Freeze the output early.** Golden fixtures turned every later refactor into
+  a one-command check instead of a judgement call.
+- **Read-only is a feature.** Refusing every write is what made the agent
+  surface safe to expose before any permissions story existed.
