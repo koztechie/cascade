@@ -26,6 +26,25 @@ def die(msg):
     raise SystemExit(f"FATAL: {msg}")
 
 
+def first_dark_frame(video, fps=25, thresh=100):
+    """Seconds until the page's dark background first paints.
+
+    Playwright starts recording when the context is created, so the file
+    opens on Chromium's blank white page; a scene has to be cut from the
+    moment our own #0e1116 background appears.
+    """
+    r = subprocess.run(
+        ["ffmpeg", "-v", "error", "-i", str(video), "-vf",
+         f"fps={fps},scale=64:36,format=gray", "-f", "rawvideo", "-"],
+        capture_output=True)
+    block = 64 * 36
+    data = r.stdout
+    for i in range(len(data) // block):
+        if sum(data[i * block:(i + 1) * block]) / block < thresh:
+            return i / fps
+    return 0.0
+
+
 with sync_playwright() as pw:
     browser = pw.chromium.launch(headless=True)
     page = browser.new_page(viewport={"width": 1920, "height": 1080},
@@ -71,33 +90,44 @@ with sync_playwright() as pw:
     page.screenshot(path=str(OUT / "question.png"))
     ok.append("question: full still")
 
-    # ---- 1b. animated cards: capture frames DURING the CSS animation ----
-    # scale.html and close.html animate themselves, so screenshotting over
-    # time yields real motion frames (DOM animation — no canvas involved).
+    # ---- 1b. animated cards: NATIVE PAGE RECORDING (25 fps) -------------
+    # The old screenshot loop topped out at 1.76 fps here (358–614 ms per
+    # full-page shot), so a 0.6 s CSS reveal was captured in a single frame
+    # and the text snapped into place instead of gliding. Playwright's
+    # recorder samples the compositor at 25 fps and measured identical to a
+    # direct screenshot (edge sharpness 755 vs 751).
     for name, seconds in (("scale", 13.0), ("close", 8.0)):
-        pg2 = browser.new_page(viewport={"width": 1920, "height": 1080},
-                               device_scale_factor=1)
-        d = OUT / name
-        if d.exists():
-            for old in d.iterdir():
-                old.unlink()          # stale frames would break f%04d numbering
-        d.mkdir(exist_ok=True)
+        rec_dir = OUT / f"{name}.rec"
+        if rec_dir.exists():
+            for old in rec_dir.iterdir():
+                old.unlink()
+        rec_dir.mkdir(exist_ok=True)
+        ctx = browser.new_context(viewport={"width": 1920, "height": 1080},
+                                  device_scale_factor=1,
+                                  record_video_dir=str(rec_dir),
+                                  record_video_size={"width": 1920,
+                                                     "height": 1080})
+        pg2 = ctx.new_page()
         pg2.goto((REPO / f"{name}.html").resolve().as_uri(), wait_until="load")
-        pg2.wait_for_timeout(1000)     # first line fully entered before frame 0
-        stamps = []
-        t_end = time.time() + seconds
-        while time.time() < t_end:
-            i = len(stamps)
-            # JPEG with a .jpg name: ffmpeg's png decoder rejects jpeg bytes
-            pg2.screenshot(path=str(d / f"f{i:04d}.jpg"), type="jpeg",
-                           quality=92)
-            stamps.append(time.time())
-            pg2.wait_for_timeout(110)
-        span = stamps[-1] - stamps[0]
-        (OUT / f"{name}.txt").write_text(f"{len(stamps)} {span}\n")
-        ok.append(f"{name}: {len(stamps)} frames over {span:.2f}s "
+        # 1 s: the first line has fully entered — the same lead-in the old
+        # screenshot loop waited for; +1 s so the cut never runs short.
+        pg2.wait_for_timeout(1000 + int(seconds * 1000) + 1000)
+        ctx.close()                     # flushes the .webm to disk
+        rec = next(rec_dir.glob("*.webm"))
+        # The recording opens on the browser's blank white page, so the
+        # scene is cut from the first frame carrying our dark background.
+        # +1.15 s = the 1 s lead-in the old screenshot loop waited for after
+        # `load`, plus the ~0.1 s gap between first paint and that load event.
+        # Measured against the shipped video: scale needs 1.09, close 1.05 —
+        # 1.15 clears both, and the target state then holds for ~1.7 s.
+        offset = first_dark_frame(rec) + 1.15
+        dst = OUT / f"{name}.webm"
+        if dst.exists():
+            dst.unlink()
+        rec.rename(dst)
+        (OUT / f"{name}.txt").write_text(f"{offset:.3f}\n")
+        ok.append(f"{name}: recorded 25 fps, scene cut at {offset:.2f}s "
                   f"(scene {seconds:.0f}s)")
-        pg2.close()
 
     # ---- 2. viewer: capture sequence with a real click ------------------
     ctx = browser.new_context(viewport={"width": 1920, "height": 1080},

@@ -217,6 +217,22 @@ def encode_sequence(name, frames_dir, span, total):
     return raw
 
 
+def encode_video(name, src, offset, total):
+    """Cut `offset` seconds into a 25 fps page recording and conform it to
+    exactly `total` seconds at 30 fps.
+
+    Playwright records at 25 fps, so `fps=30` duplicates one frame in six.
+    That regular pulldown is invisible next to the 17-frame holds it
+    replaces (the old screenshot loop managed 1.76 fps).
+    """
+    raw = W / f"{name}-raw.mp4"
+    sh(f'ffmpeg -y -v error -i "{src}" '
+       f"-vf \"trim=start={offset}:duration={total},setpts=PTS-STARTPTS,"
+       f"fps={FPS},format=yuv420p\" "
+       f"-c:v libx264 -crf 16 -preset fast {raw}")
+    return raw
+
+
 def add_zoom(raw, total):
     """Slow continuous zoom so no frame is ever static.
 
@@ -224,8 +240,12 @@ def add_zoom(raw, total):
     lands on its exact planned duration; -t then trims the ones that are long.
     """
     out = W / (raw.stem.replace("-raw", "") + ".mp4")
+    # scale=4x first: zoompan rounds its crop box to whole pixels, so at 1x a
+    # slow zoom jumped ~1 px every other frame (23% of scene 1's frames were
+    # identical to their predecessor). At 4x the rounding is sub-pixel at
+    # output: 0 frozen frames, motion irregularity CV 2.20 -> 0.28.
     sh(f"ffmpeg -y -v error -i {raw} -vf "
-       f'"zoompan=z=\'1+0.00032*on\':d=1:'
+       f'"scale=7680:4320,zoompan=z=\'1+0.00032*on\':d=1:'
        f'x=\'iw/2-(iw/zoom/2)\':y=\'ih/2-(ih/zoom/2)\':'
        f's=1920x1080:fps={FPS}",format=yuv420p,'
        f"tpad=stop_mode=clone:stop_duration=3 "
@@ -318,17 +338,23 @@ def main():
 
     print("2) encode scenes …")
     clips = []
-    # image-sequence scenes captured by render_assets.py
-    seq_scenes = {}
+    # CSS-animated scenes are page recordings: the screenshot loop only
+    # managed 1.76 fps, which froze every 0.6 s reveal into a single frame.
+    video_scenes = {}
     for name in ("scale", "close"):
-        n, span = (A / f"{name}.txt").read_text().split()
-        seq_scenes[name] = (A / name, float(span))
+        off = float((A / f"{name}.txt").read_text())
+        video_scenes[name] = (A / f"{name}.webm", off)
+    # viewer stays a frame sequence: a static graph plus one instant click,
+    # so there is no smooth motion a faster capture would improve.
     n_v, span_v = (A / "viewer.txt").read_text().split()
-    seq_scenes["viewer"] = (A / "viewer", float(span_v))
+    frame_scenes = {"viewer": (A / "viewer", float(span_v))}
 
     for name, total in SCENES:
-        if name in seq_scenes:
-            d, span = seq_scenes[name]
+        if name in video_scenes:
+            src, off = video_scenes[name]
+            raw = encode_video(name, src, off, total)
+        elif name in frame_scenes:
+            d, span = frame_scenes[name]
             raw = encode_sequence(name, d, span, total)
         elif name in ("sql", "question"):
             sh(f"ffmpeg -y -v error -loop 1 -i {A}/{name}.png -t {total} "
@@ -351,13 +377,18 @@ def main():
     # hard cuts: concat demuxer, then burn subtitles, then mux the score
     lst = W / "final-list.txt"
     lst.write_text("".join(f"file '{c}'\n" for c in clips))
+    # Encode beside the target, then rename: an interrupted build must not
+    # be able to truncate the shipped deliverable (a server restart did
+    # exactly that before this line existed).
+    tmp = OUT.with_name(OUT.stem + ".part" + OUT.suffix)
     sh(f"ffmpeg -y -v error -f concat -safe 0 -i {lst} -i {wav} "
        f"-filter_complex \"[0:v]subtitles={srt}:force_style='FontName=DejaVu Sans,"
        f"FontSize=17,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,Outline=2,"
        f"Shadow=0,BorderStyle=1,MarginV=42,Alignment=2'[v]\" "
        f"-map \"[v]\" -map 1:a -c:v libx264 -crf 18 -preset medium "
        f"-pix_fmt yuv420p -c:a aac -b:a 192k -shortest "
-       f"-movflags +faststart \"{OUT}\"")
+       f"-movflags +faststart \"{tmp}\"")
+    tmp.replace(OUT)
     print(f"  -> {OUT}")
 
 
