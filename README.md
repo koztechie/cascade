@@ -7,6 +7,19 @@
 *Embedded and agent-native — **no signup, no server**: one deterministic,
 inspectable file, and every answer is **connected context you can cite**.*
 
+[![In the viewer, one click on a product lights up every edge it touches — each edge a real relationship in the committed store](video/viewer.gif)](viewer.html)
+
+*That is [`viewer.html`](viewer.html) above: **click a product**, and every edge
+it touches lights up — brand, supplier, category, listings, feed contract — each
+one a **real relationship** read from `store/catalog.rl`, not a mock-up.*
+
+**Explore in the browser, nothing to install** — `viewer.html` keeps that
+literal: the graph is **pre-generated and offline**, so opening it needs no
+server, no signup and no build step. It is an **equivalent way in**, not a
+lesser one — the same edges the CLI and MCP serve, rendered for a person. A
+**live** WASM-backed viewer (the catalog changing under you) is the planned
+**M3** follow-up.
+
 ## Use case
 
 E-commerce teams change something every week: a SKU is discontinued, a brand is
@@ -153,6 +166,16 @@ Queries that check existence (`03`, `05`) report the objects themselves; every
    insight. (`make viewer` rebuilds it.)
 2. **Run `make verify`** — eleven gates, ending `== verify: OK ==` in **12–17 s**
    on the floor machine.
+
+**What you'll see** — the real tail of that command, copied verbatim from a run
+on this repo (the GIF above is what step 1 looks like):
+
+```text
+-- 11 generator determinism (byte-identical under PYTHONHASHSEED=1)
+   OK: byte-identical under a different hash seed
+normalize: store/catalog.rl already deterministic (3 shard ids)
+== verify: OK ==
+```
 
 Then go deeper: `make report` (the one-line verdict, again no Cypher) ·
 `make demo` (all seven queries) · ask an agent via [`.mcp.json`](.mcp.json) ·

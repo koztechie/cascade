@@ -555,21 +555,40 @@ mv video/cascade-demo.part.mp4 video/cascade-demo.mp4
 **⚠️ Декларація (§3–§4): у submission обов'язково вказати, що голос
 згенеровано ШІ — Kokoro-82M, Apache 2.0.**
 
-## Обкладинка відео (YouTube thumbnail)
+## Обкладинка відео — два формати під два хости
 
-**Файл:** `video/thumbnail.png` — **1920×1080 (16:9)**, 0.48 МБ.
-YouTube рекомендує 1280×720 і приймає будь-яке більше за тим самим співвідношенням.
+Один `thumbnail.html` віддає **обидва** потрібні співвідношення, бо весь
+горизонтальний розмір у ньому виражено у `vw` (при 1920px кожне значення
+давало ту саму кількість пікселів, що й раніше — вигляд для YouTube не змінився).
 
-**Регенерація (дві команди):**
+| Файл | Розмір | Співвідношення | Куди |
+| --- | --- | --- | --- |
+| `video/thumbnail.png` | **1920×1080**, 0.48 МБ | **16:9** | YouTube (рекомендує 1280×720, приймає більше) |
+| `video/thumbnail-devpost.png` | **1800×1200**, 0.49 МБ | **3:2** | Devpost — форма прямо пише *«use a 3:2 ratio»* |
+
+**⚠️ Чому два:** Devpost просить **3:2**, YouTube — **16:9** (обрізає інше).
+Завантажувати в кожен свій.
+
+**Регенерація:**
 ```bash
 # 1. кадр графа — сцена 3, ДО кліку (~25.7 с), тож без панелі
 ffmpeg -y -ss 24.5 -i video/cascade-demo.mp4 -frames:v 1 thumb-graph.png
-# 2. обкладинка: thumbnail.html посилається на thumb-graph.png
-python3 -c "from playwright.sync_api import sync_playwright as s; \
-p=s().start(); b=p.chromium.launch(headless=True); \
-pg=b.new_page(viewport={'width':1920,'height':1080}, device_scale_factor=1); \
-pg.goto('file://$PWD/thumbnail.html', wait_until='load'); pg.wait_for_timeout(1200); \
-pg.screenshot(path='video/thumbnail.png'); b.close(); p.stop()"
+
+# 2. обкладинка (thumbnail.html посилається на thumb-graph.png)
+python3 - <<'PY'
+from playwright.sync_api import sync_playwright
+with sync_playwright() as p:
+    b = p.chromium.launch(headless=True)
+    for path, w, h in (("video/thumbnail.png", 1920, 1080),
+                       ("video/thumbnail-devpost.png", 1800, 1200)):
+        pg = b.new_page(viewport={"width": w, "height": h}, device_scale_factor=1)
+        pg.goto("file://" + __import__("os").getcwd() + "/thumbnail.html",
+                wait_until="load")
+        pg.wait_for_timeout(1200)
+        pg.screenshot(path=path)
+        pg.close()
+    b.close()
+PY
 ```
 
 **Чому split 55/45, а не граф на весь кадр:** виміряна карта щільності кадру
@@ -811,3 +830,29 @@ Google Cloud TTS ✅ · Amazon Polly ✅ · Microsoft Azure TTS ✅ · OpenAI TT
 2. Перевірити: тривалість ≤2 хв · субтитри читаються · жодного показаного
    файлу зі списку «Що НЕ показувати».
 3. У submission — заява про згенерований голос (якщо використано).
+
+## GIF для README і галереї Devpost (крок 30)
+
+**Файл:** `video/viewer.gif` — **720×406 · 12 fps · 60 кадрів · 5.000 с · 1.71 МБ**,
+нескінченний цикл (`loop=0`).
+
+**Що на ньому:** сцена 3 відео (viewer, 23–40 с), відрізок **23.6–28.6 с** —
+клік по продукту (~24.15 с) і відкриття панелі зі списком ребер; у кадрі
+субтитр *«Every answer arrives as a path…»*.
+
+**Регенерація (одна команда, ≈50 с):**
+
+```bash
+ffmpeg -y -i video/cascade-demo.mp4 -ss 23.6 -t 5.0 \
+  -vf "fps=12,scale=720:-2:flags=lanczos,split[s0][s1];[s0]palettegen=max_colors=128:stats_mode=diff[p];[s1][p]paletteuse=dither=sierra2_4a:diff_mode=rectangle" \
+  -loop 0 video/viewer.gif
+```
+
+**Перевірки (27.11.2026):** кадри 0/30/59 збігаються з відео на тих самих
+тайм-кодах (**MAE 1.07 / 0.90 / 0.96**) · рух є (0 статичних переходів із 59) ·
+панель відкривається (яскравість правої зони 16.2 → 20.9) · 102 унікальні
+кольори в зоні графа · **1.71 МБ < 5 МБ** (жорсткий ліміт Devpost).
+
+**Куди вставлено:** `README.md` — одразу після пітча (D19); зображення
+клікабельне → веде на `viewer.html`. Очікуваний результат першої команди
+(D44) додано під `make verify` **дослівним хвостом реального прогону**.

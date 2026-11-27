@@ -24,31 +24,39 @@
 <style>
   :root{--bg:#0e1116;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff}
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);
+  /* Fluid on purpose: the box fills whatever the host asks for (16:9 for
+     YouTube, 3:2 for Devpost) and every HORIZONTAL dimension is in vw, so the
+     type scales with the box instead of overflowing a narrower one. At 1920px
+     wide each vw value resolves to exactly the px value it replaces, so the
+     YouTube render is byte-for-byte the layout it was before.
+     Vertical margins stay in px - a taller box just centres the block. */
+  html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);
     color:var(--text);
-    font:400 44px/1.25 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,
-         Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
-  .split{display:flex;width:1920px;height:1080px}
+    font:400 2.2917vw/1.25 ui-sans-serif,system-ui,-apple-system,"Segoe UI",
+         Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  .split{display:flex;width:100%;height:100%}
   .left{width:55%;background:var(--bg);display:flex;flex-direction:column;
-    justify-content:center;padding-left:96px;padding-right:40px}
+    justify-content:center;padding-left:5vw;padding-right:2.0833vw}
   .right{width:45%;position:relative;overflow:hidden;background:var(--bg)}
-  /* centred at height 1080 the 1920x1080 source overflows sideways, so the
-     visible window is its middle 864px - the densest part of the graph */
+  /* height-driven so the 1920x1080 source overflows sideways and centres: the
+     visible window stays on the dense core of the graph (x480-1440) at either
+     ratio, and at 16:9 it resolves to exactly the box it had before. */
   .right img{position:absolute;top:0;left:50%;transform:translateX(-50%);
-    width:1920px;height:1080px;display:block}
-  .fade{position:absolute;top:0;left:0;bottom:0;width:200px;
+    height:100%;width:auto;display:block}
+  .fade{position:absolute;top:0;left:0;bottom:0;width:10.4167vw;
     background:linear-gradient(90deg,var(--bg) 0%,rgba(14,17,22,0) 100%)}
-  .brand{font-size:30px;letter-spacing:.24em;text-transform:uppercase;
+  .brand{font-size:1.5625vw;letter-spacing:.24em;text-transform:uppercase;
     color:var(--muted);margin-bottom:44px}
-  .huge{font-size:300px;font-weight:700;letter-spacing:-.045em;line-height:.88;
-    color:var(--accent);text-shadow:0 0 70px rgba(88,166,255,.30)}
-  .word{font-size:124px;font-weight:700;letter-spacing:-.03em;line-height:1;
+  .huge{font-size:15.625vw;font-weight:700;letter-spacing:-.045em;
+    line-height:.88;color:var(--accent);
+    text-shadow:0 0 3.6458vw rgba(88,166,255,.30)}
+  .word{font-size:6.4583vw;font-weight:700;letter-spacing:-.03em;line-height:1;
     color:var(--text);margin-top:14px}
-  .from{font-size:56px;font-weight:600;letter-spacing:-.005em;
+  .from{font-size:2.9167vw;font-weight:600;letter-spacing:-.005em;
     color:var(--text);margin-top:40px}
-  .rule{width:196px;height:6px;background:var(--accent);border:0;
+  .rule{width:10.2083vw;height:6px;background:var(--accent);border:0;
     margin:40px 0 34px}
-  .foot{font-size:42px;color:var(--muted)}
+  .foot{font-size:2.1875vw;color:var(--muted)}
   .foot b{color:var(--text);font-weight:600}
 </style>
 <body>

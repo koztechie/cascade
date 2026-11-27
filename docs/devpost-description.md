@@ -191,11 +191,13 @@ viewer; Relate and the `relate_db` client (Apache-2.0).
 **AI tools:** AI-assisted development — design, code, tests and docs produced
 with AI under the project owner's direction. **No AI runs at runtime**: every
 answer is deterministic Cypher against the store, and where a model and the
-graph disagree, the graph wins.
+graph disagree, the graph wins. The **narration voice in the demo video is
+AI-generated** — Kokoro-82M (Apache-2.0), run locally on CPU: no cloud service,
+no account. The video's music bed is synthesised by this repository's own build
+script, so **no third-party audio is used anywhere in the video**.
 
 **Originality:** written for this contest; no reused third-party application
-code. *(Додати «generated voice in the demo video» — якщо у відео
-використано ElevenLabs; див. нотатку нижче.)*
+code.
 
 ## КІНЕЦЬ ТЕКСТУ ДЛЯ ВСТАВЛЕННЯ
 
@@ -219,9 +221,11 @@ code. *(Додати «generated voice in the demo video» — якщо у ві�
 
 ## Відкриті нотатки
 
-1. **ElevenLabs (§3, відео):** пункт `reused`/AI-голос дописати **після
-   зйомки** (крок 28), якщо голос синтетичний. Зараз залишено явний
-   коментар-місце. Крок39 вимагає подавати це **як інженерну дисципліну, а не
+1. **ШІ-голос у відео (§3, §4):** ✅ **ВИКОНАНО 27.11.2026** — плейсхолдер
+   вище заповнено. Голос: **Kokoro-82M (Apache-2.0), локально на CPU** (не
+   ElevenLabs — див. порівняння ліцензій у шот-листі). Заява тепер містить і
+   розробку за участі ШІ, і ШІ-голос, і власну музику — тобто §4 закрито
+   повністю. Крок39 вимагає подавати це **як інженерну дисципліну, а не
    виправдання** (D33).
 2. **Фразеологія §3 уточнена:** у кроці39 перелік був записаний скорочено
    (*CLI, embedded use, MCP, or a connection to Neo4j or Aura*), а в правилах
