@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cascade — thumbnail</title>
+<!--
+  Video thumbnail, 1920x1080 (16:9; YouTube's recommended size is 1280x720 and
+  it accepts anything larger at that ratio).
+
+  Why a split rather than full-bleed: measuring the graph frame shows the nodes
+  cluster in x480-1440 of 1920, i.e. exactly where a left-hand headline would
+  sit. Putting type over it would make contrast depend on which nodes happen to
+  be behind the letters. So the left 55% is solid #0e1116 and the graph gets its
+  own panel - contrast is guaranteed by construction, not by measuring after the
+  fact. object-fit is avoided in favour of a fixed-height centred image, which
+  lands the crop on x528-1390: the dense core of the graph.
+
+  The copy is scale.html's own key card, verbatim ("475 consequences" /
+  "from ONE discontinued product"), so the cover quotes the video instead of
+  inventing a separate hook.
+
+  Regenerate: see "Обкладинка відео" in docs/video-shot-list.md
+-->
+<style>
+  :root{--bg:#0e1116;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);
+    color:var(--text);
+    font:400 44px/1.25 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,
+         Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  .split{display:flex;width:1920px;height:1080px}
+  .left{width:55%;background:var(--bg);display:flex;flex-direction:column;
+    justify-content:center;padding-left:96px;padding-right:40px}
+  .right{width:45%;position:relative;overflow:hidden;background:var(--bg)}
+  /* centred at height 1080 the 1920x1080 source overflows sideways, so the
+     visible window is its middle 864px - the densest part of the graph */
+  .right img{position:absolute;top:0;left:50%;transform:translateX(-50%);
+    width:1920px;height:1080px;display:block}
+  .fade{position:absolute;top:0;left:0;bottom:0;width:200px;
+    background:linear-gradient(90deg,var(--bg) 0%,rgba(14,17,22,0) 100%)}
+  .brand{font-size:30px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:44px}
+  .huge{font-size:300px;font-weight:700;letter-spacing:-.045em;line-height:.88;
+    color:var(--accent);text-shadow:0 0 70px rgba(88,166,255,.30)}
+  .word{font-size:124px;font-weight:700;letter-spacing:-.03em;line-height:1;
+    color:var(--text);margin-top:14px}
+  .from{font-size:56px;font-weight:600;letter-spacing:-.005em;
+    color:var(--text);margin-top:40px}
+  .rule{width:196px;height:6px;background:var(--accent);border:0;
+    margin:40px 0 34px}
+  .foot{font-size:42px;color:var(--muted)}
+  .foot b{color:var(--text);font-weight:600}
+</style>
+<body>
+  <div class="split">
+    <div class="left">
+      <div class="brand">Cascade</div>
+      <div class="huge">475</div>
+      <div class="word">consequences</div>
+      <div class="from">from ONE discontinued product</div>
+      <hr class="rule">
+      <div class="foot"><b>one Cypher question</b> — not a score</div>
+    </div>
+    <div class="right">
+      <img src="thumb-graph.png" alt="">
+      <div class="fade"></div>
+    </div>
+  </div>
+</body>
+</html>
