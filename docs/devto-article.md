@@ -17,17 +17,14 @@
 - **Київ, ніч, перший коміт `6139b57` о 00:10**, **42 з 140 комітів** за перший день — звірено з git;
 - сірий листопадовий дощ, **«без пальм»** — твої власні фрази з листування (*«Palm trees don't grow in Kyiv»*, *«the sky is always gray and cloudy»*);
 - **нічні тривоги** як фон і привітання *«мирного неба»* — з твоїх задокументованих висловлювань (досьє, розділ здоров'я/контекст) + загальновідомий контекст;
-- **тіло й машина, що «проти»** — *«епізодичні спазми, слабкість, біль від погоди, що може ускладнювати ходьбу»* і **старий комп'ютер, що обмежує працю** (твої слова, досьє: стаття20.11 — приз як реальний шлях його замінити). **Без діагнозів, ліків, ТЦК і стосунків.**
+- **статус із твоєї власної заяви** — `zayava_BPD_2026-11-26.html`: **внутрішньо переміщена особа** + **особа з інвалідністю III групи** + війна як реальність («ризики під час пересування містом») → у тексті: *internally displaced person with a third-group disability*; **без адреси, паспорта, телефону, e-mail, номера справи та деталей ТЦК/поліції**;
+- **тіло й машина** — *«епізодичні спазми, слабкість, біль від погоди»* (досьє) і **старий компʼютер, що обмежує працю** (твоє формулювання 20.11) → *walking is hard* / *old enough to refuse heavy loads*.
 
 **Свідомо НЕ ввійшло:**
-- **Чуже приватне** — тека `Тимчасове/TG` (перевірено двічі, оновлення о14:13): чат *«Victoria»* (9 повідомлень + **голосове51 с, розпізнане локально** — належить їй) і чат *«Лєна»* (40 повідомлень, робочі правки описів пральних гелів) + **5 фото = скріншоти описів**. Скан ключових слів: **війна 0 · інвалідність 0**. Чужі обставини («difficult week», «new computer для кожного з нас», тиск «Розетки») — **сторонні дані** (правила §11) → не публікуються. Голосове розпізнавав **локально** (faster-whisper, tiny.en), нікуди не відправляв.
-- **Клінічні/юридичні деталі** — діагнози, ліки, справа ТЦК, стосунки, гроші, чужі імена — **навіть попри наявність у досьє**: публікації вони не потрібні, а ризик великий.
+- **Чуже приватне** — тека `Тимчасове/TG` (перевірено **чотири рази**, тека оновлювалась щоразу: чати *«Victoria»* → *«Лєна»* → *«Віка»* → *«Олександр»*; **21 фото** — побут, київський двір, цінові таблиці, рамкова ПОДЯКА, стікер; голосове 51 с розпізнане **локально**, нікуди не відправлялось). Скан ключових слів: **війна 0 · інвалідність 0** у всьому. Чужі обставини («difficult week», «new computer для кожного з нас», тиск «Розетки», госпіталізація батька) — **сторонні дані** (правила §11) → не публікуються.
+- **Клінічні/юридичні деталі** — діагнози, ліки, паспорт/адреса/телефон, номер справи, обставини ТЦК і поліції, стосунки, гроші, чужі імена — **навіть попри наявність у досьє і в тій самій заяві**: публікації вони не потрібні, а ризик (незворотність публікації + активна юридична справа) великий.
 
-**⚠️ Перед публікацією (4–5.12) — перечитай абзац сам:** це твоє життя, і
-друга частина (про тіло й комп'ютер) сформульована мною **по-твоєму, але
-стисло**. Якщо хочеш інакше — або назвати конкретніку (діагноз, статус) —
-**дай своє речення**, я вставлю дослівно.
-
+**⚠️ Перед публікацією (4–5.12) — перечитай абзац сам:** це твоє життя, формулювання стиснуті мною. **Статус ВПО та III групу вже вкладено** — якщо хочеш прибрати, змінити чи додати власне речення (дослівно) — скажи, підправлю до публікації.
 ---
 
 ## Заголовок (варіанти)
@@ -106,13 +103,13 @@ repository is stamped **00:10**, and the day it was born carries **42 of its
 palm trees, and nights that are not always quiet — which is why people here
 greet each other with *«мирного неба»*: a peaceful sky.
 
-I am building this with a body and a machine that both push back. Some days
-walking is hard; the computer is old enough to refuse heavy loads. So the
-answer this project offers is built to ask as little as possible of whatever
-it runs on: **one file, no server, eleven gates in fourteen seconds, no cloud
-to depend on.** When the week around you is already unpredictable, knowing
-**exactly** what your next change touches stops being optimisation and becomes
-a small, readable piece of control.
+I write this as an **internally displaced person with a third-group
+disability**, on a machine old enough to refuse heavy loads, on days when
+walking is hard. None of that is a plea — it is the reason the tool asks as
+little as possible of whatever it runs on: **one file, no server, eleven gates
+in fourteen seconds, no cloud to depend on.** When the week around you is
+already unpredictable, knowing **exactly** what your next change touches stops
+being optimisation and becomes a small, readable piece of control.
 
 **Links**
 
