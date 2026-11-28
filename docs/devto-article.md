@@ -11,30 +11,22 @@
 
 ---
 
-## Екзистенційні елементи (додано 28.11) — що увійшло, а що ні
+## Екзистенційні елементи (додано 28.11) — джерела й межі
 
-**Увійшло (правдиве, з перевірюваним джерелом):** абзац *«Where this was
-written»* — КИЇВ, робота після півночі (**перший коміт `6139b57` о 00:10**,
-**42 з 140 комітів** за перший день), листопадовий сірий дощ і «без пальм»
-(твоя ж фраза з листування: *«Palm trees don't grow in Kyiv»* / *«the sky is
-always gray and cloudy»*), і зв'язок із тезою статті: непередбачуваний тиждень
-робить запит «що зламається» не академічним.
+**Що увійшло в абзац «Where this was written» (усе — правдиве):**
+- **Київ, ніч, перший коміт `6139b57` о 00:10**, **42 з 140 комітів** за перший день — звірено з git;
+- сірий листопадовий дощ, **«без пальм»** — твої власні фрази з листування (*«Palm trees don't grow in Kyiv»*, *«the sky is always gray and cloudy»*);
+- **нічні тривоги** як фон і привітання *«мирного неба»* — з твоїх задокументованих висловлювань (досьє, розділ здоров'я/контекст) + загальновідомий контекст;
+- **тіло й машина, що «проти»** — *«епізодичні спазми, слабкість, біль від погоди, що може ускладнювати ходьбу»* і **старий комп'ютер, що обмежує працю** (твої слова, досьє: стаття20.11 — приз як реальний шлях його замінити). **Без діагнозів, ліків, ТЦК і стосунків.**
 
 **Свідомо НЕ ввійшло:**
-- **Чуже приватне** — у теці `Тимчасове/TG`9 повідомлень (7 твоїх,2 чужих) і
-  **1 голосове, яке належить Victoria** (розпізнано:51 с, вона ж писала о
-  17:55). Її обставини («your difficult week», «a new computer for either one
-  of us») — **сторонні дані**: правила §11 і наш внутрішній принцип їх не
-  публікують. Текст розпізнавав локально (faster-whisper), нікуди не відправляв.
-- **Війна / інвалідність** — **у матеріалах цього немає** (0 збігів і в
-  тексті, і в транскрипції голосового). **Я не вигадую особисті факти для
-  публікації** — якщо це частина твоєї історії, дай **1–2 свої речення**, і я
-  вставлю їх дослівно.
+- **Чуже приватне** — тека `Тимчасове/TG` (перевірено двічі, оновлення о14:13): чат *«Victoria»* (9 повідомлень + **голосове51 с, розпізнане локально** — належить їй) і чат *«Лєна»* (40 повідомлень, робочі правки описів пральних гелів) + **5 фото = скріншоти описів**. Скан ключових слів: **війна 0 · інвалідність 0**. Чужі обставини («difficult week», «new computer для кожного з нас», тиск «Розетки») — **сторонні дані** (правила §11) → не публікуються. Голосове розпізнавав **локально** (faster-whisper, tiny.en), нікуди не відправляв.
+- **Клінічні/юридичні деталі** — діагнози, ліки, справа ТЦК, стосунки, гроші, чужі імена — **навіть попри наявність у досьє**: публікації вони не потрібні, а ризик великий.
 
-**Опційний рядок про війну — встав сам, якщо хочеш** (у тексті його немає):
-
-> *— and the city is at war. That is not a metaphor for this project; it is the
-> reason "what breaks next" stopped being an academic question.*
+**⚠️ Перед публікацією (4–5.12) — перечитай абзац сам:** це твоє життя, і
+друга частина (про тіло й комп'ютер) сформульована мною **по-твоєму, але
+стисло**. Якщо хочеш інакше — або назвати конкретніку (діагноз, статус) —
+**дай своє речення**, я вставлю дослівно.
 
 ---
 
@@ -108,13 +100,19 @@ cd cascade && make verify                          # == verify: OK ==
 Then open `viewer.html` — the blast radius is already built, offline, no query
 written — or give the repo to your agent through `.mcp.json`.
 
-**Where this was written.** Kyiv, mostly after midnight: the first commit in
-this repository is stamped **00:10**, and the day the project was born carries
-**42 of its 140 commits**. November here supplies the framing for free — gray
-sky, rain, and, as a certain American cinema promised, no palm trees. There is
-a quieter argument under the technical one: when the week around you is
-already unpredictable, knowing **exactly** what your next change touches stops
-being optimisation and becomes a small, readable piece of control.
+**Where this was written.** Kyiv, after midnight — the first commit in this
+repository is stamped **00:10**, and the day it was born carries **42 of its
+140 commits**. November here supplies the framing for free: gray sky, rain, no
+palm trees, and nights that are not always quiet — which is why people here
+greet each other with *«мирного неба»*: a peaceful sky.
+
+I am building this with a body and a machine that both push back. Some days
+walking is hard; the computer is old enough to refuse heavy loads. So the
+answer this project offers is built to ask as little as possible of whatever
+it runs on: **one file, no server, eleven gates in fourteen seconds, no cloud
+to depend on.** When the week around you is already unpredictable, knowing
+**exactly** what your next change touches stops being optimisation and becomes
+a small, readable piece of control.
 
 **Links**
 
