@@ -31,7 +31,7 @@
 
 ## Заголовок (варіанти)
 
-1. **We stopped guessing what a product change breaks — and answered it with one Cypher question**
+1. **I stopped guessing what a product change breaks — and answered it with one Cypher question**
 2. The blast radius of a product change, drawn as a path instead of a spreadsheet
 3. What breaks if we stop selling this? A graph answer in 200 ms
 
@@ -41,7 +41,7 @@ Every week an e-commerce team changes something: a SKU is retired, a brand is re
 
 **Why a spreadsheet cannot answer it.** The question is not "where did I write this down", it is "what is connected to this". A vector store finds text that *looks like* the question; it cannot say what breaks, because breakage lives in relationships that have to be traversed: listing → product → category → feed contract → rule. In SQL the same question is **ten tables** and a recursive CTE. In a graph it is one variable-length pattern.
 
-**What we built: Cascade.** A change-impact graph for e-commerce operations, running on Relate as a **single file** — `store/catalog.rl`, 1.1 MB, committed to the repository. No server, no signup, no directory to reconcile: the whole interface is one command.
+**What I built: Cascade.** A change-impact graph for e-commerce operations, running on Relate as a **single file** — `store/catalog.rl`, 1.1 MB, committed to the repository. No server, no signup, no directory to reconcile: the whole interface is one command.
 
 The store holds **1,667 nodes and 3,730 relationships** over a synthetic 600-product catalog (seed 42, generator included, deliberate defects planted so they can be asserted rather than assumed). Seven questions are answered by seven single statements — what breaks if we stop selling this product, why is this listing rejected, what is invisible right now, what collides if we merge two categories, which products get rejected next, is this promo still in force, and what single fix clears the most risk.
 

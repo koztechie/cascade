@@ -134,7 +134,7 @@ The dataset is synthetic: realistic structure, deliberate defects, no real busin
 
 **AI tools:** AI-assisted development — design, code, tests and docs produced with AI under the project owner's direction. **No AI runs at runtime**: every answer is deterministic Cypher against the store, and where a model and the graph disagree, the graph wins. The **narration voice in the demo video is AI-generated** — Kokoro-82M (Apache-2.0), run locally on CPU: no cloud service, no account. The video's music bed is synthesised by this repository's own build script, so **no third-party audio is used anywhere in the video**.
 
-**Originality, start date and prompts:** written for this contest — work began **21 November 2026**, inside the contest window. **No pre-existing code was reused**: neither third-party application code nor earlier code of our own — everything here was built for this submission. The **prompts** are part of the record as well: [`docs/agent-session.md`](https://github.com/koztechie/cascade/blob/main/docs/agent-session.md) holds the exact prompts, the Cypher the agent wrote and the results, including the moment the agent corrected its own first query.
+**Originality, start date and prompts:** written for this contest — work began **21 November 2026**, inside the contest window. **No pre-existing code was reused**: neither third-party application code nor earlier code of my own — everything here was built for this submission. The **prompts** are part of the record as well: [`docs/agent-session.md`](https://github.com/koztechie/cascade/blob/main/docs/agent-session.md) holds the exact prompts, the Cypher the agent wrote and the results, including the moment the agent corrected its own first query.
 
 ## КІНЕЦЬ ТЕКСТУ ДЛЯ ВСТАВЛЕННЯ
 

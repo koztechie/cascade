@@ -550,14 +550,14 @@ then adjust the seven questions in `queries/` — each one a single statement yo
 can copy out on its own. The report is markdown, so your case ends up in a
 ticket, a gist or a fork without reformatting anything.
 
-The pattern is not ours alone. The official
+The pattern is not mine alone. The official
 [`jexp/relate-ideas`](https://github.com/jexp/relate-ideas) vault collects it as
 **Code Graph** (*"what breaks if I delete this function?"*), **Dependency Radar**
 and **blast radius**; Cascade is that same change-impact pattern applied to
 **e-commerce catalog and feed operations** — a domain its examples do not cover.
 If you build on this, a fork or an issue is what the licence is for.
 
-### What we learned
+### What I learned
 
 - **A path beats a score.** A route someone can re-run from the committed store
   gets believed; a number they have to take on trust does not.
