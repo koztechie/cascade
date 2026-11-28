@@ -11,6 +11,33 @@
 
 ---
 
+## Екзистенційні елементи (додано 28.11) — що увійшло, а що ні
+
+**Увійшло (правдиве, з перевірюваним джерелом):** абзац *«Where this was
+written»* — КИЇВ, робота після півночі (**перший коміт `6139b57` о 00:10**,
+**42 з 140 комітів** за перший день), листопадовий сірий дощ і «без пальм»
+(твоя ж фраза з листування: *«Palm trees don't grow in Kyiv»* / *«the sky is
+always gray and cloudy»*), і зв'язок із тезою статті: непередбачуваний тиждень
+робить запит «що зламається» не академічним.
+
+**Свідомо НЕ ввійшло:**
+- **Чуже приватне** — у теці `Тимчасове/TG`9 повідомлень (7 твоїх,2 чужих) і
+  **1 голосове, яке належить Victoria** (розпізнано:51 с, вона ж писала о
+  17:55). Її обставини («your difficult week», «a new computer for either one
+  of us») — **сторонні дані**: правила §11 і наш внутрішній принцип їх не
+  публікують. Текст розпізнавав локально (faster-whisper), нікуди не відправляв.
+- **Війна / інвалідність** — **у матеріалах цього немає** (0 збігів і в
+  тексті, і в транскрипції голосового). **Я не вигадую особисті факти для
+  публікації** — якщо це частина твоєї історії, дай **1–2 свої речення**, і я
+  вставлю їх дослівно.
+
+**Опційний рядок про війну — встав сам, якщо хочеш** (у тексті його немає):
+
+> *— and the city is at war. That is not a metaphor for this project; it is the
+> reason "what breaks next" stopped being an academic question.*
+
+---
+
 ## Заголовок (варіанти)
 
 1. **We stopped guessing what a product change breaks — and answered it with one Cypher question**
@@ -80,6 +107,14 @@ cd cascade && make verify                          # == verify: OK ==
 
 Then open `viewer.html` — the blast radius is already built, offline, no query
 written — or give the repo to your agent through `.mcp.json`.
+
+**Where this was written.** Kyiv, mostly after midnight: the first commit in
+this repository is stamped **00:10**, and the day the project was born carries
+**42 of its 140 commits**. November here supplies the framing for free — gray
+sky, rain, and, as a certain American cinema promised, no palm trees. There is
+a quieter argument under the technical one: when the week around you is
+already unpredictable, knowing **exactly** what your next change touches stops
+being optimisation and becomes a small, readable piece of control.
 
 **Links**
 
