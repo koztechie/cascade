@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cascade — dev.to article cover</title>
+<!--
+  dev.to article cover, 1000x420 (dev.to's card ratio).
+
+  Same design system as thumbnail.html (split panel, #0e1116, accent #58a6ff,
+  letterspaced brand, graph on the right with a fade) so the article, the
+  video and the Devpost entry read as one campaign.
+
+  The copy is the 107-character tagline from README / Devpost Elevator pitch /
+  share-blurb, split into headline + foot — share-blurb.md requires the judge
+  to see one identical line everywhere, and the article's H1 (which dev.to
+  prints directly under the cover) already carries the "I stopped guessing"
+  clause, so repeating it here would waste the image.
+
+  The number is deliberately absent: the video thumbnail froze at 475 while
+  every text asset says 476, and this cover should not pick a side.
+
+  The graph panel uses docs/cover-graph.png — frame t=23.0s of the demo video:
+  the graph has finished drawing and the burned-in subtitles have not started
+  yet (they begin at 23.5s and run through the whole scene). thumb-graph.png,
+  used by the video thumbnail, was cut at t=24.5s where the subtitle already
+  shows; that baked-in line would read as an artifact when cropped to a 360px
+  window, so the shipped video assets keep their source untouched and this
+  cover gets its own frame.
+
+  Regenerate: python3 docs/devto-cover.py  (Playwright, viewport 1000x420,
+  device_scale_factor=1 -> exactly 1000x420 px)
+-->
+<style>
+  :root{--bg:#0e1116;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:1000px;height:420px;overflow:hidden;background:var(--bg);
+    color:var(--text);
+    font:400 16px/1.25 ui-sans-serif,system-ui,-apple-system,"Segoe UI",
+         Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  .split{display:flex;width:1000px;height:420px}
+  /* 640px of type / 360px of graph: the headline needs ~556px of measure and
+     the graph window still shows its dense core at 420px height. */
+  .left{width:640px;background:var(--bg);display:flex;flex-direction:column;
+    justify-content:center;padding:0 36px 0 48px}
+  .right{width:360px;position:relative;overflow:hidden;background:var(--bg)}
+  .right img{position:absolute;top:0;left:50%;transform:translateX(-50%);
+    height:100%;width:auto;display:block}
+  .fade{position:absolute;top:0;left:0;bottom:0;width:72px;
+    background:linear-gradient(90deg,var(--bg) 0%,rgba(14,17,22,0) 100%)}
+  .brand{font-size:14px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:24px}
+  .head{font-size:50px;font-weight:700;letter-spacing:-.025em;line-height:1.04;
+    color:var(--text)}
+  .rule{width:124px;height:5px;background:var(--accent);border:0;
+    margin:28px 0 22px}
+  .foot{font-size:17px;line-height:1.35;color:var(--muted)}
+  .foot b{color:var(--text);font-weight:600}
+</style>
+<body>
+  <div class="split">
+    <div class="left">
+      <div class="brand">Cascade</div>
+      <div class="head">Know the blast radius<br>before it breaks</div>
+      <hr class="rule">
+      <div class="foot"><b>one Cypher question</b> returns a path — not a score</div>
+    </div>
+    <div class="right">
+      <img src="cover-graph.png" alt="">
+      <div class="fade"></div>
+    </div>
+  </div>
+</body>
+</html>
