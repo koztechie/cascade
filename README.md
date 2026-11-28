@@ -107,9 +107,10 @@ from asking a model: the agent gets **connected context instead of a guess**,
 and every sentence it says back can be checked against the edge that produced
 it.
 
-**Where this is different:** of the **60+ projects in this hackathon's
-gallery, none works on catalog/feed operations** (every entry re-read on
-23 Nov 2026, 67 in all). The "what breaks?" question is asked elsewhere too
+**Where this is different:** **none of the projects in this hackathon's
+gallery works on catalog/feed operations** (every entry's title and
+description scanned on 28 Nov 2026, 96 in all). The "what breaks?" question is
+asked elsewhere too
 (incidents, data lineage, code changes), but no entry points it at a product
 catalog. Cascade points it where the answer costs money: listings, feeds,
 rules, campaigns.
@@ -211,12 +212,14 @@ The store serves MCP over stdio with five read-only tools — `read_cypher`,
 category machinery + the bounded 4-hop neighbourhood, each layer labelled
 honestly), **`rejection_causes`** (why listings are rejected, with the proof
 path) and **`remediation`** (the one fix, ranked by payoff) — so an agent can
-answer "what breaks?" with paths instead of guesses:
+answer "what breaks?" with paths instead of guesses.
+
+They are served by **`./bin/relate`**, the repository's wrapper; the upstream
+CLI on its own exposes `read_cypher` and `get_schema`, so start there rather
+than at the bare `relate serve` if you want all five.
 
 ```bash
 ./bin/relate serve --mcp stdio --database store/catalog.rl --read-only
-# the repository's wrapper serves all five read-only tools; the upstream CLI
-# on its own exposes read_cypher and get_schema
 ```
 
 **Read-only and bounded are a deliberate choice.** For an analytics tool,
@@ -495,7 +498,7 @@ stated as code rather than as a claim.
 
 ## How this maps to the judging criteria
 
-- **Creativity** — an e-commerce *operations* change-impact graph: of the 60+
+- **Creativity** — an e-commerce *operations* change-impact graph: of the
   entries in the gallery, none works on catalog/feed operations; the same
   "what breaks?" question is asked about incidents, data lineage and code
   changes, and this is the gallery entry that points it at a catalog.
