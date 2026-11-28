@@ -187,8 +187,8 @@ audited.
 ## Product capabilities, third-party tools and AI tools
 
 **Product capabilities (Relate):** the project makes meaningful use of Relate
-through the **CLI** (`relate query`, `relate serve --mcp stdio`), **embedded
-use** (the `relate_db` Python client behind `bin/relate`) and **MCP** (five
+through the **CLI** (`relate query`), **embedded use** (the `relate_db` Python
+client behind `bin/relate`, which also serves the MCP surface) and **MCP** (five
 read-only tools over stdio), against a single-file `.rl` store, with Cypher as
 the query language. Bolt, HTTP and the Rust and Python libraries are the
 surfaces that switch on when a catalog outgrows a single process — see

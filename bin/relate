@@ -1,16 +1,39 @@
 #!/usr/bin/env bash
-# Prefer the official prebuilt `relate` CLI when this CPU supports it;
-# otherwise fall back to the embedded Python client (same engine, same store
-# format) — see scripts/relate_compat.py.
+# The stable entry point every command in this repository goes through
+# (pass R4: scripts change, this path does not).
+#
+# - `serve` ALWAYS runs through the embedded client: the five read-only MCP
+#   tools this project documents (read_cypher, get_schema, blast_radius,
+#   rejection_causes, remediation) live in scripts/relate_lib, and the
+#   upstream CLI serves only the two generic ones — routing serve anywhere
+#   else silently downgrades an agent from five tools to two.
+# - every other subcommand prefers the official prebuilt CLI when the CPU
+#   supports it, and falls back to the embedded Python client otherwise:
+#   same engine, same store format. See scripts/relate_compat.py.
 set -u
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+run_shim() {
+  local py="$ROOT/.venv/bin/python"
+  [ -x "$py" ] || py=python3
+  exec "$py" "$ROOT/scripts/relate_compat.py" "$@"
+}
+
+# RELATE_PREFER=embedded — set by the Makefile for every target: the pinned
+# engine is what produced the committed store and the golden fixtures, and it
+# reproduces both byte for byte. The official CLI writes the same graph (same
+# node and relationship counts) with different bytes, so letting it rebuild
+# the store would dirty the working tree and drift the golden outputs.
+if [ "${RELATE_PREFER:-}" = "embedded" ]; then
+  run_shim "$@"
+fi
+
+if [ "${1:-}" = "serve" ]; then
+  run_shim "$@"
+fi
 
 if command -v relate >/dev/null 2>&1 && relate --version >/dev/null 2>&1; then
   exec relate "$@"
 fi
 
-PY="$ROOT/.venv/bin/python"
-if [ ! -x "$PY" ]; then
-  PY=python3
-fi
-exec "$PY" "$ROOT/scripts/relate_compat.py" "$@"
+run_shim "$@"

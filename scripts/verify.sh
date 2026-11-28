@@ -7,6 +7,13 @@ RELATE="${RELATE:-./bin/relate}"
 STORE="${1:-store/catalog.rl}"
 PARAMS="data/demo_params.json"
 
+# Row-cap guard (found by dry run #2): the official CLI defaults to 100 rows
+# per statement when it detects an agent harness and stdout is not a terminal,
+# which truncates gate output and fails verify for a reason that has nothing to
+# do with the store. `make verify` exports RELATE_MAX_ROWS=0 for every target;
+# this line covers running this script directly.
+export RELATE_MAX_ROWS="${RELATE_MAX_ROWS:-0}"
+
 SKU=$(${PYTHON:-python3} -c "import json;print(json.load(open('$PARAMS'))['sku'])")
 FROM=$(${PYTHON:-python3} -c "import json;print(json.load(open('$PARAMS'))['merge_from'])")
 TO=$(${PYTHON:-python3} -c "import json;print(json.load(open('$PARAMS'))['merge_into'])")

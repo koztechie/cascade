@@ -214,9 +214,9 @@ path) and **`remediation`** (the one fix, ranked by payoff) — so an agent can
 answer "what breaks?" with paths instead of guesses:
 
 ```bash
-relate serve --mcp stdio --database store/catalog.rl --read-only
-# on hardware the prebuilt CLI does not support:
 ./bin/relate serve --mcp stdio --database store/catalog.rl --read-only
+# the repository's wrapper serves all five read-only tools; the upstream CLI
+# on its own exposes read_cypher and get_schema
 ```
 
 **Read-only and bounded are a deliberate choice.** For an analytics tool,
