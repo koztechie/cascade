@@ -115,11 +115,11 @@ asked elsewhere too
 catalog. Cascade points it where the answer costs money: listings, feeds,
 rules, campaigns.
 
-**The return:** **seven consequences instead of seven tables**, a **one-line
-verdict** you can paste into a ticket, and the blast-radius query (475 rows)
-runs in **206 ms** on a 2013 laptop — timings, and the machine they came from,
-are in [The store in numbers](#the-store-in-numbers). The cost side is one
-**1.1 MB** file: no server, no signup, no directory to reconcile.
+**The return:** **seven one-statement answers instead of ten joined tables**, a
+**one-line verdict** you can paste into a ticket, and the blast-radius query
+(**476 rows**) runs in **206 ms** on a 2013 laptop — timings, and the machine
+they came from, are in [The store in numbers](#the-store-in-numbers). The cost
+side is one **1.1 MB** file: no server, no signup, no directory to reconcile.
 
 **Cypher next to the SQL it replaces:** one pattern here, **ten tables** there —
 the pattern, the join list and the recursive CTE are
@@ -483,9 +483,9 @@ the ceiling:
 
 | Query | Rows | Median |
 | --- | --- | --- |
-| 01 blast radius | 475 | 206 ms |
+| 01 blast radius | 476 | 206 ms |
 | 02 rejected root cause | 25 | 3.4 ms |
-| 03 invisible inventory | 150 | 9.1 ms |
+| 03 invisible inventory | 151 | 9.1 ms |
 | 04 merge counterfactual | 15 | 1.2 ms |
 
 ## Cypher next to the SQL it replaces

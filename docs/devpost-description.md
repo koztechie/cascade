@@ -73,7 +73,7 @@ is invisible or unlinked right now · what collides if we merge two categories
 force · what single fix clears the most risk. **No Cypher required to read the
 answer** — the queries are how it is checked, not what you are asked to write.
 
-**Why it is useful, in numbers:** one discontinued product expands into **475
+**Why it is useful, in numbers:** one discontinued product expands into **476
 consequences** across a **600-product** catalog, and both the path and the
 **one-line verdict** come back from a single statement — the weekly change
 conversation that lives in a spreadsheet becomes something a person reads in
