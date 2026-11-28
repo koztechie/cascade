@@ -24,6 +24,8 @@
 
 - **ставки** — твої датовані формулювання (досьє, 20.11 і 22.11): зламаний компʼютер сильно обмежує працю, а приз хакатону — **реальний шлях його замінити** → речення *«a real route out, not a fantasy»* і *«I did not enter to be voted for»* (**§9**: без жодних закликів голосувати чи «просити бали»).
 
+- **два дослівні цитування твого власного ПУБЛІЧНОГО тексту** — твій артикл на dev.to *«One person, one project, one month: Building Svitlogics from Kyiv»* (12.07.2025): *«Because of my health, office life is impossible for me. So my home became my studio»* і *«a city that has learned to live by the sound of sirens»* → **звірив дослівно з оригіналом** (завантажив сторінку, `curl` 96 КБ) ✓; це твої власні раніше опубліковані слова, тож §9/§11 їх не зачіпають.
+
 **Свідомо НЕ ввійшло:**
 - **Чуже приватне** — тека `Тимчасове/TG` (перевірено **сім разів**, тека оновлювалась щоразу: чати *«Victoria»* → *«Лєна»* → *«Віка»* → *«Олександр»* → *«Інна»* → *«Ксюша»* (3 повідомлення, останній стан 14:55 — теки `files/` і `stickers/` зникли); **21 фото** — побут, київський двір, цінові таблиці, рамкова ПОДЯКА, стікер; голосове 51 с розпізнане **локально**, нікуди не відправлялось). Скан ключових слів: **війна 0 · інвалідність 0** у всьому; два збіги «втома» виявились підрядком слова *автоматично/автоматом*. Чужі обставини («difficult week», «new computer для кожного з нас», тиск «Розетки», **госпіталізація батька**) — **сторонні дані** (правила §11) → не публікуються.
 - **Клінічні/юридичні деталі** — діагнози, ліки, паспорт/адреса/телефон, номер справи, обставини ТЦК і поліції, стосунки, гроші, чужі імена — **навіть попри наявність у досьє і в тій самій заяві**: публікації вони не потрібні, а ризик (незворотність публікації + активна юридична справа) великий.
@@ -121,6 +123,13 @@ being optimisation and becomes a small, readable piece of control.
 middle of this build, which is a second reason it had to stay small: small
 enough to finish on the days that are not good, and honest enough to trust on
 the ones that are.
+
+**Most of this was written where I write everything else.** In my own earlier
+words: *«Because of my health, office life is impossible for me. So my home
+became my studio»* — in *«a city that has learned to live by the sound of
+sirens»*. So the answer here is built for exactly that studio: no server, no
+account, a graph in one file you can open locally, and a check you can run in
+fourteen seconds when the night is already long.
 
 **Why this entry exists at all.** The machine I build on is failing, and it is
 the machine everything else in my life runs through — a new one is a real
