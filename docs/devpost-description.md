@@ -128,6 +128,10 @@ that produced it:
 The store is **synthetic** (seed 42, generator in this repository, deliberate
 defects planted and asserted), because a public dataset of e-commerce
 *operations* does not exist and publishing a real catalog is not an option.
+That is a deliberate choice, not a shortcut: **no production, regulated or
+employer data appears anywhere** — not in the store, not in the screenshots,
+not in this submission — and nothing here derives from anyone else's
+proprietary information.
 **No AI runs inside the product:** every runtime answer is deterministic Cypher
 against the store.
 
