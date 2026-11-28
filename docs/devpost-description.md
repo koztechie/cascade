@@ -73,6 +73,12 @@ is invisible or unlinked right now · what collides if we merge two categories
 force · what single fix clears the most risk. **No Cypher required to read the
 answer** — the queries are how it is checked, not what you are asked to write.
 
+**Why it is useful, in numbers:** one discontinued product expands into **475
+consequences** across a **600-product** catalog, and both the path and the
+**one-line verdict** come back from a single statement — the weekly change
+conversation that lives in a spreadsheet becomes something a person reads in
+a minute and an agent can re-run on demand.
+
 **Why a graph:** a vector store finds text that *looks like* the question; it
 cannot say **what breaks**, because breakage lives in relationships that have
 to be traversed (listing → product → category → feed contract → rule), not in
@@ -200,8 +206,13 @@ AI-generated** — Kokoro-82M (Apache-2.0), run locally on CPU: no cloud service
 no account. The video's music bed is synthesised by this repository's own build
 script, so **no third-party audio is used anywhere in the video**.
 
-**Originality:** written for this contest; no reused third-party application
-code.
+**Originality, start date and prompts:** written for this contest — work began
+**21 November 2026**, inside the contest window. **No pre-existing code was
+reused**: neither third-party application code nor earlier code of our own —
+everything here was built for this submission. The **prompts** are part of the
+record as well: [`docs/agent-session.md`](https://github.com/koztechie/cascade/blob/main/docs/agent-session.md)
+holds the exact prompts, the Cypher the agent wrote and the results, including
+the moment the agent corrected its own first query.
 
 ## КІНЕЦЬ ТЕКСТУ ДЛЯ ВСТАВЛЕННЯ
 
