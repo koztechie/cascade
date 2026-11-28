@@ -38,7 +38,7 @@ An importer for real catalogs (CSV/API), a change log with temporal queries,
 write-mode MCP for proposing changes, and vector retrieval for
 "find the change ticket, then traverse its blast radius".
 
-## One writer per store (Relate's rule)
+## One writer per store (a Relate rule)
 
 Relate allows a **single writer per store**. Stop `relate serve` (or any other
 process holding `store/catalog.rl`) before `make store`, `make demo` or

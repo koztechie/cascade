@@ -197,7 +197,7 @@ read [`docs/agent-session.md`](docs/agent-session.md).
 
 ## For your agent
 
-Relate's own promise, as the hackathon page puts it: **"One command installs a
+Relate states its own promise, as the hackathon page puts it: **"One command installs a
 skill into the coding agents you already use, so they can find it and start
 using it on their own."** Cascade ships that outcome as files already committed
 here — [`.mcp.json`](.mcp.json) for any MCP client,
@@ -362,7 +362,7 @@ means what a green local run means.
 ## When not to use Cascade
 
 [`docs/limitations.md`](docs/limitations.md) is the full list, in the same
-spirit as Relate's own limitations page. Condensed: the catalog is synthetic,
+spirit as the Relate product's own limitations page. Condensed: the catalog is synthetic,
 there are no live integrations, the seven queries are the product (anything
 else needs an agent on top), blast radius stops at 4 hops, the graph is
 current-state only, there is no semantic search, and Relate allows one writer
@@ -525,6 +525,10 @@ installed by you rather than vendored — no binary is redistributed here
 (`bin/relate` is a wrapper script); the demo's voice is **Kokoro-82M**
 (Apache-2.0). The viewer embeds **no font files** — it renders in system fonts.
 The demo video, its music and the screenshots are this project's own work.
+
+*Neo4j and Cypher are trademarks or registered trademarks of Neo4j, Inc. or
+its subsidiaries in the United States and/or other countries. The names are
+used here only to identify the product this project runs on.*
 
 ## Beyond one file
 
