@@ -14,6 +14,8 @@ it touches lights up — brand, supplier, category, listings, feed contract — 
 one a **real relationship** read from `store/catalog.rl`, not a mock-up.*
 **Prefer to watch?** The **1:30 demo** — voice, subtitles, no login — is on
 [YouTube](https://youtu.be/EuO9WT4_lPc).
+**Prefer to read?** The **full write-up** — problem, graph, what came out —
+is on [dev.to](https://dev.to/koztechie/i-stopped-guessing-what-a-product-change-breaks-and-answered-it-with-one-cypher-question-1j5i).
 
 **Explore in the browser, nothing to install** — `viewer.html` keeps that
 literal: the graph is **pre-generated and offline**, so opening it needs no
