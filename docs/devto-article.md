@@ -6,6 +6,16 @@
 
 **Теги (dev.to обмежує4):** `graphdatabase` · `cypher` · `neo4j` · `ai` (запасні: `mcp`, `llm`, `agents`)
 
+**Зображення (додано 28.11) — усі вже вставлені в текст нижче** (посилання на `raw.githubusercontent.com`, тож у публікацію вставляється весь блок «Текст статті» цілком):
+1. `docs/fig-question.png` → **після абзацу**, що починається *«Every week an e-commerce team changes something:…»* (вступ, одразу перед *«Why a spreadsheet cannot answer it.»*);
+2. `docs/fig-sql.png` → **після абзацу «Why a spreadsheet cannot answer it.»** (закінчується *«…one variable-length pattern.»*);
+3. `docs/fig-viewer.png` → **після абзацу** *«The store holds **1,667 nodes and 3,730 relationships** …»* (закінчується *«…clears the most risk.»*);
+4. `docs/fig-verdict.png` → **після абзацу «The answer arrives as a path, not a score.»** (закінчується *«…live Cypher results.»*);
+5. `docs/fig-agent.png` → **після абзацу «For agents, not just for people.»** (закінчується *«…including yours.»*);
+6. `docs/fig-verify.png` → **після абзацу «What keeps it honest.»** (закінчується *«…rather than typed in.»*);
+7. `video/viewer.gif` → **після абзацу** *«Then open `viewer.html` — …»* (тобто між ним і *«**Where this was written.**»*).
+**Джерела1–6:** реальні кадри демовідео (ті самі, що в галереї Devpost, уже публічні). **Свідомо НЕ ввійшли:** `02-scale.png` (**475** — суперечить **476** у тексті) · `08-close.png` (дублює обкладинку). У частині від *«Where this was written.»* і до кінця картинок **немає — навмисно** (особистий текст лишається текстом).
+
 ---
 
 ## Екзистенційні елементи (додано 28.11) — джерела й межі
@@ -39,17 +49,29 @@
 
 Every week an e-commerce team changes something: a SKU is retired, a brand is renamed, a category merge lands. The blast radius of that one change is scattered across product feeds, marketplace listings, price rules, campaigns, landing pages and CRM segments — and today it lives in a spreadsheet plus somebody's memory. Nobody finds the seventh consequence until it breaks.
 
+![The question in business words: We are discontinuing PU-1004 — what breaks?](https://raw.githubusercontent.com/koztechie/cascade/main/docs/fig-question.png)
+
 **Why a spreadsheet cannot answer it.** The question is not "where did I write this down", it is "what is connected to this". A vector store finds text that *looks like* the question; it cannot say what breaks, because breakage lives in relationships that have to be traversed: listing → product → category → feed contract → rule. In SQL the same question is **ten tables** and a recursive CTE. In a graph it is one variable-length pattern.
+
+![The same question twice: ten tables plus a recursive CTE in SQL, one variable-length pattern in Cypher](https://raw.githubusercontent.com/koztechie/cascade/main/docs/fig-sql.png)
 
 **What I built: Cascade.** A change-impact graph for e-commerce operations, running on Relate as a **single file** — `store/catalog.rl`, 1.1 MB, committed to the repository. No server, no signup, no directory to reconcile: the whole interface is one command.
 
 The store holds **1,667 nodes and 3,730 relationships** over a synthetic 600-product catalog (seed 42, generator included, deliberate defects planted so they can be asserted rather than assumed). Seven questions are answered by seven single statements — what breaks if we stop selling this product, why is this listing rejected, what is invisible right now, what collides if we merge two categories, which products get rejected next, is this promo still in force, and what single fix clears the most risk.
 
+![viewer.html after a real click: 130 nodes and 142 relationships, every edge a real path from the store](https://raw.githubusercontent.com/koztechie/cascade/main/docs/fig-viewer.png)
+
 **The answer arrives as a path, not a score.** The blast-radius query returns **476 rows** in about **0.2 s** on a 2013 laptop without AVX2 — every row a route from the change to its consequence, so the claim is reproducible instead of asserted. `make report` opens with a one-line verdict you can paste into a ticket: delisting `PU-1004` takes 2 listings offline, deadens 1 page, breaks 1 feed contract. Under it, the tables are live Cypher results.
+
+![make report opens with a one-line verdict you can paste into a ticket](https://raw.githubusercontent.com/koztechie/cascade/main/docs/fig-verdict.png)
 
 **For agents, not just for people.** The store serves MCP over stdio with five read-only tools — `read_cypher`, `get_schema`, `blast_radius`, `rejection_causes`, `remediation` — so an agent answers "what breaks?" with paths it can cite. The server refuses every write: it cannot delete anyone's graph, including yours.
 
+![The MCP server over stdio: five read-only tools answering with a path the agent can cite](https://raw.githubusercontent.com/koztechie/cascade/main/docs/fig-agent.png)
+
 **What keeps it honest.** `make verify` runs **eleven gates** end to end from a fresh clone in about **14 seconds**: committed store first, seven query results, the MCP surface with CLI/MCP parity, baseline counts, an injection test and a determinism check. `make golden` freezes demo, report and verify output byte for byte, CI re-runs all of it on every push, and every number in the README is checked against the store rather than typed in.
+
+![make verify grades itself: eleven gates over queries, MCP, baselines and determinism — verify: OK](https://raw.githubusercontent.com/koztechie/cascade/main/docs/fig-verify.png)
 
 **What it is not.** No vector or hybrid retrieval, no live integrations, no production data — the catalog is synthetic and disclosed as such, because publishing a real one is not an option. Blast radius stops at four hops, and absence of impact is not proof of safety.
 
@@ -62,6 +84,8 @@ cd cascade && make verify                          # == verify: OK ==
 ```
 
 Then open `viewer.html` — the blast radius is already built, offline, no query written — or give the repo to your agent through `.mcp.json`.
+
+![The offline viewer in motion: click a node, get its blast radius, no query written](https://raw.githubusercontent.com/koztechie/cascade/main/video/viewer.gif)
 
 **Where this was written.** Kyiv, after midnight — the first commit in this repository is stamped **00:10**, and the day it was born carries **42 of its 140 commits**. November here supplies the framing for free: gray sky, rain, no palm trees, and nights that are not always quiet — which is why people here greet each other with *«мирного неба»*: a peaceful sky. An air-raid alert moves a morning, a commute, a night's sleep; you learn to plan the work around the sky rather than the clock.
 
