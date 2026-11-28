@@ -20,6 +20,7 @@
 - **статус із твоєї власної заяви** — `zayava_BPD_2026-11-26.html`: **внутрішньо переміщена особа** + **особа з інвалідністю III групи** + війна як реальність («ризики під час пересування містом») → у тексті: *internally displaced person with a third-group disability*; **без адреси, паспорта, телефону, e-mail, номера справи та деталей ТЦК/поліції**;
 - **тіло й машина** — *«епізодичні спазми, слабкість, біль від погоди»* (досьє) і **старий компʼютер, що обмежує працю** (твоє формулювання 20.11) → *walking is hard* / *old enough to refuse heavy loads*;
 - **госпіталізація** — твоє власне повідомлення в чаті *«Інна»* (**25.11, 10:14**: *«Привіт! В лікарні»*) + досьє (курс вдень-госпіталю, виписка 25.11) → речення *«There were hospital visits of my own in the middle of this build»*. **Без батька, без діагнозів, без ліків.**
+- **повітряні тривоги, що переносять ранок** — з `TG/files/План.md` (твій власний операційний план від 22.11: *«загрозлива обстановка/тривога — виходити з запасом часу»*) → речення *«An air-raid alert moves a morning, a commute, a night's sleep»*. **З того самого плану НЕ взято:** ліки й дози, номер справи `К-3719/108`, бюджет/цінни сигарет, ім'я клієнта, прийоми в лікарів, статус ТЦК — усе це залишилось поза публікацією.
 
 **Свідомо НЕ ввійшло:**
 - **Чуже приватне** — тека `Тимчасове/TG` (перевірено **пʼять разів**, тека оновлювалась щоразу: чати *«Victoria»* → *«Лєна»* → *«Віка»* → *«Олександр»* → *«Інна»*; **21 фото** — побут, київський двір, цінові таблиці, рамкова ПОДЯКА, стікер; голосове 51 с розпізнане **локально**, нікуди не відправлялось). Скан ключових слів: **війна 0 · інвалідність 0** у всьому; два збіги «втома» виявились підрядком слова *автоматично/автоматом*. Чужі обставини («difficult week», «new computer для кожного з нас», тиск «Розетки», **госпіталізація батька**) — **сторонні дані** (правила §11) → не публікуються.
@@ -102,7 +103,9 @@ written — or give the repo to your agent through `.mcp.json`.
 repository is stamped **00:10**, and the day it was born carries **42 of its
 140 commits**. November here supplies the framing for free: gray sky, rain, no
 palm trees, and nights that are not always quiet — which is why people here
-greet each other with *«мирного неба»*: a peaceful sky.
+greet each other with *«мирного неба»*: a peaceful sky. An air-raid alert
+moves a morning, a commute, a night's sleep; you learn to plan the work around
+the sky rather than the clock.
 
 I write this as an **internally displaced person with a third-group
 disability**, on a machine old enough to refuse heavy loads, on days when
